@@ -11,22 +11,39 @@
 // itu berlaku global untuk semua aplikasi, bukan cuma punya kita.
 
 (() => {
-	const WORKSPACE = "imogi-payroll";
+	const TARGET = "imogi-payroll";
 	const KELAS = "imogi-wide";
 
+	// Rute bisa memakai nama workspace ("Imogi Payroll") maupun slug URL
+	// ("imogi-payroll"), tergantung dari mana navigasinya datang. Keduanya
+	// diratakan ke bentuk yang sama sebelum dibandingkan.
+	function slug(nilai) {
+		return (nilai || "")
+			.toString()
+			.trim()
+			.toLowerCase()
+			.replace(/[\s_]+/g, "-");
+	}
+
 	function di_workspace_kita() {
-		const route = frappe.get_route() || [];
-		// Rute workspace berbentuk ["Workspaces", "<nama>"]; di sebagian versi
-		// nama workspace juga muncul sebagai rute tunggal.
-		const nama = (route[1] || route[0] || "").toString().toLowerCase();
-		return route[0] === "Workspaces" ? nama === WORKSPACE : nama === WORKSPACE;
+		// 1) lewat router - sumber paling tepat saat berpindah halaman
+		try {
+			const route = frappe.get_route() || [];
+			if (route.some((bagian) => slug(bagian) === TARGET)) return true;
+		} catch (e) {
+			// router belum siap; jatuh ke pemeriksaan URL di bawah
+		}
+
+		// 2) cadangan lewat URL - menangani muat-ulang halaman langsung,
+		//    sekaligus bench yang menyajikan desk di /desk maupun /app
+		const path = slug(window.location.pathname.split("?")[0]);
+		return path.endsWith(`-${TARGET}`) || path.endsWith(`/${TARGET}`);
 	}
 
 	function terapkan() {
 		document.body.classList.toggle(KELAS, di_workspace_kita());
 	}
 
-	// router mungkin belum siap saat berkas ini dimuat.
 	function pasang() {
 		if (!window.frappe || !frappe.router || !frappe.router.on) {
 			setTimeout(pasang, 300);
