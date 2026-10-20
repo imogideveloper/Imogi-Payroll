@@ -22,8 +22,12 @@ add_to_apps_screen = [
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/imogi_payroll/css/imogi_payroll_annual_history.css"
-app_include_js = "/assets/imogi_payroll/js/checkin_gate.js?v=1"
+app_include_css = "/assets/imogi_payroll/css/imogi_payroll_desk.css"
+app_include_js = [
+    "/assets/imogi_payroll/js/checkin_gate.js?v=1",
+    # memasang kelas .imogi-wide saat berada di workspace Imogi Payroll
+    "/assets/imogi_payroll/js/imogi_payroll_desk.js",
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/imogi_payroll/css/imogi_payroll.css"

@@ -1,0 +1,39 @@
+/* Lebar halaman Imogi Payroll.
+ *
+ * Frappe mengunci lebar lewat desktop.scss:
+ *     body:not(.full-width) .layout-main { max-width: var(--page-max-width) }
+ * dengan --page-max-width: 900px. Di layar lebar, sisi kiri-kanan jadi
+ * kosong melompong.
+ *
+ * Kelas .imogi-wide dipasang/dilepas oleh imogi_payroll_desk.js hanya saat
+ * rute berada di workspace Imogi Payroll. Dengan begitu tampilan melebar di
+ * modul kita TANPA mengubah preferensi "Toggle Full Width" milik pengguna,
+ * yang berlaku global untuk seluruh aplikasi.
+ *
+ * Selektor di bawah menang karena punya satu kelas lebih spesifik daripada
+ * aturan bawaan.
+ */
+
+body.imogi-wide:not(.full-width) .layout-main {
+	max-width: var(--imogi-page-max-width, 1500px);
+}
+
+/* Beri sedikit nafas di tepi supaya konten tidak menempel ke sisi layar. */
+body.imogi-wide .layout-main-section-wrapper {
+	padding-left: var(--padding-md);
+	padding-right: var(--padding-md);
+}
+
+/* Number card: ratakan tinggi antar kartu dalam satu baris supaya tidak
+ * bergerigi ketika panjang labelnya berbeda. */
+body.imogi-wide .widget.number-widget-box {
+	height: 100%;
+}
+
+/* Angka di kartu kerap panjang (rupiah tanpa singkatan). Kecilkan sedikit
+ * dan cegah meluber keluar kartu. */
+body.imogi-wide .widget.number-widget-box .widget-content .number {
+	font-size: var(--text-2xl);
+	overflow-wrap: anywhere;
+	line-height: 1.25;
+}
