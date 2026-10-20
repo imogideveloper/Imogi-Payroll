@@ -1,0 +1,64 @@
+[
+ {
+  "allow_tax_exemption": 0,
+  "amended_from": null,
+  "company": "",
+  "currency": "IDR",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Income Tax Slab",
+  "effective_from": "2025-01-01",
+  "modified": "2024-01-01 00:00:00",
+  "name": "Indonesia 2025 Progressive",
+  "other_taxes_and_charges": [],
+  "slabs": [
+   {
+    "condition": "",
+    "from_amount": 0.0,
+    "parent": "Indonesia 2025 Progressive",
+    "parentfield": "slabs",
+    "parenttype": "Income Tax Slab",
+    "percent_deduction": 5.0,
+    "to_amount": 60000000.0
+   },
+   {
+    "condition": "",
+    "from_amount": 60000001.0,
+    "parent": "Indonesia 2025 Progressive",
+    "parentfield": "slabs",
+    "parenttype": "Income Tax Slab",
+    "percent_deduction": 15.0,
+    "to_amount": 250000000.0
+   },
+   {
+    "condition": "",
+    "from_amount": 250000001.0,
+    "parent": "Indonesia 2025 Progressive",
+    "parentfield": "slabs",
+    "parenttype": "Income Tax Slab",
+    "percent_deduction": 25.0,
+    "to_amount": 500000000.0
+   },
+   {
+    "condition": "",
+    "from_amount": 500000001.0,
+    "parent": "Indonesia 2025 Progressive",
+    "parentfield": "slabs",
+    "parenttype": "Income Tax Slab",
+    "percent_deduction": 30.0,
+    "to_amount": 5000000000.0
+   },
+   {
+    "condition": "",
+    "from_amount": 5000000001.0,
+    "parent": "Indonesia 2025 Progressive",
+    "parentfield": "slabs",
+    "parenttype": "Income Tax Slab",
+    "percent_deduction": 35.0,
+    "to_amount": 0.0
+   }
+  ],
+  "standard_tax_exemption_amount": 0.0,
+  "tax_relief_limit": 0.0
+ }
+]

@@ -1,0 +1,147 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll Annual History",
+  "module": "Imogi Payroll",
+  "custom": 1,
+  "istable": 0,
+  "editable_grid": 1,
+  "is_submittable": 1,
+  "is_creatable": 1,
+  "show_in_module_section": 1,
+  "route": "annual-payroll-history",
+  "autoname": "format:{employee}-{fiscal_year}",
+  "fields": [
+    {
+      "fieldname": "fiscal_year",
+      "fieldtype": "Link",
+      "label": "Fiscal Year",
+      "options": "Fiscal Year",
+      "reqd": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1
+    },
+    {
+      "fieldname": "employee",
+      "fieldtype": "Link",
+      "label": "Employee",
+      "options": "Employee",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "employee_name",
+      "fieldtype": "Data",
+      "label": "Employee Name",
+      "fetch_from": "employee.employee_name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "bruto_total",
+      "fieldtype": "Currency",
+      "label": "Total Bruto",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1
+    },
+    {
+      "fieldname": "pengurang_netto_total",
+      "fieldtype": "Currency",
+      "label": "Total Pengurang Netto",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1,
+      "description": "Total pengurang netto (excludes biaya jabatan)"
+    },
+    {
+      "fieldname": "biaya_jabatan_total",
+      "fieldtype": "Currency",
+      "label": "Total Biaya Jabatan",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1,
+      "description": "Total biaya jabatan dari seluruh bulan"
+    },
+    {
+      "fieldname": "netto_total",
+      "fieldtype": "Currency",
+      "label": "Total Netto",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1,
+      "description": "Bruto Total - Pengurang Netto Total - Biaya Jabatan Total"
+    },
+    {
+      "fieldname": "ptkp_annual",
+      "fieldtype": "Currency",
+      "label": "PTKP Annual",
+      "default": "0",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1
+    },
+    {
+      "fieldname": "pkp_annual",
+      "fieldtype": "Currency",
+      "label": "PKP Annual (Rounded)",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1
+    },
+    {
+      "fieldname": "pph21_annual",
+      "fieldtype": "Currency",
+      "label": "PPh21 Annual",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1
+    },
+    {
+      "fieldname": "koreksi_pph21",
+      "fieldtype": "Currency",
+      "label": "Koreksi PPh21 Desember",
+      "default": "0",
+      "reqd": 0,
+      "read_only": 1,
+      "allow_on_submit": 1,
+      "description": "pph21_annual - total pph21 Jan-Nov"
+    },
+    {
+      "fieldname": "error_state",
+      "fieldtype": "Small Text",
+      "label": "Error State",
+      "description": "Informasi error terakhir terkait proses slip gaji"
+    },
+    {
+      "fieldname": "monthly_details",
+      "fieldtype": "Table",
+      "label": "Monthly Detail",
+      "options": "Imogi Payroll Annual History Child",
+      "allow_on_submit": 1
+    },
+    {
+      "fieldname": "monthly_details_jumlah",
+      "fieldtype": "HTML",
+      "label": "Total (Jumlah per Kolom)",
+      "options": ""
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "permlevel": 0,
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1,
+      "amend": 1
+    }
+  ],
+  "modified": "2024-01-02 00:00:00"
+}

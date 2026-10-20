@@ -1,0 +1,221 @@
+import os
+import sys
+import types
+import importlib
+import json
+
+
+def test_sync_error_state_forces_save(monkeypatch):
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+    frappe = types.SimpleNamespace()
+
+    class DummyLogger:
+        def info(self, msg, *args):
+            pass
+
+        def warning(self, msg, *args):
+            pass
+
+        def debug(self, msg, *args):
+            pass
+
+    frappe.logger = lambda *a, **k: DummyLogger()
+    frappe.throw = lambda *a, **k: None
+    frappe.log_error = lambda *a, **k: None
+    frappe.db = types.SimpleNamespace(savepoint=lambda name: None, rollback=lambda save_point=None: None)
+    frappe.utils = types.SimpleNamespace(now=lambda: "now")
+    frappe.as_json = json.dumps
+    frappe.session = types.SimpleNamespace(user="tester")
+
+    sys.modules["frappe"] = frappe
+    sys.modules["frappe.utils"] = frappe.utils
+
+    if "imogi_payroll.utils.sync_imogi_payroll_annual_history" in sys.modules:
+        del sys.modules["imogi_payroll.utils.sync_imogi_payroll_annual_history"]
+    sync_mod = importlib.import_module("imogi_payroll.utils.sync_imogi_payroll_annual_history")
+
+    class HistoryDoc:
+        def __init__(self):
+            self.name = "APH-1"
+            self.flags = types.SimpleNamespace()
+            self.saved = False
+            self.docstatus = 1
+
+        def is_new(self):
+            return False
+
+        def get(self, key, default=None):
+            return getattr(self, key, default)
+
+        def set(self, key, value):
+            setattr(self, key, value)
+
+        def save(self):
+            self.saved = True
+
+    doc = HistoryDoc()
+    monkeypatch.setattr(sync_mod, "get_or_create_imogi_payroll_annual_history", lambda *a, **k: doc)
+
+    result = sync_mod.sync_imogi_payroll_annual_history(
+        employee={"name": "EMP1"},
+        fiscal_year="2024",
+        error_state={"detail": "failure"},
+    )
+
+    assert result == "APH-1"
+    assert doc.saved
+    assert doc.error_state == json.dumps({"detail": "failure"})
+
+
+def test_sync_accepts_employee_string(monkeypatch):
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+    frappe = types.SimpleNamespace()
+
+    class DummyLogger:
+        def info(self, msg, *args):
+            pass
+
+        def warning(self, msg, *args):
+            pass
+
+        def debug(self, msg, *args):
+            pass
+
+    frappe.logger = lambda *a, **k: DummyLogger()
+    frappe.throw = lambda *a, **k: None
+    frappe.log_error = lambda *a, **k: None
+    frappe.db = types.SimpleNamespace(savepoint=lambda name: None, rollback=lambda save_point=None: None)
+    frappe.utils = types.SimpleNamespace(now=lambda: "now")
+    frappe.as_json = json.dumps
+    frappe.session = types.SimpleNamespace(user="tester")
+
+    sys.modules["frappe"] = frappe
+    sys.modules["frappe.utils"] = frappe.utils
+
+    if "imogi_payroll.utils.sync_imogi_payroll_annual_history" in sys.modules:
+        del sys.modules["imogi_payroll.utils.sync_imogi_payroll_annual_history"]
+    sync_mod = importlib.import_module("imogi_payroll.utils.sync_imogi_payroll_annual_history")
+
+    class Detail:
+        def __init__(self):
+            pass
+
+        def set(self, k, v):
+            setattr(self, k, v)
+
+    class HistoryDoc:
+        def __init__(self):
+            self.name = "APH-1"
+            self.flags = types.SimpleNamespace()
+            self.saved = False
+            self.monthly_details = []
+            self.docstatus = 1
+
+        def is_new(self):
+            return False
+
+        def get(self, key, default=None):
+            return getattr(self, key, default)
+
+        def set(self, key, value):
+            setattr(self, key, value)
+
+        def append(self, child_table, data):
+            detail = Detail()
+            self.monthly_details.append(detail)
+            return detail
+
+        def save(self):
+            self.saved = True
+
+    doc = HistoryDoc()
+    monkeypatch.setattr(sync_mod, "get_or_create_imogi_payroll_annual_history", lambda *a, **k: doc)
+
+    result = sync_mod.sync_imogi_payroll_annual_history(
+        employee="EMP1",
+        fiscal_year="2024",
+        monthly_results=[{"bulan": 1}],
+    )
+
+    assert result == "APH-1"
+    assert doc.saved
+    assert len(doc.monthly_details) == 1
+
+
+def test_cancelled_slip_sets_error_state_and_preserves_row(monkeypatch):
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+    frappe = types.SimpleNamespace()
+
+    class DummyLogger:
+        def info(self, msg, *args):
+            pass
+
+        def warning(self, msg, *args):
+            pass
+
+        def debug(self, msg, *args):
+            pass
+
+    frappe.logger = lambda *a, **k: DummyLogger()
+    frappe.throw = lambda *a, **k: None
+    frappe.log_error = lambda *a, **k: None
+    frappe.db = types.SimpleNamespace(
+        savepoint=lambda name: None,
+        rollback=lambda save_point=None: None,
+        exists=lambda dt, name: True,
+    )
+    frappe.utils = types.SimpleNamespace(now=lambda: "now")
+    frappe.as_json = json.dumps
+    frappe.session = types.SimpleNamespace(user="tester")
+
+    sys.modules["frappe"] = frappe
+    sys.modules["frappe.utils"] = frappe.utils
+
+    if "imogi_payroll.utils.sync_imogi_payroll_annual_history" in sys.modules:
+        del sys.modules["imogi_payroll.utils.sync_imogi_payroll_annual_history"]
+    sync_mod = importlib.import_module("imogi_payroll.utils.sync_imogi_payroll_annual_history")
+
+    class Detail:
+        def __init__(self):
+            self.salary_slip = "SS-FAIL"
+            self.error_state = None
+
+    class HistoryDoc:
+        def __init__(self):
+            self.name = "APH-1"
+            self.flags = types.SimpleNamespace()
+            self.saved = False
+            self.monthly_details = [Detail()]
+            self.docstatus = 1
+
+        def is_new(self):
+            return False
+
+        def get(self, key, default=None):
+            return getattr(self, key, default)
+
+        def set(self, key, value):
+            setattr(self, key, value)
+
+        def save(self):
+            self.saved = True
+
+    doc = HistoryDoc()
+    monkeypatch.setattr(sync_mod, "get_or_create_imogi_payroll_annual_history", lambda *a, **k: doc)
+
+    result = sync_mod.sync_imogi_payroll_annual_history(
+        employee={"name": "EMP1"},
+        fiscal_year="2024",
+        cancelled_salary_slip="SS-FAIL",
+        error_state={"reason": "failed"},
+    )
+
+    assert result == "APH-1"
+    assert doc.saved
+    assert len(doc.monthly_details) == 1
+    assert doc.monthly_details[0].error_state == json.dumps({"reason": "failed"})
+    assert doc.error_state == json.dumps({"reason": "failed"})
+

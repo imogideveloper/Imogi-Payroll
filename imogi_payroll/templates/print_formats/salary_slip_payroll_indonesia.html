@@ -1,0 +1,220 @@
+{%- set employee_doc = frappe.get_doc("Employee", doc.employee) -%}
+{%- set settings = frappe.get_doc("Imogi Payroll Settings", "Imogi Payroll Settings") -%}
+{%- set signatory_name = settings.get("authorized_signatory") or "HRD Manager" -%}
+{%- set signatory_designation = settings.get("authorized_signatory_designation") or "Human Resources" -%}
+
+<style>
+  .slip-container {
+    font-size: 9pt;
+    font-family: Arial, sans-serif;
+  }
+  .slip-header-table, .slip-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .slip-header-table td {
+    padding: 2px 4px;
+    vertical-align: top;
+  }
+  .slip-table th, .slip-table td {
+    border: 1px solid #000;
+    padding: 3px 5px;
+  }
+  .slip-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  .text-right {
+    text-align: right;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .section-title {
+    margin-top: 10px;
+    margin-bottom: 3px;
+    font-weight: bold;
+    font-size: 10pt;
+  }
+  .summary-row {
+    font-weight: bold;
+  }
+</style>
+
+<div class="slip-container">
+
+  <!-- HEADER -->
+  <h3 class="text-center" style="margin-bottom:4px; margin-top:0;">
+    Slip Gaji
+  </h3>
+  <div class="text-center" style="margin-bottom:10px; font-size:10pt;">
+    <strong>{{ doc.company }}</strong><br>
+    Periode: {{ frappe.format(doc.start_date, {'fieldtype': 'Date'}) }} s/d {{ frappe.format(doc.end_date, {'fieldtype': 'Date'}) }}
+  </div>
+
+  <!-- INFO KARYAWAN -->
+  <table class="slip-header-table" style="margin-bottom:10px;">
+    <tr>
+      <td style="width:20%;">Nama</td>
+      <td style="width:35%;"><strong>: {{ doc.employee_name or doc.employee }}</strong></td>
+      <td style="width:20%;">Jabatan</td>
+      <td style="width:25%;">: {{ doc.designation or "-" }}</td>
+    </tr>
+    <tr>
+      <td>NIP</td>
+      <td>: {{ doc.employee }}</td>
+      <td>Departemen</td>
+      <td>: {{ doc.department or "-" }}</td>
+    </tr>
+    <tr>
+      <td>NPWP</td>
+      <td>: {{ employee_doc.npwp_no or "-" }}</td>
+      <td>Status Pajak</td>
+      <td>: {{ employee_doc.tax_status or "-" }}</td>
+    </tr>
+    <tr>
+      <td>Periode Gaji</td>
+      <td>: {{ frappe.format(doc.start_date, {'fieldtype': 'Date'}) }} - {{ frappe.format(doc.end_date, {'fieldtype': 'Date'}) }}</td>
+      <td>Metode Pajak</td>
+      <td>: {{ doc.tax_type or "TER" }}</td>
+    </tr>
+  </table>
+
+  <!-- PENDAPATAN -->
+  <div class="section-title">Pendapatan</div>
+  <table class="slip-table">
+    <thead>
+      <tr>
+        <th style="width:70%;">Komponen</th>
+        <th style="width:30%;" class="text-right">Jumlah (IDR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set has_earnings = false %}
+      {% for row in doc.earnings %}
+        {% if not (row.do_not_include_in_total or row.statistical_component) %}
+          {% set has_earnings = true %}
+          <tr>
+            <td>{{ row.salary_component }}</td>
+            <td class="text-right">
+              {{ frappe.format(row.amount, {'fieldtype': 'Currency'}) }}
+            </td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+      {% if not has_earnings %}
+        <tr>
+          <td colspan="2" class="text-center"><em>Tidak ada pendapatan</em></td>
+        </tr>
+      {% endif %}
+    </tbody>
+    <tfoot>
+      <tr class="summary-row">
+        <td>Total Pendapatan</td>
+        <td class="text-right">{{ frappe.format(doc.gross_pay, {'fieldtype': 'Currency'}) }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- POTONGAN -->
+  <div class="section-title">Potongan</div>
+  <table class="slip-table">
+    <thead>
+      <tr>
+        <th style="width:70%;">Komponen</th>
+        <th style="width:30%;" class="text-right">Jumlah (IDR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set has_deductions = false %}
+      {% for row in doc.deductions %}
+        {% if not (row.do_not_include_in_total or row.statistical_component) %}
+          {% set has_deductions = true %}
+          <tr>
+            <td>{{ row.salary_component }}</td>
+            <td class="text-right">
+              {{ frappe.format(row.amount, {'fieldtype': 'Currency'}) }}
+            </td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+      {% if not has_deductions %}
+        <tr>
+          <td colspan="2" class="text-center"><em>Tidak ada potongan</em></td>
+        </tr>
+      {% endif %}
+    </tbody>
+    <tfoot>
+      <tr class="summary-row">
+        <td>Total Potongan</td>
+        <td class="text-right">{{ frappe.format(doc.total_deduction, {'fieldtype': 'Currency'}) }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- RINGKASAN GAJI -->
+  <div class="section-title">Ringkasan</div>
+  <table class="slip-header-table" style="font-size:9pt;">
+    <tr>
+      <td style="width:50%;">Total Pendapatan</td>
+      <td style="width:50%;" class="text-right">
+        {{ frappe.format(doc.gross_pay, {'fieldtype': 'Currency'}) }}
+      </td>
+    </tr>
+    <tr>
+      <td>Total Potongan</td>
+      <td class="text-right">
+        {{ frappe.format(doc.total_deduction, {'fieldtype': 'Currency'}) }}
+      </td>
+    </tr>
+    <tr style="border-top: 2px solid #000;">
+      <td><strong>Gaji Bersih (Take Home Pay)</strong></td>
+      <td class="text-right">
+        <strong style="font-size:11pt;">{{ frappe.format(doc.net_pay, {'fieldtype': 'Currency'}) }}</strong>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding-top:5px;">
+        <em>Terbilang: {{ doc.net_pay_in_words or "" }}</em>
+      </td>
+    </tr>
+  </table>
+
+  <!-- INFORMASI PPh21 -->
+  <div class="section-title">Informasi PPh21</div>
+  <table class="slip-table">
+    <tbody>
+      <tr>
+        <td style="width:70%;">PPh21 bulan ini</td>
+        <td style="width:30%;" class="text-right">
+          {{ frappe.format(doc.tax or 0, {'fieldtype': 'Currency'}) }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- TANDA TANGAN / CATATAN (opsional) -->
+  <div style="margin-top:20px;">
+    <table class="slip-header-table">
+      <tr>
+        <td style="width:100%; text-align:right; vertical-align:top; padding-right:50px;">
+          <div style="margin-bottom:5px;">Mengetahui,</div>
+          <div style="margin-top:50px; display:inline-block;">
+            <div style="border-top:1px solid #000; padding-top:3px; min-width:180px; text-align:center;">
+              <strong>{{ signatory_name }}</strong>
+            </div>
+            <div style="text-align:center; font-size:8pt; margin-top:2px;">
+              {{ signatory_designation }}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- FOOTER NOTE -->
+  <div style="margin-top:15px; font-size:8pt; color:#666; text-align:center;">
+    <em>Dokumen ini dicetak secara otomatis menggunakan Imogi Payroll module by IMOGI untuk ERPNext</em>
+  </div>
+
+</div>

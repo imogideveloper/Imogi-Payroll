@@ -1,0 +1,102 @@
+[
+ {
+  "add_total_row": 1,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2024-01-01 00:00:00",
+  "module": "Imogi Payroll",
+  "name": "Imogi Payroll PPh21 Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Salary Slip",
+  "reference_report": null,
+  "report_name": "Imogi Payroll PPh21 Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Imogi Payroll PPh21 Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "HR User"
+   },
+   {
+    "parent": "Imogi Payroll PPh21 Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "HR Manager"
+   },
+   {
+    "parent": "Imogi Payroll PPh21 Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Payroll Manager"
+   },
+   {
+    "parent": "Imogi Payroll PPh21 Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Employee"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 1,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2024-01-01 00:00:00",
+  "module": "Imogi Payroll",
+  "name": "Imogi Payroll BPJS Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Salary Slip",
+  "reference_report": null,
+  "report_name": "Imogi Payroll BPJS Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Imogi Payroll BPJS Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "HR User"
+   },
+   {
+    "parent": "Imogi Payroll BPJS Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "HR Manager"
+   },
+   {
+    "parent": "Imogi Payroll BPJS Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Payroll Manager"
+   },
+   {
+    "parent": "Imogi Payroll BPJS Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Employee"
+   }
+  ],
+  "timeout": 0
+ }
+]

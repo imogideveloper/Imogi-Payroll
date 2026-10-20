@@ -1,0 +1,27 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll PTKP Table",
+  "module": "Imogi Payroll",
+  "istable": 1,
+  "editable_grid": 1,
+  "track_changes": 1,
+  "fields": [
+    {
+      "fieldname": "tax_status",
+      "fieldtype": "Data",
+      "label": "Tax Status",
+      "in_list_view": 1,
+      "reqd": 1,
+      "description": "Status seperti TK/0, K/3, HB/2"
+    },
+    {
+      "fieldname": "ptkp_amount",
+      "fieldtype": "Currency",
+      "label": "PTKP Amount",
+      "in_list_view": 1,
+      "reqd": 1,
+      "description": "Nilai PTKP tahunan"
+    }
+  ],
+  "modified": "2024-01-01 00:00:00"
+}

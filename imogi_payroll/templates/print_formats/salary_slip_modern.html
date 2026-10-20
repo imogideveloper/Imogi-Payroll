@@ -1,0 +1,461 @@
+{%- set employee_doc = frappe.get_doc("Employee", doc.employee) -%}
+{%- set pis_settings = frappe.get_cached_doc("Imogi Payroll Settings", "Imogi Payroll Settings")
+    if frappe.db.exists("Imogi Payroll Settings", "Imogi Payroll Settings") else None -%}
+{%- set month_names = ["January","February","March","April","May","June","July","August","September","October","November","December"] -%}
+{%- if doc.end_date -%}
+  {%- set sd = doc.start_date|string -%}
+  {%- set ed = doc.end_date|string -%}
+  {%- set sd_parts = sd[:10].split("-") -%}
+  {%- set ed_parts = ed[:10].split("-") -%}
+  {# Bulan gaji pola 25–24 = bulan dari end_date (24 Des → Desember), bukan start_date #}
+  {%- set period_month = month_names[ed_parts[1]|int - 1] + " " + ed_parts[0] -%}
+  {%- set period_range = sd_parts[2] + " " + month_names[sd_parts[1]|int - 1][:3] + " – " + ed_parts[2] + " " + month_names[ed_parts[1]|int - 1][:3] + " " + ed_parts[0] -%}
+{%- elif doc.start_date -%}
+  {%- set sd = doc.start_date|string -%}
+  {%- set sd_parts = sd[:10].split("-") -%}
+  {%- set period_month = month_names[sd_parts[1]|int - 1] + " " + sd_parts[0] -%}
+  {%- set period_range = "" -%}
+{%- else -%}
+  {%- set period_month = "" -%}
+  {%- set period_range = "" -%}
+{%- endif -%}
+
+{%- set normal_earn   = [] -%}
+{%- set employer_list = [] -%}
+{%- set statutory_ded = [] -%}
+{%- set other_ded     = [] -%}
+{%- set ns = namespace(earn_total=0, emp_total=0) -%}
+
+{%- for row in doc.earnings -%}
+  {%- if row.statistical_component -%}
+  {%- elif "employer" in (row.salary_component | lower) -%}
+    {%- set _ = employer_list.append(row) -%}
+    {%- set ns.emp_total = ns.emp_total + row.amount -%}
+  {%- elif not row.do_not_include_in_total -%}
+    {%- set _ = normal_earn.append(row) -%}
+    {%- set ns.earn_total = ns.earn_total + row.amount -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- for row in doc.deductions -%}
+  {%- if row.statistical_component -%}
+  {%- elif "contra" in (row.salary_component | lower) -%}
+  {%- elif "employer" in (row.salary_component | lower) -%}
+    {%- set _ = employer_list.append(row) -%}
+    {%- set ns.emp_total = ns.emp_total + row.amount -%}
+  {%- else -%}
+    {%- set cl = row.salary_component | lower -%}
+    {%- if "bpjs" in cl or "pph" in cl or "tax" in cl -%}
+      {%- set _ = statutory_ded.append(row) -%}
+    {%- else -%}
+      {%- set _ = other_ded.append(row) -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if doc.employer_contributions -%}
+  {%- for row in doc.employer_contributions -%}
+    {%- if row.salary_component and row.amount -%}
+      {%- set _ = employer_list.append(row) -%}
+      {%- set ns.emp_total = ns.emp_total + row.amount -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{# Fallback: hitung estimasi saat tabel employer_contributions kosong #}
+{%- if not employer_list and (doc.base or 0) > 0 -%}
+  {%- set settings_doc = frappe.get_cached_doc("Imogi Payroll Settings", "Imogi Payroll Settings")
+      if frappe.db.exists("Imogi Payroll Settings", "Imogi Payroll Settings") else None -%}
+  {%- set base_amt = (doc.base or 0) | float -%}
+  {%- set health_base = [base_amt, 5396761] | max -%}
+  {%- set rate_health = (settings_doc.get("bpjs_health_employer_rate") if settings_doc else 4.0) | float -%}
+  {%- set rate_jkk = (settings_doc.get("bpjs_jkk_rate") if settings_doc else 0.24) | float -%}
+  {%- set rate_jkm = (settings_doc.get("bpjs_jkm_rate") if settings_doc else 0.3) | float -%}
+  {%- set est_health = health_base * rate_health / 100 -%}
+  {%- set est_jkk = base_amt * rate_jkk / 100 -%}
+  {%- set est_jkm = base_amt * rate_jkm / 100 -%}
+  {%- for item in [
+      {"salary_component": "BPJS Kesehatan Employer (Estimasi)", "amount": est_health},
+      {"salary_component": "BPJS JKK Employer (Estimasi)", "amount": est_jkk},
+      {"salary_component": "BPJS JKM Employer (Estimasi)", "amount": est_jkm}
+    ] -%}
+    {%- if item.amount > 0 -%}
+      {%- set _ = employer_list.append(item) -%}
+      {%- set ns.emp_total = ns.emp_total + item.amount -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+<style>
+@page { size: A5 landscape; margin: 5mm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.wrap {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 7.5pt; /* DINAIKKAN dari 6.5pt */
+  color: #1a1a1a;
+  width: 100%;
+}
+
+/* HEADER - FIX COLOR CONTRAST */
+.hdr { 
+  background: #1b3f7e; 
+  color: #ffffff; /* EXPLICIT WHITE - TIDAK TRANSPARENT */
+  padding: 8px 14px; /* PADDING LEBIH BESAR */
+  overflow: hidden; 
+}
+.hdr-l { float: left; }
+.hdr-r { float: right; text-align: right; }
+.co-name { 
+  font-size: 12pt; /* DINAIKKAN dari 11pt */
+  font-weight: bold; 
+  line-height: 1.1; 
+  color: #ffffff; /* EXPLICIT WHITE */
+}
+.co-sub  { 
+  font-size: 6pt; /* DINAIKKAN dari 5pt */
+  color: #d0d8e6; /* LEBIH TERANG - dari rgba(255,255,255,.5) */
+  margin-top: 2px; 
+}
+.per-lbl { 
+  font-size: 6pt; /* DINAIKKAN dari 5pt */
+  color: #d0d8e6; /* LEBIH TERANG */
+}
+.per-mon { 
+  font-size: 12pt; /* DINAIKKAN dari 11pt */
+  font-weight: bold; 
+  margin-top: 2px; 
+  color: #ffffff; /* EXPLICIT WHITE */
+}
+
+/* EMP BAR - FIX COLOR CONTRAST */
+.emp { 
+  background: #2558b8; /* LEBIH TERANG - dari #1e4a99 */
+  color: #ffffff; /* EXPLICIT WHITE */
+  padding: 6px 14px; /* PADDING LEBIH BESAR */
+  overflow: hidden; 
+}
+.ef  { float: left; padding-right: 18px; } /* SPACING LEBIH BESAR */
+.ef:last-child { padding-right: 0; }
+.el  { 
+  font-size: 5.5pt; /* DINAIKKAN dari 4.5pt */
+  color: #d0d8e6; /* LEBIH TERANG */
+  text-transform: uppercase; 
+  letter-spacing: .3px; 
+}
+.ev  { 
+  font-size: 7.5pt; /* DINAIKKAN dari 6.5pt */
+  font-weight: bold; 
+  margin-top: 1px; 
+  color: #ffffff; /* EXPLICIT WHITE */
+}
+
+/* BODY */
+.body { background: #edf0f7; padding: 5px 5px 0 5px; width: 100%; }
+.body-table { width: 100%; border-collapse: separate; border-spacing: 5px 0; table-layout: fixed; }
+.col-earn  { background: #fff; padding: 8px 10px; vertical-align: top; width: 42%; }
+.col-right { background: #fff; padding: 8px 10px; vertical-align: top; width: 58%; }
+
+.col-title {
+  font-size: 6.5pt; /* DINAIKKAN dari 5.5pt */
+  font-weight: bold; 
+  letter-spacing: .9px;
+  text-transform: uppercase; 
+  color: #1b3f7e;
+  border-left: 3px solid #1b3f7e; 
+  padding-left: 6px; 
+  margin-bottom: 7px;
+}
+.section-divider { border: none; border-top: 2px solid #edf0f7; margin: 8px 0; }
+
+.grp { 
+  font-size: 5.5pt; /* DINAIKKAN dari 4.5pt */
+  font-weight: bold; 
+  text-transform: uppercase; 
+  letter-spacing: .3px; 
+  color: #999; /* LEBIH GELAP dari #aaa untuk kontras */
+  padding: 5px 0 3px; 
+}
+.grp.first { padding-top: 0; }
+
+.items { width: 100%; border-collapse: collapse; }
+.items td { 
+  font-size: 7.5pt; /* DINAIKKAN dari 6.5pt */
+  padding: 2.5px 0; /* PADDING LEBIH BESAR */
+  border-bottom: 1px solid #f3f3f3; 
+  vertical-align: middle; 
+  line-height: 1.4; /* LEBIH TINGGI */
+}
+.items tr:last-child td { border-bottom: none; }
+.r   { text-align: right; white-space: nowrap; }
+.neg { text-align: right; white-space: nowrap; color: #c0392b; }
+
+.subtotal { width: 100%; border-top: 1.5px solid #ddd; margin-top: 6px; padding-top: 5px; overflow: hidden; }
+.sl { 
+  float: left;  
+  font-size: 7.5pt; /* DINAIKKAN dari 6.5pt */
+  font-weight: bold; 
+  color: #1b3f7e; 
+}
+.sr { 
+  float: right; 
+  font-size: 7.5pt; /* DINAIKKAN dari 6.5pt */
+  font-weight: bold; 
+  color: #1b3f7e; 
+  white-space: nowrap; 
+}
+
+/* SUMMARY BAR */
+.summary {
+  background: #fff;
+  margin: 5px 0 0 0;
+  padding: 8px 14px; /* PADDING LEBIH BESAR */
+  overflow: hidden;
+  border-top: 3px solid #edf0f7;
+}
+.summary-table { width: 100%; border-collapse: collapse; }
+.summary-table td { padding: 0 10px; vertical-align: middle; } /* PADDING LEBIH BESAR */
+.summary-table td:first-child { padding-left: 0; }
+.summary-table td:last-child  { padding-right: 0; text-align: right; }
+.sum-lbl { 
+  font-size: 6.5pt; /* DINAIKKAN dari 5.5pt */
+  color: #999; 
+  text-transform: uppercase; 
+  letter-spacing: .4px; 
+  margin-bottom: 3px; 
+}
+.sum-val { 
+  font-size: 10pt; /* DINAIKKAN dari 9pt */
+  font-weight: bold; 
+  color: #1b3f7e; 
+}
+.sum-val.neg { color: #c0392b; }
+.sum-eq  { 
+  font-size: 14pt; /* DINAIKKAN dari 12pt */
+  color: #ccc; 
+  font-weight: bold; 
+  padding: 0 5px; 
+}
+.sum-net { 
+  font-size: 11pt; /* DINAIKKAN dari 10pt */
+  font-weight: bold; 
+  color: #1b3f7e; 
+}
+.badge {
+  display: inline-block; 
+  background: #27ae60; 
+  color: #fff;
+  font-size: 6.5pt; /* DINAIKKAN dari 5.5pt */
+  font-weight: bold; 
+  padding: 3px 8px; /* PADDING LEBIH BESAR */
+  border-radius: 8px; 
+  margin-left: 7px; 
+  vertical-align: middle;
+}
+
+.note {
+  background: #edf0f7;
+  text-align: center;
+  font-size: 6pt; /* DINAIKKAN dari 5pt */
+  color: #999; /* LEBIH GELAP dari #bbb */
+  padding: 4px 14px;
+}
+
+/* SIGNATURE BLOCK */
+.sig-wrap {
+  background: #fff;
+  padding: 16px 14px 8px 14px;
+  border-top: 3px solid #edf0f7;
+}
+.sig-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.sig-table td {
+  width: 33.33%;
+  text-align: center;
+  vertical-align: top;
+  padding: 0 8px;
+}
+.sig-place {
+  font-size: 6.5pt;
+  color: #999;
+  margin-bottom: 26px;
+}
+.sig-line {
+  border-top: 1px solid #333;
+  margin: 0 6px;
+  padding-top: 4px;
+}
+.sig-name {
+  font-size: 7.5pt;
+  font-weight: bold;
+  color: #1b3f7e;
+}
+.sig-role {
+  font-size: 6.5pt;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  margin-top: 1px;
+}
+</style>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-l">
+      <div class="co-name">{{ doc.company }}</div>
+      <div class="co-sub">imogi.id &middot; Payroll Division</div>
+    </div>
+    <div class="hdr-r">
+      <div class="per-lbl">Payslip &middot; Period {{ period_range }}</div>
+      <div class="per-mon">{{ period_month }}</div>
+    </div>
+  </div>
+
+  <!-- EMPLOYEE BAR -->
+  <div class="emp">
+    <div class="ef"><div class="el">Employee</div><div class="ev">{{ doc.employee_name or doc.employee }}</div></div>
+    <div class="ef"><div class="el">Department</div><div class="ev">{{ doc.department or "&mdash;" }}</div></div>
+    <div class="ef"><div class="el">Employee ID</div><div class="ev">{{ doc.employee }}</div></div>
+    <div class="ef"><div class="el">Position</div><div class="ev">{{ doc.designation or "&mdash;" }}</div></div>
+    <div class="ef">
+      <div class="el">Bank Account</div>
+      <div class="ev">
+        {%- if employee_doc.bank_name or employee_doc.bank_ac_no -%}
+          {{ employee_doc.bank_name or "" }}{% if employee_doc.bank_name and employee_doc.bank_ac_no %} &middot; {% endif %}{{ employee_doc.bank_ac_no or "" }}
+        {%- else -%}&mdash;{%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY: 2 KOLOM -->
+  <div class="body">
+    <table class="body-table"><tbody><tr>
+
+      <!-- KIRI: EARNINGS -->
+      <td class="col-earn">
+        <div class="col-title">Earnings</div>
+        <table class="items"><tbody>
+          {%- if normal_earn -%}
+            {%- for row in normal_earn -%}
+            <tr>
+              <td>{{ row.salary_component }}</td>
+              <td class="r">{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+            </tr>
+            {%- endfor -%}
+          {%- else -%}
+            <tr><td colspan="2" style="color:#ccc;">—</td></tr>
+          {%- endif -%}
+        </tbody></table>
+        <div class="subtotal">
+          <span class="sl">Total Earnings</span>
+          <span class="sr">{{ frappe.format(ns.earn_total, {'fieldtype':'Currency'}) }}</span>
+        </div>
+      </td>
+
+      <!-- KANAN: DEDUCTIONS + EMPLOYER (stacked) -->
+      <td class="col-right">
+        <div class="col-title">Deductions</div>
+        {%- if statutory_ded -%}
+          <div class="grp first">Statutory &mdash; Employee</div>
+          <table class="items"><tbody>
+            {%- for row in statutory_ded -%}
+            <tr>
+              <td>{{ row.salary_component }}</td>
+              <td class="neg">&ndash; {{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+            </tr>
+            {%- endfor -%}
+          </tbody></table>
+        {%- endif -%}
+        {%- if other_ded -%}
+          <div class="grp{% if not statutory_ded %} first{% endif %}">Other</div>
+          <table class="items"><tbody>
+            {%- for row in other_ded -%}
+            <tr>
+              <td>{{ row.salary_component }}</td>
+              <td class="neg">&ndash; {{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+            </tr>
+            {%- endfor -%}
+          </tbody></table>
+        {%- endif -%}
+        {%- if not statutory_ded and not other_ded -%}<div style="color:#ccc;">—</div>{%- endif -%}
+        <div class="subtotal">
+          <span class="sl">Total Deductions</span>
+          <span class="sr">&ndash; {{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</span>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="col-title">Employer Contribution</div>
+        {%- if employer_list -%}
+          <table class="items"><tbody>
+            {%- for row in employer_list -%}
+            <tr>
+              <td>{{ row.salary_component }}</td>
+              <td class="r">{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+            </tr>
+            {%- endfor -%}
+          </tbody></table>
+          <div class="subtotal">
+            <span class="sl">Total Contribution</span>
+            <span class="sr">{{ frappe.format(ns.emp_total, {'fieldtype':'Currency'}) }}</span>
+          </div>
+        {%- else -%}
+          <div style="color:#ccc;">—</div>
+        {%- endif -%}
+      </td>
+
+    </tr></tbody></table>
+
+    <!-- SUMMARY BAR -->
+    <div class="summary">
+      <table class="summary-table"><tbody><tr>
+        <td>
+          <div class="sum-lbl">Total Earnings</div>
+          <div class="sum-val">{{ frappe.format(ns.earn_total, {'fieldtype':'Currency'}) }}</div>
+        </td>
+        <td style="width:20px; text-align:center;"><span class="sum-eq">&minus;</span></td>
+        <td>
+          <div class="sum-lbl">Total Deductions</div>
+          <div class="sum-val neg">{{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</div>
+        </td>
+        <td style="width:20px; text-align:center;"><span class="sum-eq">=</span></td>
+        <td>
+          <div class="sum-lbl">Net Take-Home Pay</div>
+          <div class="sum-net">{{ frappe.format(doc.net_pay, {'fieldtype':'Currency'}) }} <span class="badge">Paid</span></div>
+        </td>
+      </tr></tbody></table>
+    </div>
+
+  </div>
+
+  <!-- SIGNATURE BLOCK -->
+  <div class="sig-wrap">
+    <table class="sig-table"><tbody><tr>
+      <td>
+        <div class="sig-place">&nbsp;</div>
+        <div class="sig-line">
+          <div class="sig-name">{{ (pis_settings.director_name if pis_settings else "") or "&mdash;" }}</div>
+          <div class="sig-role">{{ (pis_settings.director_designation if pis_settings else "") or "Direktur" }}</div>
+        </div>
+      </td>
+      <td>
+        <div class="sig-place">&nbsp;</div>
+        <div class="sig-line">
+          <div class="sig-name">{{ (pis_settings.operation_head_name if pis_settings else "") or "&mdash;" }}</div>
+          <div class="sig-role">{{ (pis_settings.operation_head_designation if pis_settings else "") or "Operation Head" }}</div>
+        </div>
+      </td>
+      <td>
+        <div class="sig-place">&nbsp;</div>
+        <div class="sig-line">
+          <div class="sig-name">{{ doc.employee_name or doc.employee }}</div>
+          <div class="sig-role">Karyawan</div>
+        </div>
+      </td>
+    </tr></tbody></table>
+  </div>
+
+  <div class="note">Generated automatically &middot; imogi.id Payroll Division</div>
+
+</div>

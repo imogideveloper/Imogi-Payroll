@@ -1,0 +1,14 @@
+[pre_model_sync]
+imogi_payroll.patches.restore_cancelled_aph
+imogi_payroll.patches.clean_duplicate_aph_monthly_details
+imogi_payroll.patches.resync_aph_from_salary_slips
+imogi_payroll.patches.fix_aph_bruto_from_ter
+imogi_payroll.patches.allow_aph_monthly_edit_on_submit
+imogi_payroll.patches.fix_aph_cutoff_fiscal_year
+imogi_payroll.patches.fix_aph_end_year_and_month_order
+imogi_payroll.patches.backfill_aph_salary_component_snapshot
+imogi_payroll.patches.set_default_salary_slip_print_format
+
+[post_model_sync]
+imogi_payroll.patches.convert_aph_bulan_to_month_names
+imogi_payroll.patches.add_aph_monthly_totals_client_script

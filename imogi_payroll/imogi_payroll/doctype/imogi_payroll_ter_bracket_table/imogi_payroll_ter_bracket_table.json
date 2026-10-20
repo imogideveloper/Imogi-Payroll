@@ -1,0 +1,44 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll TER Bracket Table",
+  "module": "Imogi Payroll",
+  "istable": 1,
+  "editable_grid": 1,
+  "track_changes": 1,
+  "fields": [
+    {
+      "fieldname": "ter_code",
+      "fieldtype": "Data",
+      "label": "TER Code",
+      "in_list_view": 1,
+      "reqd": 1,
+      "description": "Kode TER: A, B, C"
+    },
+    {
+      "fieldname": "min_income",
+      "fieldtype": "Currency",
+      "label": "Min Income",
+      "in_list_view": 1,
+      "reqd": 1,
+      "description": "Batas bawah penghasilan bruto bulanan"
+    },
+    {
+      "fieldname": "max_income",
+      "fieldtype": "Currency",
+      "label": "Max Income",
+      "in_list_view": 1,
+      "reqd": 0,
+      "description": "Batas atas penghasilan bruto bulanan (kosong untuk batas teratas)"
+    },
+    {
+      "fieldname": "rate_percent",
+      "fieldtype": "Float",
+      "label": "Rate (%)",
+      "in_list_view": 1,
+      "reqd": 1,
+      "precision": 2,
+      "description": "Tarif pajak (%)"
+    }
+  ],
+  "modified": "2024-01-01 00:00:00"
+}

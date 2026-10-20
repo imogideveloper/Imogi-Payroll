@@ -1,0 +1,107 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll Annual History Child",
+  "module": "Imogi Payroll",
+  "istable": 1,
+  "custom": 1,
+  "fields": [
+    {
+      "fieldname": "bulan",
+      "fieldtype": "Select",
+      "label": "Bulan",
+      "options": "Januari\nFebruari\nMaret\nApril\nMei\nJuni\nJuli\nAgustus\nSeptember\nOktober\nNovember\nDesember",
+      "columns": 1,
+      "in_list_view": 1,
+      "reqd": 1
+    },
+    {
+      "fieldname": "bruto",
+      "fieldtype": "Currency",
+      "label": "Bruto",
+      "columns": 2,
+      "in_list_view": 1,
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "pengurang_netto",
+      "fieldtype": "Currency",
+      "label": "Pengurang",
+      "columns": 2,
+      "in_list_view": 1,
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "biaya_jabatan",
+      "fieldtype": "Currency",
+      "label": "Biaya Jab.",
+      "columns": 2,
+      "in_list_view": 1,
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "netto",
+      "fieldtype": "Currency",
+      "label": "Netto",
+      "columns": 1,
+      "in_list_view": 1,
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "pph21",
+      "fieldtype": "Currency",
+      "label": "PPh21",
+      "columns": 2,
+      "in_list_view": 1,
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "pkp",
+      "fieldtype": "Currency",
+      "label": "PKP Bulan Ini",
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "rate",
+      "fieldtype": "Percent",
+      "label": "Rate TER Bulan Ini (%)",
+      "reqd": 0,
+      "default": 0
+    },
+    {
+      "fieldname": "salary_slip",
+      "fieldtype": "Link",
+      "label": "Salary Slip",
+      "reqd": 0,
+      "options": "Salary Slip"
+    },
+    {
+      "fieldname": "salary_structure_assignment",
+      "fieldtype": "Link",
+      "label": "Salary Structure Assignment",
+      "reqd": 0,
+      "options": "Salary Structure Assignment",
+      "description": "SSA yang dipakai saat Salary Slip bulan ini dibuat"
+    },
+    {
+      "fieldname": "salary_component_snapshot",
+      "fieldtype": "Long Text",
+      "label": "Snapshot Komponen Gaji",
+      "reqd": 0,
+      "description": "Salinan komponen gaji dari SSA saat Salary Slip dibuat. Tidak berubah walau SSA diedit setelahnya."
+    },
+    {
+      "fieldname": "error_state",
+      "fieldtype": "Small Text",
+      "label": "Error State",
+      "collapsible": 1,
+      "description": "JSON error bila salary slip gagal diproses"
+    }
+  ],
+  "modified": "2024-01-01 00:00:00"
+}
