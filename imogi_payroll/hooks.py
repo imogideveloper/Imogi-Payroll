@@ -561,6 +561,15 @@ fixtures = [
             ]
         ]
     },
+    {
+        # Tanpa record ini Frappe membangun sidebar otomatis lewat
+        # auto_generate_sidebar_from_module() dengan ikon seadanya
+        # ('wallpaper', 'table', sebagian kosong, header 'hammer').
+        # Fungsi itu melewati modul yang sudah punya record, jadi yang
+        # ini yang dipakai.
+        "doctype": "Workspace Sidebar",
+        "filters": [["name", "in", ["Imogi Payroll"]]]
+    },
 ]
 
 after_install = "imogi_payroll.setup.install.after_install"
