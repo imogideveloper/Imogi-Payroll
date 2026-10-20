@@ -1,32 +1,34 @@
 /* Lebar halaman Imogi Payroll.
  *
- * Frappe mengunci lebar lewat desktop.scss:
- *     body:not(.full-width) .layout-main { max-width: var(--page-max-width) }
- * dengan --page-max-width: 900px. Di layar lebar, sisi kiri-kanan jadi
- * kosong melompong.
+ * Frappe membatasi lebar lewat variabel --page-max-width (900px), dan
+ * variabel itu dipakai di BANYAK aturan sekaligus, antara lain:
  *
- * Pelebaran hanya berlaku di workspace Imogi Payroll, supaya preferensi
- * "Toggle Full Width" milik pengguna - yang berlaku global untuk seluruh
- * aplikasi - tidak ikut diubah.
+ *   body:not(.full-width) [data-page-route=Workspaces] .layout-main
+ *   .layout-main-section
+ *   body:not(.full-width) .std-form-layout .section-head / .section-body
  *
- * Penandanya dua jalur yang saling menutupi:
+ * Menimpa satu per satu selektor itu rapuh: spesifisitasnya kebetulan sama
+ * sehingga hasilnya bergantung urutan muat, dan gampang terlewat satu -
+ * persis yang terjadi di sini, .layout-main sempat dilebarkan tapi
+ * .layout-main-section tetap terkunci 900px sehingga tidak ada bedanya.
  *
- *   1. body[data-route] - dipasang Frappe sendiri setiap kali rute berubah
- *      (views/container.js). Tidak bergantung pada timing skrip kita.
- *      Dicocokkan case-insensitive (flag i) karena rute bisa memakai nama
- *      workspace "Imogi Payroll" maupun slug URL "imogi-payroll".
+ * Jadi yang ditimpa variabelnya saja. Nilai baru diwariskan ke seluruh
+ * aturan di dalam <body>, tanpa perlu beradu spesifisitas sama sekali.
  *
- *   2. body.imogi-wide - dipasang imogi_payroll_desk.js, sebagai cadangan
- *      kalau atribut di atas belum sempat terisi.
+ * Penandanya data-route, yang dipasang Frappe sendiri di <body> setiap kali
+ * rute berubah (views/container.js) - bernilai "Workspaces/Imogi Payroll".
+ * Dicocokkan case-insensitive (flag i) dan dalam dua ejaan, karena rute bisa
+ * memakai nama workspace maupun slug URL. Kelas .imogi-wide dari
+ * imogi_payroll_desk.js jadi cadangan.
  *
- * Selektor di bawah menang atas aturan bawaan karena punya satu penyeleksi
- * tingkat-kelas lebih banyak.
+ * Dibatasi pada workspace kita saja supaya preferensi "Toggle Full Width"
+ * milik pengguna - yang berlaku global - tidak ikut berubah.
  */
 
-body[data-route*="imogi payroll" i]:not(.full-width) .layout-main,
-body[data-route*="imogi-payroll" i]:not(.full-width) .layout-main,
-body.imogi-wide:not(.full-width) .layout-main {
-	max-width: var(--imogi-page-max-width, 1500px);
+body[data-route*="imogi payroll" i],
+body[data-route*="imogi-payroll" i],
+body.imogi-wide {
+	--page-max-width: var(--imogi-page-max-width, 1500px);
 }
 
 /* Beri sedikit nafas di tepi supaya konten tidak menempel ke sisi layar. */
