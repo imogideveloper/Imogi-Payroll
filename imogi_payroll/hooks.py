@@ -68,6 +68,7 @@ doctype_js = {
 doctype_list_js = {
     "Payroll Entry": "public/js/imogi_payroll_entry_list.js",
     "Salary Structure Assignment": "public/js/imogi_payroll_ssa_list.js",
+    "Salary Slip": "public/js/imogi_payroll_salary_slip_list.js",
 }
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -376,6 +377,9 @@ fixtures = [
                 "Employee-column_break_id",
                 "Employee-ktp_attachment",
                 "Employee-npwp_attachment",
+                "Salary Slip-imogi_pph21_section",
+                "Salary Slip-imogi_pph21_breakdown",
+                "Salary Slip-pph21_amount",
                 "Salary Slip-pph21_info",
                 "Salary Slip-tax_type",
                 "Payroll Entry-run_imogi_payroll",

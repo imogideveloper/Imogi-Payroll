@@ -1,6 +1,15 @@
 {
- "charts": [],
- "content": "[{\"id\":\"hdr1\",\"type\":\"header\",\"data\":{\"text\":\"Imogi Payroll\",\"col\":12}},{\"id\":\"s1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee\",\"col\":3}},{\"id\":\"s2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Structure\",\"col\":3}},{\"id\":\"s3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Structure Assignment\",\"col\":3}},{\"id\":\"s4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Component\",\"col\":3}},{\"id\":\"s5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Slip\",\"col\":3}},{\"id\":\"s6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payroll Entry\",\"col\":3}},{\"id\":\"s7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Salary Register\",\"col\":3}},{\"id\":\"s8\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Imogi Payroll Annual History\",\"col\":3}},{\"id\":\"s9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Employee Check-in\",\"col\":3}},{\"id\":\"s10\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attendance\",\"col\":3}},{\"id\":\"s11\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payroll Period\",\"col\":3}},{\"id\":\"spacer1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"dev1\",\"type\":\"text\",\"data\":{\"text\":\"Developed By IMOGI - PT. Inovasi Terbaik Bangsa\",\"col\":12}}]",
+ "charts": [
+  {
+   "label": "Total Potongan Bulanan",
+   "chart_name": "Total Potongan Bulanan"
+  },
+  {
+   "label": "Tren Gaji Bulanan",
+   "chart_name": "Tren Gaji Bulanan"
+  }
+ ],
+ "content": "[{\"id\": \"4efffacb6e\", \"type\": \"header\", \"data\": {\"text\": \"<span class='h4'>Ringkasan Payroll</span>\", \"col\": 12}}, {\"id\": \"82e4248a89\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Penugasan Gaji Aktif\", \"col\": 4}}, {\"id\": \"c0d09ea138\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Total PPh 21 (Bulan Ini)\", \"col\": 4}}, {\"id\": \"beeb9e788e\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Total Gaji Dibayar (Bulan Ini)\", \"col\": 4}}, {\"id\": \"85062bd4a4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Slip Gaji Bulan Ini\", \"col\": 4}}, {\"id\": \"42c7d134e3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Karyawan Aktif\", \"col\": 4}}, {\"id\": \"f6b4558ceb\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"6152483945\", \"type\": \"header\", \"data\": {\"text\": \"<span class='h4'>Tren</span>\", \"col\": 12}}, {\"id\": \"8299334381\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Total Potongan Bulanan\", \"col\": 6}}, {\"id\": \"0b8e6450e9\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Tren Gaji Bulanan\", \"col\": 6}}, {\"id\": \"e2181c3a6c\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"f449b2c5dc\", \"type\": \"header\", \"data\": {\"text\": \"<span class='h4'>Pintasan</span>\", \"col\": 12}}, {\"id\": \"f01cd7f5c3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Employee\", \"col\": 3}}, {\"id\": \"e286ce3be9\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Salary Structure\", \"col\": 3}}, {\"id\": \"eed08fb180\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Salary Structure Assignment\", \"col\": 3}}, {\"id\": \"b3a805d25d\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Salary Component\", \"col\": 3}}, {\"id\": \"5c3bdd64e8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Salary Slip\", \"col\": 3}}, {\"id\": \"5f928c6c23\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Payroll Entry\", \"col\": 3}}, {\"id\": \"fbf10ae7b4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Salary Register\", \"col\": 3}}, {\"id\": \"fc514978ab\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Imogi Payroll Annual History\", \"col\": 3}}, {\"id\": \"df9b3e5f86\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Employee Check-in\", \"col\": 3}}, {\"id\": \"c5b2bf9fe4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Attendance\", \"col\": 3}}, {\"id\": \"66210f87cf\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Payroll Period\", \"col\": 3}}]",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -14,7 +23,28 @@
  "modified": "2026-04-27 14:13:11.213716",
  "module": "Imogi Payroll",
  "name": "Imogi Payroll",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Penugasan Gaji Aktif",
+   "number_card_name": "Penugasan Gaji Aktif"
+  },
+  {
+   "label": "Total PPh 21 (Bulan Ini)",
+   "number_card_name": "Total PPh 21 (Bulan Ini)"
+  },
+  {
+   "label": "Total Gaji Dibayar (Bulan Ini)",
+   "number_card_name": "Total Gaji Dibayar (Bulan Ini)"
+  },
+  {
+   "label": "Slip Gaji Bulan Ini",
+   "number_card_name": "Slip Gaji Bulan Ini"
+  },
+  {
+   "label": "Karyawan Aktif",
+   "number_card_name": "Karyawan Aktif"
+  }
+ ],
  "parent_page": null,
  "public": 1,
  "quick_lists": [],

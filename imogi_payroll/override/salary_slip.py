@@ -381,6 +381,21 @@ class CustomSalarySlip(SalarySlip):
 
         return super().eval_condition_and_formula(struct_row, data)
 
+    def get_pph21_breakdown(self) -> dict:
+        """Isi pph21_info sebagai dict, untuk print format dan tampilan.
+
+        Sandbox Jinja pada print format tidak menyediakan parser JSON, jadi
+        penguraiannya dilakukan di sini. Selalu mengembalikan dict - template
+        cukup memeriksa isinya tanpa perlu menangani JSON rusak.
+        """
+        if not self.get("pph21_info"):
+            return {}
+        try:
+            data = json.loads(self.pph21_info)
+        except (ValueError, TypeError):
+            return {}
+        return data if isinstance(data, dict) else {}
+
     def _warn_if_pph21_skipped(self, result):
         """Bunyikan alarm kalau PPh 21 dilewati gara-gara Employment Type.
 
@@ -643,6 +658,11 @@ class CustomSalarySlip(SalarySlip):
                         self.pph21_info = json.dumps(info)
                 except (ValueError, TypeError):
                     pass
+
+            # `tax` BUKAN field Salary Slip - menulis ke situ tidak pernah
+            # tersimpan, sehingga PPh 21 tidak bisa dilaporkan atau dijumlah.
+            # `pph21_amount` adalah custom field Currency yang persist.
+            self.pph21_amount = tax_amount
 
             target = "PPh 21"
             found = False

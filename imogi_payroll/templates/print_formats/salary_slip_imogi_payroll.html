@@ -1,0 +1,228 @@
+{#-
+    Slip Gaji Imogi Payroll
+
+    Dirancang untuk dicetak / dikirim ke karyawan: ringkas satu halaman,
+    aman di hitam-putih (tanpa blok warna tebal), dan menyertakan rincian
+    PPh 21 supaya karyawan bisa menelusuri sendiri dari mana potongannya.
+-#}
+{%- set c = frappe.get_doc("Company", doc.company) -%}
+{%- set emp = frappe.get_doc("Employee", doc.employee) -%}
+{#- Sandbox Jinja tidak punya parser JSON; penguraian dilakukan controller. -#}
+{%- set info = doc.get_pph21_breakdown() if doc.get("pph21_info") else {} -%}
+{%- set natura = doc.employer_contributions
+        | selectattr("is_tax_applicable")
+        | selectattr("amount")
+        | list -%}
+{%- set natura_total = natura | sum(attribute="amount") -%}
+
+<style>
+	.ip-slip { font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+		color: #1a1a1a; font-size: 10.5px; line-height: 1.5; }
+	.ip-slip table { width: 100%; border-collapse: collapse; }
+	.ip-head { display: flex; justify-content: space-between;
+		align-items: flex-start; padding-bottom: 12px;
+		border-bottom: 2px solid #1a1a1a; margin-bottom: 4px; }
+	.ip-co { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+	.ip-co-sub { color: #6b7280; font-size: 9.5px; margin-top: 2px; max-width: 280px; }
+	.ip-title { text-align: right; }
+	.ip-title-main { font-size: 12px; font-weight: 700; text-transform: uppercase;
+		letter-spacing: .06em; }
+	.ip-title-sub { color: #6b7280; font-size: 9.5px; margin-top: 3px; }
+
+	.ip-meta { margin: 14px 0 18px; }
+	.ip-meta td { padding: 3px 0; vertical-align: top; }
+	.ip-meta .k { color: #6b7280; width: 90px; }
+	.ip-meta .v { font-weight: 600; padding-right: 24px; }
+
+	.ip-cols { display: flex; gap: 22px; }
+	.ip-col { flex: 1; }
+	.ip-sec { font-size: 9px; font-weight: 700; text-transform: uppercase;
+		letter-spacing: .08em; color: #6b7280; padding-bottom: 5px;
+		border-bottom: 1px solid #d1d5db; margin-bottom: 2px; }
+	.ip-line td { padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
+	.ip-line td.amt { text-align: right; white-space: nowrap;
+		font-variant-numeric: tabular-nums; }
+	.ip-total td { padding: 7px 0 0; font-weight: 700;
+		border-top: 1.5px solid #1a1a1a; border-bottom: none; }
+
+	.ip-net { margin-top: 18px; padding: 12px 14px; border: 1.5px solid #1a1a1a;
+		border-radius: 4px; display: flex; justify-content: space-between;
+		align-items: baseline; }
+	.ip-net-k { font-size: 10px; font-weight: 700; text-transform: uppercase;
+		letter-spacing: .06em; }
+	.ip-net-v { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+	.ip-net-words { font-size: 9px; color: #6b7280; font-style: italic;
+		margin-top: 5px; }
+
+	.ip-tax { margin-top: 20px; }
+	.ip-tax table td { padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+	.ip-tax td.amt { text-align: right; white-space: nowrap;
+		font-variant-numeric: tabular-nums; }
+	.ip-tax .muted td { color: #9ca3af; }
+	.ip-tax .emph td { font-weight: 700; border-bottom: none;
+		border-top: 1.5px solid #1a1a1a; padding-top: 6px; }
+	.ip-badge { display: inline-block; padding: 2px 7px; border: 1px solid #d1d5db;
+		border-radius: 9px; font-size: 8.5px; font-weight: 600; color: #6b7280; }
+
+	.ip-note { margin-top: 16px; padding-top: 10px; border-top: 1px solid #e5e7eb;
+		font-size: 8.5px; color: #9ca3af; line-height: 1.6; }
+	.ip-warn { margin-top: 14px; padding: 9px 12px; border: 1px solid #d1d5db;
+		border-left: 3px solid #9ca3af; font-size: 9.5px; }
+</style>
+
+<div class="ip-slip">
+
+	<div class="ip-head">
+		<div>
+			<div class="ip-co">{{ c.company_name }}</div>
+			{%- if c.address or c.phone_no -%}
+			<div class="ip-co-sub">
+				{{ c.address or "" }}{% if c.phone_no %} &middot; {{ c.phone_no }}{% endif %}
+			</div>
+			{%- endif -%}
+		</div>
+		<div class="ip-title">
+			<div class="ip-title-main">{{ _("Slip Gaji") }}</div>
+			<div class="ip-title-sub">
+				{{ frappe.format(doc.start_date, {"fieldtype": "Date"}) }} &ndash;
+				{{ frappe.format(doc.end_date, {"fieldtype": "Date"}) }}
+			</div>
+		</div>
+	</div>
+
+	<table class="ip-meta">
+		<tr>
+			<td class="k">{{ _("Nama") }}</td>
+			<td class="v">{{ doc.employee_name }}</td>
+			<td class="k">{{ _("Jabatan") }}</td>
+			<td class="v">{{ emp.designation or "-" }}</td>
+		</tr>
+		<tr>
+			<td class="k">{{ _("NIK") }}</td>
+			<td class="v">{{ doc.employee }}</td>
+			<td class="k">{{ _("Departemen") }}</td>
+			<td class="v">{{ emp.department or "-" }}</td>
+		</tr>
+		<tr>
+			<td class="k">{{ _("Status Pajak") }}</td>
+			<td class="v">{{ emp.get("tax_status") or "-" }}</td>
+			<td class="k">{{ _("Hari Kerja") }}</td>
+			<td class="v">{{ doc.payment_days | int }} / {{ doc.total_working_days | int }}</td>
+		</tr>
+	</table>
+
+	<div class="ip-cols">
+		<div class="ip-col">
+			<div class="ip-sec">{{ _("Penghasilan") }}</div>
+			<table>
+				{%- for r in doc.earnings -%}
+					{%- if r.amount or not r.do_not_include_in_total -%}
+					<tr class="ip-line">
+						<td>{{ r.salary_component }}</td>
+						<td class="amt">{{ frappe.utils.fmt_money(r.amount, currency=doc.currency) }}</td>
+					</tr>
+					{%- endif -%}
+				{%- endfor -%}
+				<tr class="ip-total">
+					<td>{{ _("Total Penghasilan") }}</td>
+					<td class="amt">{{ frappe.utils.fmt_money(doc.gross_pay, currency=doc.currency) }}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="ip-col">
+			<div class="ip-sec">{{ _("Potongan") }}</div>
+			<table>
+				{%- for r in doc.deductions -%}
+				<tr class="ip-line">
+					<td>{{ r.salary_component }}</td>
+					<td class="amt">{{ frappe.utils.fmt_money(r.amount, currency=doc.currency) }}</td>
+				</tr>
+				{%- endfor -%}
+				<tr class="ip-total">
+					<td>{{ _("Total Potongan") }}</td>
+					<td class="amt">{{ frappe.utils.fmt_money(doc.total_deduction, currency=doc.currency) }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="ip-net">
+		<div>
+			<div class="ip-net-k">{{ _("Gaji Bersih") }}</div>
+			<div class="ip-net-words">{{ doc.in_words or "" }}</div>
+		</div>
+		<div class="ip-net-v">
+			{{ frappe.utils.fmt_money(doc.net_pay, currency=doc.currency) }}
+		</div>
+	</div>
+
+	{%- if info.get("employment_type_checked") == false -%}
+	<div class="ip-warn">
+		<strong>{{ _("PPh 21 tidak dihitung") }}</strong><br>
+		{{ _("Employment Type karyawan ini bukan Full-time, sehingga PPh 21 tidak dikenakan pada slip ini.") }}
+	</div>
+	{%- elif info.get("bruto") -%}
+	<div class="ip-tax">
+		<div class="ip-sec" style="margin-bottom:6px;">
+			{{ _("Rincian PPh 21") }}
+			<span class="ip-badge" style="margin-left:6px;">
+				{%- if doc.tax_type == "DECEMBER" -%}
+					{{ _("Koreksi Desember") }}
+				{%- else -%}
+					{{ _("TER Bulanan") }}
+				{%- endif -%}
+			</span>
+		</div>
+		<table>
+			<tr>
+				<td>{{ _("Gaji bruto") }}</td>
+				<td class="amt">{{ frappe.utils.fmt_money(doc.gross_pay, currency=doc.currency) }}</td>
+			</tr>
+			{%- for r in natura -%}
+			<tr>
+				<td>+ {{ r.salary_component }}</td>
+				<td class="amt">{{ frappe.utils.fmt_money(r.amount, currency=doc.currency) }}</td>
+			</tr>
+			{%- endfor -%}
+			<tr>
+				<td><strong>{{ _("Bruto dasar pengenaan") }}</strong></td>
+				<td class="amt"><strong>{{ frappe.utils.fmt_money(info.get("bruto"), currency=doc.currency) }}</strong></td>
+			</tr>
+			{%- if doc.tax_type == "DECEMBER" -%}
+			<tr>
+				<td>{{ _("Biaya jabatan") }}</td>
+				<td class="amt">&minus; {{ frappe.utils.fmt_money(info.get("biaya_jabatan"), currency=doc.currency) }}</td>
+			</tr>
+			<tr>
+				<td>{{ _("PTKP") }}</td>
+				<td class="amt">&minus; {{ frappe.utils.fmt_money(info.get("ptkp"), currency=doc.currency) }}</td>
+			</tr>
+			<tr>
+				<td>{{ _("Penghasilan Kena Pajak") }}</td>
+				<td class="amt">{{ frappe.utils.fmt_money(info.get("pkp"), currency=doc.currency) }}</td>
+			</tr>
+			{%- endif -%}
+			<tr>
+				<td>{{ _("Tarif") }}</td>
+				<td class="amt">{{ info.get("rate") }}%</td>
+			</tr>
+			<tr class="emph">
+				<td>{{ _("PPh 21") }}</td>
+				<td class="amt">{{ frappe.utils.fmt_money(info.get("pph21"), currency=doc.currency) }}</td>
+			</tr>
+		</table>
+		{%- if natura -%}
+		<div class="ip-note" style="margin-top:8px; border-top:none; padding-top:4px;">
+			{{ _("Iuran BPJS yang dibayar perusahaan di atas termasuk penghasilan kena pajak, sehingga menambah dasar perhitungan PPh 21. Iuran tersebut tidak dipotong dari gaji Anda.") }}
+		</div>
+		{%- endif -%}
+	</div>
+	{%- endif -%}
+
+	<div class="ip-note">
+		{{ _("Dokumen ini dibuat otomatis oleh sistem dan sah tanpa tanda tangan.") }}
+		{{ _("Dicetak") }}: {{ frappe.utils.format_datetime(frappe.utils.now(), "dd MMM yyyy HH:mm") }}
+	</div>
+
+</div>

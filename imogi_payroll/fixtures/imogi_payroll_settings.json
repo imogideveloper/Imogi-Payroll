@@ -1327,6 +1327,11 @@
     "ter_code": "C"
    }
   ],
-  "validate_tax_status_strict": 1
+  "validate_tax_status_strict": 1,
+  "bpjs_jkk_rate_sangat_rendah": 0.24,
+  "bpjs_jkk_rate_rendah": 0.54,
+  "bpjs_jkk_rate_sedang": 0.89,
+  "bpjs_jkk_rate_tinggi": 1.27,
+  "bpjs_jkk_rate_sangat_tinggi": 1.74
  }
 ]

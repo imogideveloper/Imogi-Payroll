@@ -193,6 +193,17 @@ def infer_employer_contribution_rows(doc) -> list[dict]:
 	for row in rows:
 		if _is_exempted_bpjs_component(row.get("salary_component"), exemptions):
 			row["amount"] = 0
+
+		# Salin flag dari master komponen. Perhitungan pajak memang membaca
+		# flag ini dari master, bukan dari baris - tapi tanpa disalin, baris
+		# di slip selalu menunjukkan 0 sehingga tidak ada cara melihat iuran
+		# mana yang menambah bruto, baik di grid maupun di panel rincian.
+		row["is_tax_applicable"] = (
+			frappe.db.get_value(
+				"Salary Component", row["salary_component"], "is_tax_applicable"
+			)
+			or 0
+		)
 	return rows
 
 
