@@ -185,6 +185,31 @@ def create_salary_structures_from_json() -> None:
         except Exception:
             frappe.logger().error(f"Skipped Salary Structure {name}\n{traceback.format_exc()}")
 
+
+def ensure_payroll_payable_account_type() -> None:
+    """Pastikan akun payroll payable perusahaan bertipe Payable.
+
+    Payroll Entry menolak submit kalau account_type akun payable-nya bukan
+    "Payable":
+
+      Account type should be set Payable for payroll payable account ...
+
+    Chart of Accounts standar ERPNext membuat "Payroll Payable" tanpa
+    account_type, jadi di site baru payroll tidak akan pernah bisa
+    disubmit sampai field itu diisi manual. Disetel di sini supaya
+    penyiapan app benar-benar lengkap.
+    """
+    for company in frappe.get_all("Company", pluck="name"):
+        akun = frappe.db.get_value("Company", company, "default_payroll_payable_account")
+        if not akun:
+            continue
+        if frappe.db.get_value("Account", akun, "account_type") == "Payable":
+            continue
+        frappe.db.set_value("Account", akun, "account_type", "Payable")
+        frappe.logger().info(f"Set account_type=Payable on {akun}")
+        print(f"\u2713 Akun payroll payable disetel bertipe Payable: {akun}")
+
+
 def after_sync() -> None:
     """Entry point executed on migrate and sync."""
     frappe.logger().info("🚀 Payroll GL Setup started")
@@ -213,6 +238,14 @@ def after_sync() -> None:
         frappe.logger().error(f"Error creating Salary Structures\n{traceback.format_exc()}")
         frappe.db.rollback()
         raise
+
+    try:
+        ensure_payroll_payable_account_type()
+        frappe.db.commit()
+    except Exception:
+        frappe.logger().error(
+            f"Error setting payroll payable account type\n{traceback.format_exc()}"
+        )
 
     try:
         setup_default_settings()  # Includes DocType master data migration
