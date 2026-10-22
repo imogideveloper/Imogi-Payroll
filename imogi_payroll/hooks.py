@@ -379,6 +379,7 @@ fixtures = [
                 "Employee-bebas_bpjs_kesehatan",
                 "Employee-bebas_bpjs_jht",
                 "Employee-bebas_bpjs_jp",
+                "Employee-jkk_risk_level",
                 "Employee-wajib_absen_sebelum_masuk",
                 "Employee-id_section",
                 "Employee-ktp_no",
