@@ -187,10 +187,15 @@ doc_events = {
         "on_update": "imogi_payroll.override.employee.on_update",
     },
     "Salary Structure": {
-        "validate": [
-            "imogi_payroll.utils.validate_salary_structure.validate_salary_structure_required_components",
-            "imogi_payroll.payroll.employer_contributions.sync_salary_structure_employer_display",
-        ]
+        # Sinkronisasi tabel employer dijalankan di before_validate, BUKAN
+        # validate. validate milik HRMS berjalan LEBIH DULU daripada hook
+        # app, dan di dalamnya validate_payment_days_based_dependent_component
+        # membaca abbr setiap baris employer_contributions. Kalau sinkronisasi
+        # baru berjalan sesudahnya, dokumen yang barisnya terlanjur tersimpan
+        # tanpa abbr tidak akan pernah bisa disubmit - HRMS gagal lebih dulu
+        # sebelum app sempat memperbaikinya.
+        "before_validate": "imogi_payroll.payroll.employer_contributions.sync_salary_structure_employer_display",
+        "validate": "imogi_payroll.utils.validate_salary_structure.validate_salary_structure_required_components",
     },
     "Salary Structure Assignment": {
         "validate": (
