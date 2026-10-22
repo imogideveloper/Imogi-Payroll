@@ -237,6 +237,20 @@ def sync_doc_employer_contributions(doc, target_field: str = "employer_contribut
 				"Salary Component", baris.salary_component, "salary_component_abbr"
 			)
 
+		# HRMS memindahkan nilai asli condition/formula ke _condition dan
+		# _formula lewat sanitize_condition_and_formula_fields() di
+		# before_validate, lalu memulihkannya lagi di on_update lewat
+		# reset_condition_and_formula_fields(). Baris yang kita tambahkan
+		# SESUDAH sanitize berjalan tidak punya atribut itu, dan pemulihan
+		# akan gagal dengan
+		#   AttributeError: 'SalaryDetail' object has no attribute '_condition'
+		# Diisi di sini supaya pasangan sanitize/reset tetap utuh, apa pun
+		# event tempat sinkronisasi ini dipasang.
+		if not hasattr(baris, "_condition"):
+			baris._condition = baris.get("condition") or ""
+		if not hasattr(baris, "_formula"):
+			baris._formula = baris.get("formula") or ""
+
 	# Legacy: komponen employer yang salah masuk ke deductions dipindah ke tabel employer.
 	if doc.meta.has_field("deductions"):
 		new_deductions = []
