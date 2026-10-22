@@ -270,7 +270,7 @@
   "condition": null,
   "deduct_full_tax_on_selected_payroll_date": 0,
   "depends_on_payment_days": 0,
-  "description": "Tunjangan makan per hari × jumlah hari hadir",
+  "description": "Tunjangan makan per hari \u00d7 jumlah hari hadir",
   "disabled": 0,
   "do_not_include_in_accounts": 0,
   "do_not_include_in_total": 0,
@@ -1008,6 +1008,29 @@
   "statistical_component": 1,
   "type": "Deduction",
   "variable_based_on_taxable_salary": 0
+ },
+ {
+  "accounts": [
+   {
+    "account": "BPJS Kesehatan Payable - RCM",
+    "company": "Republik Cinta Management",
+    "liability_account": null
+   }
+  ],
+  "amount_based_on_formula": 1,
+  "depends_on_payment_days": 1,
+  "description": "Contra entry untuk BPJS Kesehatan Employer",
+  "do_not_include_in_total": 0,
+  "doctype": "Salary Component",
+  "formula": "(base if base >= 5396761 else 5396761) * get_bpjs_rate(\"bpjs_health_employer_rate\") / 100",
+  "is_tax_applicable": 0,
+  "modified": "2026-10-20 13:28:06.664521",
+  "name": "Contra BPJS Kesehatan Employer",
+  "round_to_the_nearest_integer": 1,
+  "salary_component": "Contra BPJS Kesehatan Employer",
+  "salary_component_abbr": "C-BPJS KES-E",
+  "statistical_component": 0,
+  "type": "Deduction"
  },
  {
   "accounts": [
