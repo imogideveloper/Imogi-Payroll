@@ -222,7 +222,20 @@ def sync_doc_employer_contributions(doc, target_field: str = "employer_contribut
 
 	doc.set(target_field, [])
 	for row in rows:
-		doc.append(target_field, row)
+		baris = doc.append(target_field, row)
+
+		# abbr WAJIB diisi. Baris di atas hanya membawa salary_component dan
+		# amount, sedangkan validate_payment_days_based_dependent_component
+		# milik HRMS menyusun regex dari abbr SETIAP baris di ketiga tabel
+		# komponen (earnings, deductions, employer_contributions). Satu abbr
+		# None membuatnya gagal dengan
+		#   TypeError: can only concatenate str (not "NoneType") to str
+		# sehingga Salary Structure tidak pernah bisa disubmit. Di Salary
+		# Slip hal ini tidak terasa karena validasi itu tidak dijalankan.
+		if not baris.get("abbr") and baris.get("salary_component"):
+			baris.abbr = frappe.db.get_value(
+				"Salary Component", baris.salary_component, "salary_component_abbr"
+			)
 
 	# Legacy: komponen employer yang salah masuk ke deductions dipindah ke tabel employer.
 	if doc.meta.has_field("deductions"):
