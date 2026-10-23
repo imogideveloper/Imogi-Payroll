@@ -12,3 +12,4 @@ imogi_payroll.patches.set_default_salary_slip_print_format
 [post_model_sync]
 imogi_payroll.patches.convert_aph_bulan_to_month_names
 imogi_payroll.patches.add_aph_monthly_totals_client_script
+imogi_payroll.patches.jkk_rate_per_tingkat_risiko
