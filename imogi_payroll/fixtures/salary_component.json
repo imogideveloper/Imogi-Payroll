@@ -136,13 +136,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Salary Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -176,13 +170,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Salary Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -216,13 +204,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Transport Allowance - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -256,13 +238,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Meal Allowance - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -296,13 +272,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Bonus Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -336,13 +306,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Office Meals Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -376,13 +340,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Work Uniform Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -416,13 +374,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Holiday Gift Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -456,13 +408,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Additional Insurance Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -496,13 +442,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Company Vehicle Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -536,13 +476,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Sales Incentive Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -576,13 +510,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Tax Allowance Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -650,13 +578,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS Kesehatan Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -690,13 +612,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JHT Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -730,13 +646,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JP Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -770,13 +680,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JKK Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -810,13 +714,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JKM Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -850,13 +748,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JHT Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -890,13 +782,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JP Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -930,13 +816,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "PPh 21 Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -970,13 +850,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "Salary Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -1010,13 +884,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS Kesehatan Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "amount_based_on_formula": 1,
   "depends_on_payment_days": 1,
   "description": "Contra entry untuk BPJS Kesehatan Employer",
@@ -1033,13 +901,7 @@
   "type": "Deduction"
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JHT Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -1073,13 +935,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JP Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -1113,13 +969,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JKK Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -1153,13 +1003,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS JKM Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
@@ -1193,13 +1037,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "THR Expense - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 0,
@@ -1233,13 +1071,7 @@
   "variable_based_on_taxable_salary": 0
  },
  {
-  "accounts": [
-   {
-    "account": "BPJS Kesehatan Payable - RCM",
-    "company": "Republik Cinta Management",
-    "liability_account": null
-   }
-  ],
+  "accounts": [],
   "accrual_component": 0,
   "amount": 0.0,
   "amount_based_on_formula": 1,
