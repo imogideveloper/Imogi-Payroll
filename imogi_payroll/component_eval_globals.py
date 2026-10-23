@@ -45,9 +45,22 @@ def get_bpjs_cap(fieldname: str) -> float:
 	return _get_bpjs_cap(fieldname)
 
 
+def get_jkk_rate(employee: str | None = None) -> float:
+	"""Tarif JKK (%) menurut tingkat risiko pekerjaan karyawan (PP 6/2025).
+
+	Jatuh kembali ke `bpjs_jkk_rate` bila karyawannya belum diisi tingkat
+	risiko - persis seperti yang dijanjikan label field itu di Settings:
+	"Cadangan, dipakai hanya kalau Employee belum diisi Risiko Pekerjaan".
+	"""
+	from imogi_payroll.config import get_jkk_rate as _get_jkk_rate
+
+	return _get_jkk_rate(employee)
+
+
 IMOGI_PAYROLL_EVAL_GLOBALS = {
 	"get_bpjs_rate": get_bpjs_rate,
 	"get_bpjs_cap": get_bpjs_cap,
+	"get_jkk_rate": get_jkk_rate,
 }
 
 
