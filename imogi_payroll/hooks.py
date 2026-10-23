@@ -535,7 +535,16 @@ fixtures = [
         "doctype": "Salary Component",
         "validate": "imogi_payroll.override.salary_component.validate"
     },
-    "Income Tax Slab",
+    {
+        # Dibatasi ke slab yang netral perusahaan. Entri string polos
+        # menyapu SEMUA Income Tax Slab saat export, termasuk milik satu
+        # perusahaan tertentu - dan slab seperti itu tidak bisa diimpor ke
+        # site lain: company-nya tidak ada di sana, currency ikut kosong,
+        # lalu install gagal dengan
+        #   MandatoryError: [Income Tax Slab, ...]: currency
+        "doctype": "Income Tax Slab",
+        "filters": [["company", "in", ["", None]]],
+    },
     "Imogi Payroll PTKP Table",
     "Imogi Payroll TER Bracket Table",
     "Imogi Payroll TER Mapping Table",
