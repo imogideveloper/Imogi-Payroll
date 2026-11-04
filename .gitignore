@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 __pycache__/
 *.pyc
+
+# Editing leftovers: a copy saved beside the original before a risky change.
+# They are working files, never part of the app.
+*.bak_*
+*.bak-*
+*.broken_attempt
+*.picker_version

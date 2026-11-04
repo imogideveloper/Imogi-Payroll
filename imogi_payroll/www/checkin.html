@@ -147,6 +147,29 @@ no_cache: 1
     color: white;
     box-shadow: 0 6px 20px rgba(15,74,156,0.38);
   }
+  /* Side by side: stacked full-width buttons pushed the page well past one screen, and
+     neither of these is the main action -- the main action is the one button above. */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  /* equal halves, and 0 basis so a long label cannot make one wider than the other */
+  .btn-row > .btn { flex: 1 1 0; min-width: 0; margin-top: 0; }
+  .btn.secondary {
+    background: #EFF6FF;
+    color: #1D6FBF;
+    border: 1.5px solid #BFDBFE;
+  }
+  .btn.secondary:hover { background: #DBEAFE; }
+  .btn:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+  .btn.logout {
+    background: white;
+    color: #475569;
+    border: 1.5px solid #E2E8F0;
+    box-shadow: 0 2px 10px rgba(15,23,42,0.06);
+  }
+  .btn.logout:hover { border-color: #CBD5E1; color: #1E293B; }
   .btn.checkout {
     background: white;
     color: #DC2626;
@@ -244,12 +267,25 @@ no_cache: 1
     <div id="hist-list"><div class="empty">Belum ada aktivitas</div></div>
   </div>
 
+  <!-- Only once the shift is actually closed. Logging out is the last thing that should
+       happen, and offering it before check-out invites leaving without one. -->
+  <!-- Landing here on every login would otherwise strand someone mid-shift: their only button
+       would be Check Out, and going back to work would cost them their shift. The same way back
+       stays after check-out: closing the till, reprinting a receipt or finishing an order the
+       customer is still waiting on are all things that happen after the shift is clocked out,
+       and none of them should need a logout and a login to reach. -->
+  <div class="btn-row" id="btn-row" style="display:none">
+    <button class="btn secondary" id="resume-btn" onclick="goToWork()" style="display:none">Lanjut ke POS</button>
+    <button class="btn logout" id="logout-btn" onclick="doLogout()" style="display:none">Logout</button>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 <div id="app-meta"
   data-user={{ frappe.session.user | tojson }}
   data-csrf={{ csrf_token | tojson }}
+  data-after={{ (after_checkin or "") | tojson }}
   style="display:none"></div>
 
 <script>
@@ -257,6 +293,8 @@ no_cache: 1
   var SITE_URL     = window.location.origin;
   var SESSION_USER = appMeta.dataset.user;
   var CSRF_TOKEN   = appMeta.dataset.csrf;
+  // set by the server only for someone a POS Profile lists; empty for everyone else
+  var AFTER_CHECKIN = appMeta.dataset.after || '';
   var employeeId   = null;
   var logs = [];
 
@@ -356,6 +394,24 @@ no_cache: 1
 
   function updateStatus(){
     var last = logs.length ? logs[logs.length-1] : null;
+    // One check-in and one check-out a day (enforced server-side too), so what matters is
+    // whether each has happened at all today -- not what the most recent row says.
+    var has_in  = logs.some(function(l){ return l.type === 'IN';  });
+    var has_out = logs.some(function(l){ return l.type === 'OUT'; });
+    var done    = has_in && has_out;
+
+    var out_btn = document.getElementById('logout-btn');
+    if(out_btn) out_btn.style.display = done ? 'block' : 'none';
+    // the row itself is hidden while empty, so it leaves no gap before check-in
+    var btn_row = document.getElementById('btn-row');
+    if(btn_row) btn_row.style.display = has_in ? 'flex' : 'none';
+    var on_btn = document.getElementById('resume-btn');
+    if(on_btn){
+      // offered from check-in onwards, including after check-out -- attendance is recorded,
+      // it is not a door that locks behind you
+      on_btn.style.display = has_in ? 'block' : 'none';
+      on_btn.textContent = done ? 'Open POS' : 'Lanjut ke POS';
+    }
     var card  = document.getElementById('status-card');
     var icon  = document.getElementById('status-icon');
     var lbl   = document.getElementById('status-label');
@@ -379,8 +435,20 @@ no_cache: 1
       icon.className = 'status-icon out'; icon.textContent = '🏁';
       lbl.className  = 'status-label out'; lbl.textContent = 'Sudah check-out';
       sub.className  = 'status-sub out';   sub.textContent = 'Check-out pukul ' + last.time;
-      btn.className  = 'btn checkin'; btn.textContent = 'Check In Lagi';
+      btn.className  = 'btn checkin'; btn.textContent = 'Absensi hari ini selesai';
     }
+    // both punches used: the next one is tomorrow's
+    btn.disabled = done;
+  }
+
+  function goToWork(){
+    var btn = document.getElementById('resume-btn');
+    btn.textContent = 'Membuka POS...';
+    if(AFTER_CHECKIN){ window.location.href = AFTER_CHECKIN; return; }
+    fetch(SITE_URL + '/api/method/imogi_payroll.www.checkin.where_next')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ window.location.href = (d && d.message) || '/app'; })
+      .catch(function(){ window.location.href = '/app'; });
   }
 
   function renderHistory(){
@@ -403,11 +471,34 @@ no_cache: 1
     }).join('');
   }
 
+  function doLogout(){
+    var btn = document.getElementById('logout-btn');
+    btn.textContent = 'Keluar...';
+    // POST, not GET: frappe.handler.logout is declared methods=["POST"] and answers a GET with
+    // 403 without touching the session. Redirecting anyway then looked like a failed logout --
+    // /login bounces a user who is still signed in straight back to the Desk.
+    fetch(SITE_URL + '/api/method/logout', {
+      method: 'POST',
+      headers: { 'X-Frappe-CSRF-Token': CSRF_TOKEN }
+    })
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      window.location.href = '/login';
+    })
+    .catch(function(){
+      // never pretend: a session still open must not look closed
+      btn.textContent = 'Logout';
+      showToast('Gagal logout. Coba lagi.');
+    });
+  }
+
   function doCheckin(){
     if(!employeeId){ showToast('Employee tidak ditemukan!'); return; }
     var btn     = document.getElementById('main-btn');
-    var last    = logs.length ? logs[logs.length-1] : null;
-    var logType = (!last || last.type === 'OUT') ? 'IN' : 'OUT';
+    var has_in  = logs.some(function(l){ return l.type === 'IN';  });
+    var has_out = logs.some(function(l){ return l.type === 'OUT'; });
+    if(has_in && has_out){ showToast('Absensi hari ini sudah lengkap.'); return; }
+    var logType = has_in ? 'OUT' : 'IN';
     var now     = new Date();
     var timeStr = now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '
                  +pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
@@ -431,6 +522,27 @@ no_cache: 1
         renderHistory();
         updateStatus();
         showToast(logType === 'IN' ? '✓ Check-in berhasil!' : '✓ Check-out berhasil!');
+        // Only after checking IN: a check-OUT means the shift is over, and sending someone to
+        // the till on their way home would be absurd. The pause lets the confirmation be read
+        // first — a screen that jumps before you have seen it reads as an error.
+        if(logType === 'IN'){
+          var goTo = function(route){
+            if(!route) return;
+            btn.textContent = 'Membuka POS...';
+            btn.classList.add('loading');
+            setTimeout(function(){ window.location.href = route; }, 1200);
+          };
+          if(AFTER_CHECKIN){
+            goTo(AFTER_CHECKIN);
+          } else {
+            // this page may predate the cashier being given a till; ask the server now rather
+            // than leave them on a screen that has quietly finished and says nothing
+            fetch(SITE_URL + '/api/method/imogi_payroll.www.checkin.where_next')
+              .then(function(r){ return r.json(); })
+              .then(function(d){ goTo(d && d.message); })
+              .catch(function(){});
+          }
+        }
       } else {
         updateStatus();
         showToast('Gagal menyimpan. Coba lagi.');

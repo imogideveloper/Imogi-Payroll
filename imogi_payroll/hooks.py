@@ -24,7 +24,7 @@ add_to_apps_screen = [
 # include js, css files in header of desk.html
 app_include_css = "/assets/imogi_payroll/css/imogi_payroll_desk.css"
 app_include_js = [
-    "/assets/imogi_payroll/js/checkin_gate.js?v=1",
+    "/assets/imogi_payroll/js/checkin_gate.js?v=3",
     # memasang kelas .imogi-wide saat berada di workspace Imogi Payroll
     "/assets/imogi_payroll/js/imogi_payroll_desk.js",
 ]
@@ -82,6 +82,9 @@ doctype_list_js = {
 
 # force karyawan yang belum absen hari ini untuk mampir ke /checkin dulu
 boot_session = "imogi_payroll.checkin_gate.boot_session"
+
+# karyawan yang wajib absen mendarat di /checkin tiap login, bukan di Desk
+on_session_creation = "imogi_payroll.checkin_gate.after_login"
 
 # Home Pages
 # ----------
@@ -254,8 +257,19 @@ doc_events = {
         ],
     },
     "Employee Checkin": {
-        "before_insert": "imogi_payroll.checkin_gate.force_server_time",
-        "after_insert": "imogi_payroll.attendance.auto_attendance.auto_create_from_checkin"
+        "before_insert": [
+            "imogi_payroll.checkin_gate.force_server_time",
+            # satu check-in dan satu check-out per hari; kedua kalinya ditolak
+            "imogi_payroll.checkin_gate.one_punch_per_day",
+        ],
+        "after_insert": [
+            "imogi_payroll.attendance.auto_attendance.auto_create_from_checkin",
+            # bootinfo di-cache per user: tanpa ini Desk masih bilang "belum absen" dan
+            # melempar balik ke /checkin walau absennya sudah masuk
+            "imogi_payroll.checkin_gate.refresh_boot",
+        ],
+        # absen yang dihapus harus menaikkan gate-nya lagi, bukan menunggu cache kedaluwarsa
+        "on_trash": "imogi_payroll.checkin_gate.refresh_boot",
     },
 }
 
