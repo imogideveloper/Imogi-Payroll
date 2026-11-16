@@ -56,3 +56,108 @@ body.imogi-wide .widget.number-widget-box .widget-content .number {
 	overflow-wrap: anywhere;
 	line-height: 1.25;
 }
+
+/* ------------------------------------------------------------------
+   Form Employee: lebih padat dan proporsional.
+   Dikunci lewat section pajak (hanya ada di Employee), jadi form lain tidak berubah.
+   - label lebih sempit, kolom isian mengisi sisanya (bukan setengah-setengah)
+   - section "Informasi Pajak & BPJS": tiga kolom, penjelasan toggle tidak lagi
+     terjepit 190px (sebelumnya satu toggle setinggi 100-160px)
+   ------------------------------------------------------------------ */
+.form-layout:has([data-fieldname="imogi_payroll_tax_section"]) .frappe-control.input-max-width {
+	max-width: none;
+}
+
+.form-layout:has([data-fieldname="imogi_payroll_tax_section"]) .form-group.horizontal > .clearfix {
+	flex: 0 0 38% !important;
+	max-width: 38% !important;
+	min-width: 110px !important;
+}
+
+.form-layout:has([data-fieldname="imogi_payroll_tax_section"]) .form-group.horizontal > .control-input-wrapper {
+	flex: 1 1 auto !important;
+	min-width: 0 !important;
+}
+
+/* toggle (Check) di seluruh form Employee memakai kolom label selebar sama dengan isian lain (38%),
+   supaya toggle sejajar dengan kolom isian; section pajak punya tata letak sendiri di bawah */
+.form-layout:has([data-fieldname="imogi_payroll_tax_section"]) .form-section:not([data-fieldname="imogi_payroll_tax_section"]) .frappe-control[data-fieldtype="Check"] .switch-text {
+	flex: 0 0 38% !important;
+	max-width: 38% !important;
+	min-width: 110px !important;
+}
+
+.form-layout:has([data-fieldname="imogi_payroll_tax_section"]) .form-section:not([data-fieldname="imogi_payroll_tax_section"]) .frappe-control[data-fieldtype="Check"] .switch-control {
+	gap: 16px !important; /* label ke isian di sini berjarak 16px; toggle ikut supaya tepat di kolom isian */
+}
+
+.form-layout:has([data-fieldname="imogi_payroll_tax_section"]) .form-section.card-section {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.form-section[data-fieldname="imogi_payroll_tax_section"] .form-column > form {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	column-gap: 32px;
+	row-gap: 2px;
+	align-items: start;
+}
+
+/* pilihan/isian (Status Pajak, Risiko JKK, Wilayah UMP) di baris pertama, toggle di bawahnya */
+.form-section[data-fieldname="imogi_payroll_tax_section"] .form-column > form > .frappe-control {
+	order: 1;
+	width: 100% !important;
+	max-width: 100% !important;
+	min-width: 0;
+}
+
+/* kelima toggle dibungkus .imogi-payroll-bpjs-row (kiri 2, kanan 3, lihat imogi_payroll_employee_form.js):
+   dibuat satu grid tiga kolom supaya tidak ada ruang kosong di tengah */
+.form-section[data-fieldname="imogi_payroll_tax_section"] .imogi-payroll-bpjs-row {
+	order: 2;
+	grid-column: 1 / -1;
+	display: grid !important; /* imogi_payroll_employee_form.js memberi display:flex lewat style inline */
+	grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+	column-gap: 32px;
+	row-gap: 2px;
+	align-items: start;
+	margin-top: 6px;
+}
+
+.form-section[data-fieldname="imogi_payroll_tax_section"] .imogi-payroll-bpjs-col-left,
+.form-section[data-fieldname="imogi_payroll_tax_section"] .imogi-payroll-bpjs-col-right {
+	display: contents !important;
+}
+
+.form-section[data-fieldname="imogi_payroll_tax_section"] .imogi-payroll-bpjs-row .frappe-control {
+	width: 100% !important;
+	max-width: 100% !important;
+	min-width: 0;
+}
+
+/* otobitz_switch_check.js memberi semua toggle label selebar 110-190px dan nowrap; di sini penjelasan
+   toggle memanjang, jadi teks mengisi sisa kolom dan toggle di ujung kanan */
+.form-section[data-fieldname="imogi_payroll_tax_section"] .switch-control {
+	display: flex !important; /* otobitz_switch_check.js menjadikannya subgrid label|input; di sini cukup flex */
+	flex-direction: row-reverse; /* toggle di kiri, teks di kanannya */
+	justify-content: flex-end !important;
+	align-items: flex-start;
+	gap: 12px !important;
+	padding: 6px 0;
+}
+
+.form-section[data-fieldname="imogi_payroll_tax_section"] .switch-text {
+	flex: 1 1 auto !important;
+	min-width: 0;
+}
+
+.form-section[data-fieldname="imogi_payroll_tax_section"] .switch-text .label-area {
+	white-space: normal !important;
+}
+
+.form-section[data-fieldname="imogi_payroll_tax_section"] .help-box {
+	font-size: 11px;
+	line-height: 1.35;
+	margin-top: 2px;
+}
