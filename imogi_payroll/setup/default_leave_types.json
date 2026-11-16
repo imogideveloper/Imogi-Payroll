@@ -1,0 +1,14 @@
+[
+ {"name": "Cuti Reguler", "max_leaves_allowed": 12, "note": "Jatah 12 hari/tahun = usulan dari pola alokasi Odoo (12/9/3); perlu konfirmasi HR"},
+ {"name": "Cuti Menikah", "max_leaves_allowed": 3},
+ {"name": "Cuti Anak Menikah", "max_leaves_allowed": 2},
+ {"name": "Cuti Kedukaan Keluarga Inti", "max_leaves_allowed": 1},
+ {"name": "Cuti Kedukaan Keluarga", "max_leaves_allowed": 2},
+ {"name": "Cuti Baptis", "max_leaves_allowed": 0},
+ {"name": "Cuti Melahirkan atau Keguguran", "max_leaves_allowed": 0},
+ {"name": "Cuti Khitanan Anak", "max_leaves_allowed": 0},
+ {"name": "Cuti Ujian Akhir Sarjana", "max_leaves_allowed": 0},
+ {"name": "Cuti Wisuda", "max_leaves_allowed": 0},
+ {"name": "Sick Time Off", "max_leaves_allowed": 0, "allow_negative": 1, "note": "Tanpa jatah (seperti Odoo)"},
+ {"name": "Compensatory Days", "max_leaves_allowed": 0, "is_compensatory": 1}
+]

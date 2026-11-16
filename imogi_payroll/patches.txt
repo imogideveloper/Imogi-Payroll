@@ -16,3 +16,6 @@ imogi_payroll.patches.jkk_rate_per_tingkat_risiko
 imogi_payroll.patches.bpjs_dasar_ump_wilayah
 imogi_payroll.patches.bpjs_dasar_ump_wilayah
 imogi_payroll.patches.lembur_dari_jam
+imogi_payroll.patches.bpjs_dasar_ump_wilayah
+imogi_payroll.patches.lembur_dari_jam
+imogi_payroll.patches.holiday_list_dan_jenis_cuti
