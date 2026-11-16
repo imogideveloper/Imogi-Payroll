@@ -65,11 +65,19 @@ def get_bpjs_wage(employee: str | None = None, on_date=None, fallback=0, floor=0
 	return _get_bpjs_wage(employee, on_date, fallback, floor)
 
 
+def get_overtime_amount(employee=None, start_date=None, end_date=None, base=0) -> float:
+	"""Nilai lembur periode slip dari jam lembur (Imogi Payroll Overtime) x base / 173."""
+	from imogi_payroll.config.overtime import get_overtime_amount as _get_overtime_amount
+
+	return _get_overtime_amount(employee, start_date, end_date, base)
+
+
 IMOGI_PAYROLL_EVAL_GLOBALS = {
 	"get_bpjs_rate": get_bpjs_rate,
 	"get_bpjs_cap": get_bpjs_cap,
 	"get_jkk_rate": get_jkk_rate,
 	"get_bpjs_wage": get_bpjs_wage,
+	"get_overtime_amount": get_overtime_amount,
 }
 
 

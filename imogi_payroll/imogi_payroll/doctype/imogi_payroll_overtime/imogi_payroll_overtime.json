@@ -1,0 +1,159 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll Overtime",
+  "module": "Imogi Payroll",
+  "naming_rule": "Expression",
+  "autoname": "format:IMOGI-OT-{YYYY}-{#####}",
+  "is_submittable": 1,
+  "track_changes": 1,
+  "title_field": "employee_name",
+  "search_fields": "employee,employee_name,overtime_date",
+  "fields": [
+    {
+      "fieldname": "employee",
+      "fieldtype": "Link",
+      "label": "Karyawan",
+      "options": "Employee",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "employee_name",
+      "fieldtype": "Data",
+      "label": "Nama Karyawan",
+      "read_only": 1,
+      "fetch_from": "employee.employee_name",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "branch",
+      "fieldtype": "Link",
+      "label": "Cabang",
+      "options": "Branch",
+      "read_only": 1,
+      "fetch_from": "employee.branch",
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "column_break_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "overtime_date",
+      "fieldtype": "Date",
+      "label": "Tanggal Lembur",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "day_type",
+      "fieldtype": "Select",
+      "label": "Jenis Hari",
+      "options": "\nWorkday\nOffday (5)\nHoliday (5)\nOffday (6)\nPublic Holiday (6)",
+      "description": "Kosongkan untuk otomatis: libur nasional = Public Holiday (6), hari libur mingguan = Offday (6), selain itu Workday.",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "sessions_section",
+      "fieldtype": "Section Break",
+      "label": "Jam Lembur"
+    },
+    {
+      "fieldname": "ot1_from",
+      "fieldtype": "Time",
+      "label": "Lembur 1 Mulai"
+    },
+    {
+      "fieldname": "ot1_to",
+      "fieldtype": "Time",
+      "label": "Lembur 1 Selesai"
+    },
+    {
+      "fieldname": "column_break_2",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "ot2_from",
+      "fieldtype": "Time",
+      "label": "Lembur 2 Mulai"
+    },
+    {
+      "fieldname": "ot2_to",
+      "fieldtype": "Time",
+      "label": "Lembur 2 Selesai"
+    },
+    {
+      "fieldname": "result_section",
+      "fieldtype": "Section Break",
+      "label": "Hasil Hitung"
+    },
+    {
+      "fieldname": "total_hours",
+      "fieldtype": "Float",
+      "label": "Total Jam",
+      "read_only": 1,
+      "precision": "2",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "column_break_3",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "weighted_hours",
+      "fieldtype": "Float",
+      "label": "Jam Berbobot (x Koefisien)",
+      "read_only": 1,
+      "precision": "2",
+      "description": "Dikalikan Upah / pembagi jam = nilai lembur di slip gaji."
+    },
+    {
+      "fieldname": "note",
+      "fieldtype": "Small Text",
+      "label": "Keterangan"
+    },
+    {
+      "fieldname": "amended_from",
+      "fieldtype": "Link",
+      "label": "Amended From",
+      "options": "Imogi Payroll Overtime",
+      "read_only": 1,
+      "no_copy": 1,
+      "print_hide": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "HR Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "submit": 1,
+      "cancel": 1
+    },
+    {
+      "role": "HR User",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "submit": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "modified": "2026-11-13 00:00:00"
+}

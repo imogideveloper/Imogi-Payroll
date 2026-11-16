@@ -1,0 +1,121 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll Overtime Coefficient",
+  "module": "Imogi Payroll",
+  "istable": 1,
+  "editable_grid": 1,
+  "fields": [
+    {
+      "fieldname": "day_type",
+      "fieldtype": "Select",
+      "label": "Jenis Hari",
+      "options": "Workday\nOffday (5)\nHoliday (5)\nOffday (6)\nPublic Holiday (6)",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2
+    },
+    {
+      "fieldname": "jam_1",
+      "fieldtype": "Float",
+      "label": "Jam 1",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-1"
+    },
+    {
+      "fieldname": "jam_2",
+      "fieldtype": "Float",
+      "label": "Jam 2",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-2"
+    },
+    {
+      "fieldname": "jam_3",
+      "fieldtype": "Float",
+      "label": "Jam 3",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-3"
+    },
+    {
+      "fieldname": "jam_4",
+      "fieldtype": "Float",
+      "label": "Jam 4",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-4"
+    },
+    {
+      "fieldname": "jam_5",
+      "fieldtype": "Float",
+      "label": "Jam 5",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-5"
+    },
+    {
+      "fieldname": "jam_6",
+      "fieldtype": "Float",
+      "label": "Jam 6",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-6"
+    },
+    {
+      "fieldname": "jam_7",
+      "fieldtype": "Float",
+      "label": "Jam 7",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-7"
+    },
+    {
+      "fieldname": "jam_8",
+      "fieldtype": "Float",
+      "label": "Jam 8",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-8"
+    },
+    {
+      "fieldname": "jam_9",
+      "fieldtype": "Float",
+      "label": "Jam 9",
+      "in_list_view": 1,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-9"
+    },
+    {
+      "fieldname": "jam_10",
+      "fieldtype": "Float",
+      "label": "Jam 10",
+      "in_list_view": 0,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-10"
+    },
+    {
+      "fieldname": "jam_11",
+      "fieldtype": "Float",
+      "label": "Jam 11+",
+      "in_list_view": 0,
+      "columns": 1,
+      "precision": "1",
+      "description": "Pengali jam ke-11 dan seterusnya"
+    }
+  ],
+  "permissions": [],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "modified": "2026-11-13 00:00:00"
+}
