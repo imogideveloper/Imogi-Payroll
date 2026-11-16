@@ -3493,5 +3493,29 @@
   "translatable": 0,
   "unique": 0,
   "width": null
+ },
+ {
+  "allow_in_quick_entry": 0,
+  "bold": 0,
+  "collapsible": 0,
+  "description": "Region on the contract: this region's UMP/UMK is the basis for BPJS contributions (follows Odoo).",
+  "doctype": "Custom Field",
+  "dt": "Employee",
+  "fieldname": "ump_region",
+  "fieldtype": "Link",
+  "hidden": 0,
+  "in_list_view": 0,
+  "in_standard_filter": 0,
+  "insert_after": "jkk_risk_level",
+  "label": "UMP Region (BPJS Basis)",
+  "modified": "2026-11-16 12:00:00.000000",
+  "name": "Employee-ump_region",
+  "no_copy": 0,
+  "options": "Imogi Payroll UMP Region",
+  "print_hide": 0,
+  "read_only": 0,
+  "reqd": 0,
+  "translatable": 0,
+  "default": null
  }
 ]

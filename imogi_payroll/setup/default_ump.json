@@ -1,0 +1,223 @@
+[
+ {
+  "region_name": "BALIKPAPAN",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 3475595
+   },
+   {
+    "year": 2025,
+    "amount": 3701508
+   },
+   {
+    "year": 2026,
+    "amount": 3856694
+   }
+  ]
+ },
+ {
+  "region_name": "DKI JAKARTA",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 5067381
+   },
+   {
+    "year": 2025,
+    "amount": 5396761
+   },
+   {
+    "year": 2026,
+    "amount": 5729876
+   }
+  ]
+ },
+ {
+  "region_name": "KAB BANDUNG",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 3527967
+   },
+   {
+    "year": 2025,
+    "amount": 3757284
+   },
+   {
+    "year": 2026,
+    "amount": 3972202
+   }
+  ]
+ },
+ {
+  "region_name": "KAB BEKASI TAMBUN",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 5219263
+   },
+   {
+    "year": 2025,
+    "amount": 5558515
+   },
+   {
+    "year": 2026,
+    "amount": 5938885
+   }
+  ]
+ },
+ {
+  "region_name": "KARAWANG",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 5257834
+   },
+   {
+    "year": 2025,
+    "amount": 5599593
+   },
+   {
+    "year": 2026,
+    "amount": 5886853
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA BANDUNG PETA",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 4209309
+   },
+   {
+    "year": 2025,
+    "amount": 4482914
+   },
+   {
+    "year": 2026,
+    "amount": 4737678
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA BOGOR",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 4813988
+   },
+   {
+    "year": 2025,
+    "amount": 5126897
+   },
+   {
+    "year": 2026,
+    "amount": 5437203
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA MEDAN",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 3769082
+   },
+   {
+    "year": 2025,
+    "amount": 4014072
+   },
+   {
+    "year": 2026,
+    "amount": 4335198
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA PALEMBANG",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 3680409
+   },
+   {
+    "year": 2025,
+    "amount": 3916635
+   },
+   {
+    "year": 2026,
+    "amount": 4192837
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA SURABAYA RUNGKUT",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 4725479
+   },
+   {
+    "year": 2025,
+    "amount": 4961753
+   },
+   {
+    "year": 2026,
+    "amount": 5288796
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA TANGERANG CIPONDOH",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 4760290
+   },
+   {
+    "year": 2025,
+    "amount": 5069708
+   },
+   {
+    "year": 2026,
+    "amount": 5399405
+   }
+  ]
+ },
+ {
+  "region_name": "KOTA TANGERANG SELATAN CIATER",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 4670791
+   },
+   {
+    "year": 2025,
+    "amount": 4974392
+   },
+   {
+    "year": 2026,
+    "amount": 5247870
+   }
+  ]
+ },
+ {
+  "region_name": "PADANG",
+  "years": [
+   {
+    "year": 2024,
+    "amount": 2811499
+   },
+   {
+    "year": 2025,
+    "amount": 2994193
+   },
+   {
+    "year": 2026,
+    "amount": 3182955
+   }
+  ]
+ }
+]

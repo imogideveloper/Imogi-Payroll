@@ -91,6 +91,17 @@ def collect_employer_contribution_rows(doc, source_tables: tuple[str, ...] = ("e
 	return rows
 
 
+def _resolve_ump(doc) -> float:
+	"""UMP wilayah karyawan pada tahun slip, 0 bila belum diisi."""
+	try:
+		from imogi_payroll.config.ump import get_ump
+	except ImportError:
+		return 0.0
+	employee = getattr(doc, "employee", None) or (doc.get("employee") if hasattr(doc, "get") else None)
+	on_date = (doc.get("end_date") or doc.get("posting_date")) if hasattr(doc, "get") else None
+	return get_ump(employee, on_date)
+
+
 def _resolve_bpjs_base(doc) -> float:
 	"""Dasar upah iuran BPJS: GAJI POKOK saja (lihat BPJS_BASE_COMPONENTS).
 
@@ -98,6 +109,11 @@ def _resolve_bpjs_base(doc) -> float:
 	seperti potongan BPJS sisi karyawan - keduanya harus memakai dasar yang
 	sama. Kalau baris itu tidak ada, mundur ke Salary Structure Assignment.
 	"""
+	# Mengikuti Odoo: kalau karyawan punya wilayah UMP, dasar iuran = UMP penuh
+	# (tidak ikut prorata); selain itu perilaku lama di bawah.
+	ump = _resolve_ump(doc)
+	if ump > 0:
+		return ump
 	earnings_base = 0.0
 	for row in doc.get("earnings") or []:
 		sc, amount = _row_component_and_amount(row)
@@ -164,7 +180,8 @@ def infer_employer_contribution_rows(doc) -> list[dict]:
 	# acuan perhitungan yang dipakai perusahaan. Field *_cap di Imogi Payroll
 	# Settings sengaja tidak dipakai.
 	# Satu-satunya penyesuaian: BPJS Kesehatan punya LANTAI minimum UMK.
-	health_base = max(base, 5_396_761.0)
+	# Dengan UMP wilayah tidak ada lantai: dasarnya sudah UMP itu sendiri.
+	health_base = base if _resolve_ump(doc) > 0 else max(base, 5_396_761.0)
 	pension_base = base
 
 	exemptions = _get_employee_bpjs_exemptions(doc)

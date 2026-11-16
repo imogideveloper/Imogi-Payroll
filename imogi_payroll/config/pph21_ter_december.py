@@ -66,7 +66,13 @@ def _infer_employer_bpjs_taxable_from_base(salary_slip: Dict[str, Any]) -> float
     base = flt(salary_slip.get("base", 0))
     if base <= 0:
         return 0.0
-    bpjs_health_base = max(base, 5_396_761.0)
+    # Mengikuti Odoo: dengan wilayah UMP, dasar iuran = UMP penuh tanpa lantai tetap.
+    from imogi_payroll.config.ump import get_ump
+
+    ump = get_ump(salary_slip.get("employee"), salary_slip.get("end_date") or salary_slip.get("posting_date"))
+    if ump > 0:
+        base = ump
+    bpjs_health_base = base if ump > 0 else max(base, 5_396_761.0)
     return (
         bpjs_health_base * flt(get_bpjs_rate("bpjs_health_employer_rate")) / 100.0
         + base * flt(get_bpjs_rate("bpjs_jkk_rate")) / 100.0

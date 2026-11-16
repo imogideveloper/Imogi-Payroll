@@ -57,10 +57,19 @@ def get_jkk_rate(employee: str | None = None) -> float:
 	return _get_jkk_rate(employee)
 
 
+def get_bpjs_wage(employee: str | None = None, on_date=None, fallback=0, floor=0) -> float:
+	"""Dasar upah iuran BPJS: UMP wilayah karyawan (mengikuti Odoo); tanpa wilayah
+	jatuh ke `fallback` dengan lantai `floor`."""
+	from imogi_payroll.config.ump import get_bpjs_wage as _get_bpjs_wage
+
+	return _get_bpjs_wage(employee, on_date, fallback, floor)
+
+
 IMOGI_PAYROLL_EVAL_GLOBALS = {
 	"get_bpjs_rate": get_bpjs_rate,
 	"get_bpjs_cap": get_bpjs_cap,
 	"get_jkk_rate": get_jkk_rate,
+	"get_bpjs_wage": get_bpjs_wage,
 }
 
 

@@ -1,0 +1,27 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll UMP Year",
+  "module": "Imogi Payroll",
+  "istable": 1,
+  "editable_grid": 1,
+  "track_changes": 1,
+  "fields": [
+    {
+      "fieldname": "year",
+      "fieldtype": "Int",
+      "label": "Tahun",
+      "in_list_view": 1,
+      "reqd": 1,
+      "description": "Tahun pajak slip"
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "UMP / UMK",
+      "in_list_view": 1,
+      "reqd": 1,
+      "description": "Dasar iuran BPJS untuk tahun ini"
+    }
+  ],
+  "modified": "2026-11-13 00:00:00"
+}

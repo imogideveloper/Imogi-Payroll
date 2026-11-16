@@ -1,0 +1,50 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll UMP Region",
+  "module": "Imogi Payroll",
+  "autoname": "field:region_name",
+  "naming_rule": "By fieldname",
+  "track_changes": 1,
+  "search_fields": "region_name",
+  "fields": [
+    {
+      "fieldname": "region_name",
+      "fieldtype": "Data",
+      "label": "Wilayah",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1,
+      "description": "Nama provinsi/kota seperti di kontrak (contoh: KARAWANG)"
+    },
+    {
+      "fieldname": "ump_years",
+      "fieldtype": "Table",
+      "label": "UMP per Tahun",
+      "options": "Imogi Payroll UMP Year",
+      "reqd": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "HR Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "HR User",
+      "read": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "modified": "2026-11-13 00:00:00"
+}
