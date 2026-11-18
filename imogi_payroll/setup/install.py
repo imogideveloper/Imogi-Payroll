@@ -41,8 +41,9 @@ def after_install():
 
 def after_migrate():
     """Run setelah bench migrate"""
-    # Re-apply settings untuk ensure tetap correct
-    setup_payroll_settings()
+    # Payroll Settings (dasar hari bayar, dst.) hanya diisi saat after_install. Tidak diulang di sini:
+    # tiap situs bisa memilih sendiri (Otoexpert memakai "Leave", gaji tidak bergantung absensi), dan
+    # mengulangnya setiap migrate diam-diam menimpa pilihan itu kembali ke "Attendance".
     setup_allowance_components()
     setup_jkk_risk_rates()
     set_default_salary_slip_print_format()

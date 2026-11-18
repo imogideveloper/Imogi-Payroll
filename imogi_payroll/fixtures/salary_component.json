@@ -177,7 +177,7 @@
   "arrear_component": 0,
   "condition": null,
   "deduct_full_tax_on_selected_payroll_date": 0,
-  "depends_on_payment_days": 1,
+  "depends_on_payment_days": 0,
   "description": "Komponen gaji pokok",
   "disabled": 0,
   "do_not_include_in_accounts": 0,
