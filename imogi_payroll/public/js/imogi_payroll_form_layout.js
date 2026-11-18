@@ -21,25 +21,47 @@ const IMOGI_PAYROLL_SKIP_FIELDTYPES = new Set([
 	"Signature",
 ]);
 
-function imogi_payroll_style_standard_field($wrapper) {
+// Field bertinggi lebih dari satu baris: label tetap di atas (sejajar baris pertama), tidak ditengahkan.
+const IMOGI_PAYROLL_MULTILINE_FIELDTYPES = new Set([
+	"Small Text",
+	"Text",
+	"Long Text",
+	"Text Editor",
+	"Markdown Editor",
+	"HTML Editor",
+	"Code",
+	"JSON",
+	"Attach Image",
+]);
+
+function imogi_payroll_style_standard_field($wrapper, fieldtype) {
 	const $form_group = $wrapper.find(".form-group").first();
 	if (!$form_group.length) return;
 
+	const multiline = IMOGI_PAYROLL_MULTILINE_FIELDTYPES.has(fieldtype);
+
 	$form_group.css({
 		display: "flex",
-		"align-items": "flex-start",
+		// stretch: kolom label dan kolom isian sama tinggi, supaya label bisa ditengahkan terhadap isian.
+		"align-items": multiline ? "flex-start" : "stretch",
 		gap: "16px",
 		"margin-bottom": "0",
 	});
 
-	$form_group.children(".clearfix").css({
+	// Label ditengahkan secara vertikal terhadap kolom isian (satu baris), tidak memakai angka padding tetap:
+	// tinggi label berbeda antar lingkungan (lokal 20px, prod 28px), sehingga padding tetap selalu meleset.
+	const $label_col = $form_group.children(".clearfix");
+	$label_col.css({
 		flex: `0 0 ${IMOGI_PAYROLL_LABEL_WIDTH}`,
 		"max-width": IMOGI_PAYROLL_LABEL_WIDTH,
-		// Kolom isian setinggi 28px dan label 20px (+1px garis): padding 3px menaruh label tepat di tengah
-		// kolom isian. Dulu 7px, sehingga label turun sekitar 4px dari kolom isiannya.
-		"padding-top": "3px",
 		"margin-bottom": "0",
+		...(multiline
+			? { "padding-top": "7px" }
+			: { "padding-top": "0", display: "flex", "align-items": "center" }),
 	});
+	if (!multiline) {
+		$label_col.children(".control-label").css({ "margin-bottom": "0" });
+	}
 
 	$form_group.children(".control-input-wrapper").css({
 		flex: "1 1 auto",
@@ -108,7 +130,7 @@ function imogi_payroll_apply_horizontal_layout(frm) {
 		if (df.fieldtype === "Check") {
 			imogi_payroll_style_check_field(field.$wrapper);
 		} else {
-			imogi_payroll_style_standard_field(field.$wrapper);
+			imogi_payroll_style_standard_field(field.$wrapper, df.fieldtype);
 		}
 
 		field.$wrapper.closest(".form-column").css({
