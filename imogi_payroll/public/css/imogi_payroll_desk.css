@@ -189,3 +189,15 @@ body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:not(.list-
 	width: auto !important;
 	min-width: 0 !important;
 }
+
+/* Kolom Payroll Entry (anak ke-4: ID, Tag, Employee Name, Payroll Entry, ...) cukup lebar untuk nomor
+   "HR-PRUN-2026-00006" tanpa terpotong; kolom Status (anak ke-8) cukup untuk lencana status. Urutan anak tetap
+   karena imogi_payroll_salary_slip_list.js menata kolom ID dan Employee Name di depan. */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(4),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(4) {
+	flex: 0 0 175px !important;
+}
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(8),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(8) {
+	flex: 0 0 110px !important;
+}
