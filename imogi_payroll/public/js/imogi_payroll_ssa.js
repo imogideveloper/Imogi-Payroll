@@ -38,6 +38,7 @@ frappe.ui.form.on("Salary Structure Assignment", {
 	employee(frm) {
 		toggle_tracking_fields(frm);
 		render_contract_history(frm);
+		fill_structure_from_branch(frm);
 	},
 
 	salary_structure(frm) {
@@ -45,6 +46,20 @@ frappe.ui.form.on("Salary Structure Assignment", {
 		render_contract_history(frm);
 	},
 });
+
+// Struktur gaji terisi otomatis dari cabang karyawan (tabel Imogi Payroll Structure Mapping).
+function fill_structure_from_branch(frm) {
+	if (!frm.doc.employee || frm.doc.salary_structure || frm.doc.docstatus !== 0) return;
+	frappe.call({
+		method: "imogi_payroll.payroll.structure_mapping.get_structure_for_employee",
+		args: { employee: frm.doc.employee },
+		callback(r) {
+			if (r.message && !frm.doc.salary_structure) {
+				frm.set_value("salary_structure", r.message);
+			}
+		},
+	});
+}
 
 function set_contract_history_section_visible(frm, visible) {
 	const hide = visible ? 0 : 1;

@@ -85,6 +85,7 @@ function render_total_bar(frm) {
 // --------------------------------------------------------------------------- //
 function auto_load_components(frm) {
 	frappe.db.get_doc("Salary Structure", frm.doc.salary_structure).then((struct) => {
+		// Isi tabel = semua Earnings di Salary Structure yang dipilih.
 		const earnings = (struct.earnings || []).filter((row) => row.salary_component);
 		if (!earnings.length) {
 			return;

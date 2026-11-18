@@ -23,6 +23,8 @@ frappe.listview_settings["Salary Structure Assignment"] = {
 	refresh(listview) {
 		set_ssa_list_intro(listview);
 		schedule_rebuild_ssa_standard_filters(listview);
+		center_ssa_date_columns(listview);
+		setTimeout(() => center_ssa_date_columns(listview), 150);
 	},
 	get_indicator(doc) {
 		if (doc.docstatus === 2) {
@@ -40,6 +42,33 @@ frappe.listview_settings["Salary Structure Assignment"] = {
 		return [__("Activate"), "green", "status,=,Activate"];
 	},
 };
+
+/**
+ * Kolom tanggal (From Date, End Date) rata tengah, baik judul maupun isinya, supaya sejajar.
+ * Urutan kolom bisa diubah user, jadi kolom dicari lewat judulnya, bukan nomor urutnya.
+ */
+function center_ssa_date_columns(listview) {
+	const $result = listview?.$result;
+	if (!$result?.length) {
+		return;
+	}
+	const wanted = new Set([__("From Date"), __("End Date")]);
+	const $head_cols = $result.find(".list-row-head .list-row-col");
+	const idx = [];
+	$head_cols.each((i, el) => {
+		if (wanted.has(el.textContent.trim())) {
+			idx.push(i);
+		}
+	});
+	if (!idx.length) {
+		return;
+	}
+	const center = (cols) => idx.forEach((i) => cols[i] && (cols[i].style.textAlign = "center"));
+	center($head_cols.toArray());
+	$result.find(".list-row-container .list-row").each((_, row) => {
+		center($(row).find(".list-row-col").toArray());
+	});
+}
 
 function set_ssa_list_intro(listview) {
 	if (!listview?.page?.set_intro) {

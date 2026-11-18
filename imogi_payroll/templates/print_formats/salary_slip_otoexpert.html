@@ -1,0 +1,122 @@
+{#-
+    Slip Gaji Otoexpert
+
+    Tata letak meniru slip gaji Odoo Otoexpert: kepala berwarna dengan logo, data karyawan
+    (NRP, cabang, kategori TER, jabatan, departemen), tabel Income dan Deduction, total,
+    TOTAL TAKE HOME PAY, dan terbilang dalam rupiah. Hanya baris bernilai yang dicetak.
+
+    Nama komponen ERPNext ditampilkan dengan istilah slip Odoo (BPJS Employer -> "Tunjangan ... ER",
+    Contra BPJS Employer -> "Tunjangan ... ER Out", BPJS Employee -> "Potongan ... EE").
+-#}
+{%- set c = frappe.get_doc("Company", doc.company) -%}
+{%- set emp = frappe.get_doc("Employee", doc.employee) -%}
+{%- set end = frappe.utils.getdate(doc.end_date) -%}
+{%- set start = frappe.utils.getdate(doc.start_date) -%}
+{%- set ter = frappe.db.get_value("Imogi Payroll TER Mapping Table", {"parent": "Imogi Payroll Settings", "tax_status": emp.tax_status}, "ter_code") -%}
+{%- set dept = (emp.department or "").split(" - ")[0] -%}
+{%- set names = {
+    "Gaji Pokok": "Upah",
+    "BPJS JHT Employer": "Tunjangan JHT ER",
+    "BPJS JP Employer": "Tunjangan JP ER",
+    "BPJS JKK Employer": "Tunjangan JKK ER",
+    "BPJS JKM Employer": "Tunjangan JKM ER",
+    "BPJS Kesehatan Employer": "Tunjangan BPJS Kesehatan ER",
+    "BPJS JHT Employee": "Potongan JHT EE",
+    "BPJS JP Employee": "Potongan JP EE",
+    "BPJS Kesehatan Employee": "Potongan BPJS Kesehatan EE",
+    "Contra BPJS JHT Employer": "Tunjangan JHT ER Out",
+    "Contra BPJS JP Employer": "Tunjangan JP ER Out",
+    "Contra BPJS JKK Employer": "Tunjangan JKK ER Out",
+    "Contra BPJS JKM Employer": "Tunjangan JKM ER Out",
+    "Contra BPJS Kesehatan Employer": "Tunjangan BPJS Kesehatan ER Out",
+} -%}
+{%- set income = doc.earnings | selectattr("amount") | rejectattr("statistical_component") | rejectattr("do_not_include_in_total") | list -%}
+{%- set deduct = doc.deductions | selectattr("amount") | rejectattr("statistical_component") | rejectattr("do_not_include_in_total") | list -%}
+
+<style>
+	.os-slip { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #111; }
+	.os-slip table { border-collapse: collapse; }
+	.os-bar { background: #6b0f3a; color: #fff; padding: 6px 8px; }
+	.os-bar-title { font-size: 21px; font-weight: 700; }
+	.os-bar-sub { font-size: 14px; }
+	.os-logo { float: right; max-height: 38px; }
+	.os-logo-text { float: right; font-size: 26px; font-weight: 900; font-style: italic; letter-spacing: -1px; }
+	.os-info { width: 100%; margin: 4px 0; }
+	.os-info td { padding: 1px 4px 1px 0; vertical-align: top; }
+	.os-period { background: #6b0f3a; color: #fff; padding: 2px 4px; font-size: 11px; }
+	.os-period span { float: right; }
+	.os-cols { width: 100%; margin-top: 6px; }
+	.os-cols > tbody > tr > td { vertical-align: top; }
+	.os-tbl { width: 100%; background: #f1f1f1; }
+	.os-tbl th { text-align: left; padding: 3px 4px; font-size: 13px; }
+	.os-tbl td { padding: 1px 4px; }
+	.os-tbl .n { width: 18px; }
+	.os-tbl .cur { width: 26px; white-space: nowrap; }
+	.os-tbl .amt { text-align: right; width: 82px; white-space: nowrap; }
+	.os-tbl .tot td { font-weight: 700; padding-top: 3px; }
+	.os-sum { width: 56%; margin-top: 10px; background: #f1f1f1; }
+	.os-sum td { padding: 3px 4px; font-weight: 700; }
+	.os-thp { width: 56%; margin-top: 52px; background: #6b0f3a; color: #fff; }
+	.os-thp td { padding: 3px 4px; font-weight: 700; }
+	.os-words { background: #6b0f3a; color: #fff; padding: 4px 6px; margin-top: 6px; font-weight: 700; }
+	.os-slip td, .os-slip th { padding-top: 1px !important; padding-bottom: 1px !important; color: inherit; }
+	.os-slip th { color: #111; }
+	.os-thp, .os-thp td, .os-period, .os-period span, .os-bar, .os-words { color: #fff !important; }
+	.os-foot { border-top: 3px solid #6b0f3a; margin-top: 8px; padding-top: 4px; font-style: italic; font-size: 10px; }
+</style>
+
+<div class="os-slip">
+	<div class="os-bar">
+		{%- set logo = file_data_uri(c.company_logo) -%}
+		{%- if logo %}<img class="os-logo" src="{{ logo }}">{% else %}<span class="os-logo-text">OTOXPERT</span>{% endif %}
+		<div class="os-bar-title">Payslip {{ end.strftime("%B %Y") | upper }}, {{ emp.branch or "" }}{% if dept %}, {{ dept }}{% endif %}</div>
+		<div class="os-bar-sub">{{ c.company_name }}</div>
+	</div>
+
+	<table class="os-info"><tbody><tr>
+		<td style="width:62%"><table><tbody>
+			<tr><td style="width:120px">Employee Name</td><td>: {{ doc.employee_name }}</td></tr>
+			<tr><td>NRP</td><td>: {{ emp.employee_number or "" }}</td></tr>
+			<tr><td>Cabang</td><td>: {{ emp.branch or "" }}</td></tr>
+			<tr><td>TER</td><td>: {% if ter %}TER {{ ter }}{% endif %}</td></tr>
+		</tbody></table></td>
+		<td><table><tbody>
+			<tr><td style="width:80px">Position</td><td>: {{ emp.designation or "" }}</td></tr>
+			<tr><td>Department</td><td>: {{ dept }}</td></tr>
+		</tbody></table></td>
+	</tr></tbody></table>
+
+	<div class="os-period">Month Period : ({{ start.strftime("%d %b %Y") }} to {{ end.strftime("%d %b %Y") }})
+		<span>Date Printed : {{ frappe.utils.getdate(frappe.utils.today()).strftime("%d %B %Y") }}</span></div>
+
+	<table class="os-cols"><tbody><tr>
+		<td style="width:50%; padding-right:10px">
+			<table class="os-tbl"><thead><tr><th colspan="4">Income</th></tr></thead><tbody>
+				{%- for r in income %}
+				<tr><td class="n">{{ loop.index }}</td><td>{{ names.get(r.salary_component, r.salary_component) }}</td><td class="cur">: Rp.</td><td class="amt">{{ "{:,.0f}".format(r.amount) }}</td></tr>
+				{%- endfor %}
+				<tr class="tot"><td></td><td>Total Income</td><td class="cur">Rp.</td><td class="amt">{{ "{:,.0f}".format(doc.gross_pay) }}</td></tr>
+			</tbody></table>
+		</td>
+		<td style="width:50%">
+			<table class="os-tbl"><thead><tr><th colspan="4">Deduction</th></tr></thead><tbody>
+				{%- for r in deduct %}
+				<tr><td class="n">{{ loop.index }}</td><td>{{ names.get(r.salary_component, r.salary_component) }}</td><td class="cur">: Rp.</td><td class="amt">{{ "{:,.0f}".format(r.amount) }}</td></tr>
+				{%- endfor %}
+				<tr class="tot"><td></td><td>Total Deduction</td><td class="cur">Rp.</td><td class="amt">{{ "{:,.0f}".format(doc.total_deduction) }}</td></tr>
+			</tbody></table>
+		</td>
+	</tr></tbody></table>
+
+	<table class="os-sum"><tbody>
+		<tr><td style="width:60%">Total Income</td><td>: Rp.</td><td style="text-align:right">{{ "{:,.0f}".format(doc.gross_pay) }}</td></tr>
+		<tr><td>Total Deduction</td><td>: Rp.</td><td style="text-align:right">{{ "{:,.0f}".format(doc.total_deduction) }}</td></tr>
+	</tbody></table>
+
+	<table class="os-thp"><tbody>
+		<tr><td style="width:60%">TOTAL TAKE HOME PAY</td><td>: Rp.</td><td style="text-align:right">{{ "{:,.0f}".format(doc.net_pay) }}</td></tr>
+	</tbody></table>
+
+	<div class="os-words">Terbilang :<br>{{ terbilang_rupiah(doc.net_pay) }}</div>
+	<div class="os-foot">This Payment Slip does not require a signature and this is automatically issued by the Human Resources Information System</div>
+</div>
