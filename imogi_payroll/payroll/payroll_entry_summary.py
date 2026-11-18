@@ -119,10 +119,55 @@ def backfill_departemen_karyawan():
 		frappe.db.commit()
 
 
+def format_cabang_karyawan(employees) -> str:
+	"""Nama cabang (Branch) unik dari karyawan di tabel Employee Details (urut kemunculan), dipisah koma.
+
+	Tabel Employee Details tidak menyimpan cabang, jadi diambil dari Employee. Field `branch` bawaan di
+	Filter Employees tidak dipakai karena itu hanya filter pencarian dan sering kosong.
+	"""
+	ids = [row.get("employee") for row in employees or [] if row.get("employee")]
+	if not ids:
+		return ""
+	cabang_per_karyawan = dict(
+		frappe.get_all("Employee", filters={"name": ["in", ids]}, fields=["name", "branch"], as_list=True)
+	)
+	seen = []
+	for emp in ids:
+		branch = cabang_per_karyawan.get(emp)
+		if branch and branch not in seen:
+			seen.append(branch)
+	return ", ".join(seen)
+
+
+def backfill_cabang_karyawan():
+	"""Isi kolom Branch untuk Payroll Entry lama yang masih kosong (dipanggil saat after_migrate).
+
+	Pola sama dengan backfill_departemen_karyawan: hanya baris kosong, tanpa mengubah `modified`. Idempoten.
+	"""
+	if not frappe.db.has_column("Payroll Entry", "cabang_karyawan"):
+		return
+	kosong = frappe.get_all(
+		"Payroll Entry",
+		filters={"cabang_karyawan": ["in", ["", None]]},
+		pluck="name",
+	)
+	for name in kosong:
+		karyawan = frappe.get_all(
+			"Payroll Employee Detail", filters={"parent": name}, fields=["employee"], order_by="idx"
+		)
+		nilai = format_cabang_karyawan(karyawan)
+		if nilai:
+			frappe.db.set_value("Payroll Entry", name, "cabang_karyawan", nilai, update_modified=False)
+	if kosong:
+		frappe.db.commit()
+
+
 def sync_summary_on_validate(doc, method=None):
 	"""Isi field ringkasan saat save Payroll Entry."""
 	if doc.meta.has_field("departemen_karyawan"):
 		doc.departemen_karyawan = format_departemen_karyawan(doc.get("employees"))
+	if doc.meta.has_field("cabang_karyawan"):
+		doc.cabang_karyawan = format_cabang_karyawan(doc.get("employees"))
 
 	if not doc.get("name") or doc.get("__islocal"):
 		doc.periode = format_periode_label(doc.get("start_date"), doc.get("end_date"))

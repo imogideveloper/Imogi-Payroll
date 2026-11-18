@@ -134,6 +134,7 @@ after_migrate = [
     "imogi_payroll.setup.install.after_migrate",
     "imogi_payroll.setup.salary_component_accounts.sync_salary_component_accounts",
     "imogi_payroll.payroll.payroll_entry_summary.backfill_departemen_karyawan",
+    "imogi_payroll.payroll.payroll_entry_summary.backfill_cabang_karyawan",
 ]
 
 # Desk Notifications
@@ -431,6 +432,7 @@ fixtures = [
                 "Payroll Entry-periode",
                 "Payroll Entry-total_karyawan",
                 "Payroll Entry-departemen_karyawan",
+                "Payroll Entry-cabang_karyawan",
                 "Payroll Entry-total_amount",
                 "Salary Structure Assignment-meal_allowance",
                 "Salary Structure Assignment-transport_allowance",
