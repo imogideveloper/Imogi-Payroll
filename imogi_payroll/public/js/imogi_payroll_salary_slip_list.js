@@ -82,14 +82,20 @@ function put_id_column_first(listview) {
 			return;
 		}
 		// Sudah ditukar bila kolom pertama sudah berisi nomor dokumen.
-		if (subject_link.textContent.trim().startsWith("Sal Slip/")) {
+		if (is_slip_id(subject_link.textContent)) {
 			return;
 		}
-		if (text_el(id_col).textContent.trim().startsWith("Sal Slip/")) {
+		if (is_slip_id(text_el(id_col).textContent)) {
 			swap(cols[0], id_col, subject_link);
 			move_after_subject(cols, id_col);
 		}
 	});
+}
+
+/** Nomor slip: bawaan HRMS "Sal Slip/<karyawan>/00001", atau seri situs seperti "SLIP/1" (Otoexpert). */
+function is_slip_id(text) {
+	const t = (text || "").trim();
+	return t.startsWith("Sal Slip/") || t.startsWith("SLIP/");
 }
 
 /** Pindahkan kolom (yang kini berisi nama karyawan) ke posisi kedua, tepat setelah kolom pertama (ID). */
