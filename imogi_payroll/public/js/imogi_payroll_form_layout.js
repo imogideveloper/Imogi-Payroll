@@ -35,7 +35,9 @@ function imogi_payroll_style_standard_field($wrapper) {
 	$form_group.children(".clearfix").css({
 		flex: `0 0 ${IMOGI_PAYROLL_LABEL_WIDTH}`,
 		"max-width": IMOGI_PAYROLL_LABEL_WIDTH,
-		"padding-top": "7px",
+		// Kolom isian setinggi 28px dan label 20px (+1px garis): padding 3px menaruh label tepat di tengah
+		// kolom isian. Dulu 7px, sehingga label turun sekitar 4px dari kolom isiannya.
+		"padding-top": "3px",
 		"margin-bottom": "0",
 	});
 
