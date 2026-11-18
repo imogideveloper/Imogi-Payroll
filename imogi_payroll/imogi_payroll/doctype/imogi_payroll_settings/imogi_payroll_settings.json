@@ -24,6 +24,14 @@
    "description": "Metode perhitungan PPh 21 default"
   },
   {
+   "fieldname": "pph21_december_method",
+   "fieldtype": "Select",
+   "label": "PPh 21 December Method",
+   "options": "Annualized December\nKumulatif Aktual",
+   "default": "Annualized December",
+   "description": "Annualized December: penghasilan setahun = slip Desember x 12 (perilaku lama). Kumulatif Aktual: penghasilan setahun = total Jan-Nov dari Annual History (termasuk saldo awal) + slip Desember."
+  },
+  {
    "fieldname": "validate_tax_status_strict",
    "fieldtype": "Check",
    "label": "Validate Tax Status Strictly",
@@ -43,6 +51,20 @@
    "label": "Process Salary Slip via Background Jobs",
    "default": "0",
    "description": "Salary Slip diproses via background job"
+  },
+  {
+   "fieldname": "auto_mark_absent_enabled",
+   "fieldtype": "Check",
+   "label": "Auto Mark Absent Enabled",
+   "default": "0",
+   "description": "Bila dicentang, job harian menandai Absent otomatis, hanya untuk karyawan yang punya shift dengan Auto Attendance menyala, di hari kerja yang sudah lewat dan sejak Process Attendance After. Default mati: tanpa centang ini job tidak menandai Absent sama sekali."
+  },
+  {
+   "fieldname": "attendance_backdate_role",
+   "fieldtype": "Link",
+   "label": "Attendance Backdate Exception Role",
+   "options": "Role",
+   "description": "Role yang boleh menginput koreksi absensi manual di tanggal mundur (kondisi darurat). Kosong = tidak ada pengecualian; koreksi hanya di hari yang sama."
   },
   {
    "fieldname": "bpjs_settings_section",
@@ -214,7 +236,7 @@
    "fieldname": "bpjs_pension_employer_cap",
    "fieldtype": "Currency",
    "label": "BPJS JP Employer Cap",
-   "default": "9077600",
+   "default": "10042300",
    "description": "Plafon JP (Perusahaan)"
   },
   {
@@ -229,8 +251,22 @@
    "fieldname": "bpjs_pension_employee_cap",
    "fieldtype": "Currency",
    "label": "BPJS JP Employee Cap",
-   "default": "9077600",
+   "default": "10042300",
    "description": "Plafon JP (Karyawan)"
+  },
+  {
+   "fieldname": "bpjs_jp_max_age",
+   "fieldtype": "Int",
+   "label": "BPJS JP Retirement Age",
+   "default": "59",
+   "description": "Usia pensiun untuk iuran JP: iuran (karyawan dan perusahaan) berhenti saat usia karyawan pada akhir periode slip mencapai angka ini (usia di bawahnya masih kena). 59 berlaku sejak 1 Jan 2025; naik 1 tahun tiap 3 tahun (60 pada 2028). Sama perilakunya dengan batas 58 di Odoo."
+  },
+  {
+   "fieldname": "default_ump_region",
+   "fieldtype": "Link",
+   "label": "Default UMP Region",
+   "options": "Imogi Payroll UMP Region",
+   "description": "Dasar iuran BPJS untuk karyawan yang belum diisi UMP Region. Odoo: UMK default DKI Jakarta."
   },
   {
    "fieldname": "column_break_pension",

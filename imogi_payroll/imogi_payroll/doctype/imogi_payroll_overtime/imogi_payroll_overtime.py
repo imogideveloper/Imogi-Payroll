@@ -10,12 +10,21 @@ class ImogiPayrollOvertime(Document):
 	"""Input lembur harian (OT1 dan OT2 per hari, seperti di Odoo)."""
 
 	def validate(self):
+		self._set_approver()
 		self._check_duplicate()
 		sessions = self._sessions()
 		self.total_hours = round(sum(h for _s, _e, h in sessions), 4)
 		if not self.day_type:
 			self.day_type = self._detect_day_type()
 		self.weighted_hours = round(weighted_hours(self.total_hours, self.day_type), 4)
+
+	def _set_approver(self):
+		"""Atasan penyetuju = akun User dari Employee.reports_to. Hanya diisi saat dokumen belum
+		masuk antrean persetujuan, supaya tidak berubah di tengah proses."""
+		if self.docstatus != 0 or self.get("workflow_state") not in (None, "", "Draft"):
+			return
+		manager = frappe.db.get_value("Employee", self.employee, "reports_to")
+		self.overtime_approver = frappe.db.get_value("Employee", manager, "user_id") if manager else None
 
 	def _sessions(self):
 		out = []

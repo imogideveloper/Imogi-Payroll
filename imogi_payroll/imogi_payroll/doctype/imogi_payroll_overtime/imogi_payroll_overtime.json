@@ -14,10 +14,19 @@
       "fieldtype": "Link",
       "label": "Karyawan",
       "options": "Employee",
+      "ignore_user_permissions": 1,
       "reqd": 1,
       "in_list_view": 1,
       "in_standard_filter": 1,
       "search_index": 1
+    },
+    {
+      "fieldname": "overtime_approver",
+      "fieldtype": "Link",
+      "label": "Atasan Penyetuju",
+      "options": "User",
+      "read_only": 1,
+      "description": "Terisi otomatis: akun User milik atasan (Employee.reports_to). Kosong bila atasan belum punya akun; HR Manager yang mewakili."
     },
     {
       "fieldname": "employee_name",
@@ -144,6 +153,11 @@
       "delete": 1,
       "submit": 1,
       "cancel": 1
+    },
+    {
+      "role": "Employee",
+      "read": 1,
+      "write": 1
     },
     {
       "role": "HR User",

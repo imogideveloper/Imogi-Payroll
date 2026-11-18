@@ -1,0 +1,57 @@
+{
+  "doctype": "DocType",
+  "name": "Imogi Payroll Structure Mapping",
+  "module": "Imogi Payroll",
+  "autoname": "field:branch",
+  "naming_rule": "By fieldname",
+  "track_changes": 1,
+  "search_fields": "branch,salary_structure",
+  "fields": [
+    {
+      "fieldname": "branch",
+      "fieldtype": "Link",
+      "label": "Cabang",
+      "options": "Branch",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1,
+      "description": "Karyawan di cabang ini otomatis memakai struktur gaji di sebelah."
+    },
+    {
+      "fieldname": "salary_structure",
+      "fieldtype": "Link",
+      "label": "Salary Structure",
+      "options": "Salary Structure",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "keterangan",
+      "fieldtype": "Small Text",
+      "label": "Keterangan"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "HR Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "HR User",
+      "read": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "modified": "2026-11-17 00:00:00"
+}
