@@ -85,6 +85,7 @@ def sum_bruto_earnings(salary_slip: Dict[str, Any]) -> float:
     earnings = salary_slip.get("earnings", []) or []
     employer_contributions = salary_slip.get("employer_contributions", []) or []
     employer_rows_found = 0
+    seen_employer = set()
     for row in [*earnings, *employer_contributions]:
         component_name = row.get("salary_component", "")
         is_taxable_earning = (
@@ -95,6 +96,11 @@ def sum_bruto_earnings(salary_slip: Dict[str, Any]) -> float:
         is_employer_benefit = _is_employer_benefit_component(component_name)
         if is_employer_benefit:
             employer_rows_found += 1
+            # Baris employer ada di earnings DAN disalin ke tabel employer_contributions
+            # (populate_employer_contributions): hitung sekali saja, jangan dua kali.
+            if component_name in seen_employer:
+                continue
+            seen_employer.add(component_name)
         if (
             (is_taxable_earning or is_employer_benefit)
             and row.get("statistical_component", 0) == 0
@@ -193,6 +199,9 @@ def calculate_pph21_december(
     # Opsional (salah satu boleh diisi):
     december_slip: Optional[Dict[str, Any]] = None,
     jp_jht_employee_month: Optional[float] = None,
+    # Metode (Imogi Payroll Settings.pph21_december_method) dan pengurang JHT+JP Jan–Nov:
+    method: str = "Annualized December",
+    ytd_pengurang_jan_nov: float = 0.0,
 ) -> Dict[str, Any]:
 
     if not employee:
@@ -228,6 +237,18 @@ def calculate_pph21_december(
     # CATATAN: pengurang_netto_desember TIDAK di-annualize (sesuai arahan),
     # ia hanya informasi breakdown bulanan.
     netto_annual = bruto_annual - bj_annual - jp_jht_employee_annual
+
+    if method == "Kumulatif Aktual":
+        # Penghasilan SETAHUN yang sebenarnya (Jan–Nov dari APH, termasuk saldo awal
+        # dari sistem sebelumnya, ditambah slip Desember) - bukan Desember x 12. Dengan
+        # THR, bonus, dan lembur yang berubah tiap bulan, hasilnya jauh lebih tepat.
+        bruto_annual = flt(ytd_bruto_jan_nov) + bruto_des
+        bj_annual = min(
+            bruto_annual * flt(config.get_value("biaya_jabatan_rate") or 5.0) / 100.0,
+            flt(config.get_value("biaya_jabatan_cap") or 6_000_000.0),
+        )
+        jp_jht_employee_annual = flt(ytd_pengurang_jan_nov) + jp_jht_employee_month
+        netto_annual = bruto_annual - bj_annual - jp_jht_employee_annual
 
     # PTKP, PKP, PPh
     try:

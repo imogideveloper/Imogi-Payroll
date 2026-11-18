@@ -51,7 +51,10 @@ class CustomSalaryStructureAssignment(SalaryStructureAssignment):
 
 			ctx = {}
 			try:
-				ctx = get_assignment_formula_context(self.name) or {}
+				# Pakai dokumen yang sedang diproses, BUKAN namanya: pada SSA yang baru pertama kali
+				# disimpan namanya belum ada di database, sehingga pencarian memunculkan pesan merah
+				# "Salary Structure Assignment ... not found". Dokumen ini juga memuat isi tabel terbaru.
+				ctx = get_assignment_formula_context(self) or {}
 			except Exception:
 				frappe.log_error(
 					message=frappe.get_traceback(),

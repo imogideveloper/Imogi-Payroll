@@ -65,6 +65,13 @@ def get_bpjs_wage(employee: str | None = None, on_date=None, fallback=0, floor=0
 	return _get_bpjs_wage(employee, on_date, fallback, floor)
 
 
+def get_jp_factor(employee: str | None = None, on_date=None) -> int:
+	"""1 = iuran JP berjalan, 0 = usia karyawan melewati batas usia JP (Settings)."""
+	from imogi_payroll.config.ump import get_jp_factor as _get_jp_factor
+
+	return _get_jp_factor(employee, on_date)
+
+
 def get_overtime_amount(employee=None, start_date=None, end_date=None, base=0) -> float:
 	"""Nilai lembur periode slip dari jam lembur (Imogi Payroll Overtime) x base / 173."""
 	from imogi_payroll.config.overtime import get_overtime_amount as _get_overtime_amount
@@ -77,6 +84,7 @@ IMOGI_PAYROLL_EVAL_GLOBALS = {
 	"get_bpjs_cap": get_bpjs_cap,
 	"get_jkk_rate": get_jkk_rate,
 	"get_bpjs_wage": get_bpjs_wage,
+	"get_jp_factor": get_jp_factor,
 	"get_overtime_amount": get_overtime_amount,
 }
 

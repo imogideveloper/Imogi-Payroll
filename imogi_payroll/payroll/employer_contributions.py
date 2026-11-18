@@ -48,8 +48,22 @@ BPJS_BASE_EXCLUDED_COMPONENTS = {
 }
 
 
+# Struktur Head Office memakai SALINAN komponen yang akun bebannya OPEX (7000xxx), bernama
+# "<nama asli> HO" (mis. "Gaji Pokok HO"). Aturan berbasis nama di bawah memperlakukan
+# salinan itu sama dengan komponen aslinya.
+HO_SUFFIX = " HO"
+
+
+def canonical_component_name(component_name: str | None) -> str:
+	"""Nama komponen tanpa akhiran " HO" (salinan Head Office -> nama asli)."""
+	name = (component_name or "").strip()
+	if name.endswith(HO_SUFFIX):
+		name = name[: -len(HO_SUFFIX)].strip()
+	return name
+
+
 def _is_bpjs_employer_component(component_name: str | None) -> bool:
-	return (component_name or "").strip().lower() in BPJS_EMPLOYER_COMPONENTS
+	return canonical_component_name(component_name).lower() in BPJS_EMPLOYER_COMPONENTS
 
 
 def _get_employee_bpjs_exemptions(doc) -> dict[str, bool]:
@@ -117,7 +131,7 @@ def _resolve_bpjs_base(doc) -> float:
 	earnings_base = 0.0
 	for row in doc.get("earnings") or []:
 		sc, amount = _row_component_and_amount(row)
-		if sc and (sc or "").strip().lower() not in BPJS_BASE_EXCLUDED_COMPONENTS:
+		if sc and canonical_component_name(sc).lower() not in BPJS_BASE_EXCLUDED_COMPONENTS:
 			earnings_base += flt(amount)
 	if earnings_base > 0:
 		return earnings_base
@@ -144,7 +158,7 @@ def _resolve_bpjs_base(doc) -> float:
 		component_base = sum(
 			flt(row.amount)
 			for row in component_rows
-			if (row.salary_component or "").strip().lower() not in BPJS_BASE_EXCLUDED_COMPONENTS
+			if canonical_component_name(row.salary_component).lower() not in BPJS_BASE_EXCLUDED_COMPONENTS
 		)
 		if component_base > 0:
 			return component_base
@@ -207,9 +221,17 @@ def infer_employer_contribution_rows(doc) -> list[dict]:
 			"amount": base * flt(get_bpjs_rate("bpjs_jkm_rate")) / 100,
 		},
 	]
+	# Slip Head Office memuat baris earnings "<nama> HO"; baris employer harus memakai nama
+	# yang sama supaya dihitung sekali (dedupe berbasis nama di perhitungan bruto pajak).
+	earnings_names = {
+		_row_component_and_amount(r)[0] for r in (doc.get("earnings") or []) if _row_component_and_amount(r)[0]
+	}
 	for row in rows:
 		if _is_exempted_bpjs_component(row.get("salary_component"), exemptions):
 			row["amount"] = 0
+
+		if row["salary_component"] + HO_SUFFIX in earnings_names:
+			row["salary_component"] = row["salary_component"] + HO_SUFFIX
 
 		# Salin flag dari master komponen. Perhitungan pajak memang membaca
 		# flag ini dari master, bukan dari baris - tapi tanpa disalin, baris
@@ -240,6 +262,14 @@ def sync_doc_employer_contributions(doc, target_field: str = "employer_contribut
 	doc.set(target_field, [])
 	for row in rows:
 		baris = doc.append(target_field, row)
+
+		# Tabel ini hanya salinan tampilan: beban BPJS perusahaan sudah dijurnal lewat baris Earnings dan
+		# Contra di jurnal accrual utama. Tanpa flag ini HRMS membuat jurnal "Employer Contribution" kedua
+		# yang mensyaratkan akun liabilitas di komponen (error "Please set expense and liability accounts")
+		# dan akan menggandakan beban. Dua flag ini membuat HRMS melewati baris tersebut.
+		if doc.doctype == "Salary Slip":
+			baris.do_not_include_in_total = 1
+			baris.do_not_include_in_accounts = 1
 
 		# abbr WAJIB diisi. Baris di atas hanya membawa salary_component dan
 		# amount, sedangkan validate_payment_days_based_dependent_component

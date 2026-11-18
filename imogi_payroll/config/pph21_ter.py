@@ -221,6 +221,7 @@ def sum_bruto_earnings(salary_slip: Dict[str, Any]) -> float:
     earnings = salary_slip.get("earnings", []) or []
     employer_contributions = salary_slip.get("employer_contributions", []) or []
     employer_rows_found = 0
+    seen_employer = set()
     for row in [*earnings, *employer_contributions]:
         component_name = _slip_row_value(row, "salary_component", "")
         is_taxable_earning = (
@@ -231,6 +232,11 @@ def sum_bruto_earnings(salary_slip: Dict[str, Any]) -> float:
         is_employer_benefit = _is_employer_benefit_component(component_name)
         if is_employer_benefit:
             employer_rows_found += 1
+            # Baris employer ada di earnings DAN disalin ke tabel employer_contributions
+            # (populate_employer_contributions): hitung sekali saja, jangan dua kali.
+            if component_name in seen_employer:
+                continue
+            seen_employer.add(component_name)
         if (
             (is_taxable_earning or is_employer_benefit)
             and _slip_row_value(row, "statistical_component", 0) == 0

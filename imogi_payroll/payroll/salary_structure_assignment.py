@@ -6,6 +6,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, date_diff, flt, fmt_money, getdate, strip_html, today
 
+from imogi_payroll.payroll.employer_contributions import canonical_component_name
+
 # Map nama komponen ke field standar/custom SSA (untuk formula slip gaji).
 COMPONENT_FIELD_MAP = {
 	"gaji pokok": "base",
@@ -59,7 +61,8 @@ def sync_assignment_component_fields(doc):
 			)
 		seen_components.add(row.salary_component)
 
-		key = (row.salary_component or "").strip().lower()
+		# "Gaji Pokok HO" (struktur Head Office) mengisi field yang sama dengan "Gaji Pokok".
+		key = canonical_component_name(row.salary_component).lower()
 		fieldname = COMPONENT_FIELD_MAP.get(key)
 		if fieldname and doc.meta.has_field(fieldname):
 			doc.set(fieldname, flt(row.amount))
@@ -71,7 +74,8 @@ def resolve_assignment_doc(assignment):
 	if not assignment:
 		return None
 	if isinstance(assignment, str):
-		return frappe.get_doc("Salary Structure Assignment", assignment)
+		# Nama yang belum ada di database (SSA yang baru disimpan): kembalikan None, bukan error.
+		return frappe.get_doc("Salary Structure Assignment", assignment) if frappe.db.exists("Salary Structure Assignment", assignment) else None
 	if hasattr(assignment, "get") and assignment.get("salary_component_amounts"):
 		return assignment
 	name = assignment.get("name") if isinstance(assignment, dict) else getattr(assignment, "name", None)
@@ -96,9 +100,9 @@ def get_assignment_formula_context(assignment) -> dict:
 				continue
 			amount = flt(row.amount)
 			key = (row.salary_component or "").strip().lower()
-			if key not in BPJS_BASE_EXCLUDED_COMPONENTS:
+			if canonical_component_name(row.salary_component).lower() not in BPJS_BASE_EXCLUDED_COMPONENTS:
 				bpjs_base += amount
-			fieldname = COMPONENT_FIELD_MAP.get(key)
+			fieldname = COMPONENT_FIELD_MAP.get(canonical_component_name(row.salary_component).lower())
 			if fieldname:
 				context[fieldname] = amount
 			abbr = frappe.db.get_value(
@@ -132,6 +136,13 @@ def get_assignment_formula_context(assignment) -> dict:
 
 
 CONTRACT_PERIOD_FIELDS = ("from_date", "end_date")
+
+
+def sync_components_before_validate(doc, method=None):
+	"""before_validate: salin Upah dari tabel Komponen Gaji ke `base` SEBELUM validate milik HRMS.
+	HRMS menghitung Annual Gross Earning dan CTC di validate-nya dari `base`; kalau penyalinan baru terjadi
+	sesudahnya (validate_salary_structure_assignment), Save pertama menghasilkan 0 dan baru benar di Save kedua."""
+	sync_assignment_component_fields(doc)
 
 
 def validate_salary_structure_assignment(doc, method=None):

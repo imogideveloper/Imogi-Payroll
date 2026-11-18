@@ -481,6 +481,8 @@ class CustomSalarySlip(SalarySlip):
         ytd_bruto = 0.0
         ytd_netto = 0.0
         ytd_tax   = 0.0
+        ytd_pengurang = 0.0
+        self._ytd_pengurang_jan_nov = 0.0
 
         fiscal_year = getattr(self, "fiscal_year", None)
         if not fiscal_year and getattr(self, "start_date", None):
@@ -511,9 +513,12 @@ class CustomSalarySlip(SalarySlip):
                                       - flt(getattr(r, "pengurang_netto", 0))
                         ytd_netto += r_netto
                         ytd_tax   += flt(getattr(r, "pph21", 0))
+                        ytd_pengurang += flt(getattr(r, "pengurang_netto", 0))
         except Exception as e:
             logger.warning(f"Error fetching YTD from Imogi Payroll Annual History: {e}")
 
+        # Total pengurang netto (JHT+JP karyawan) Jan–Nov, dipakai metode "Kumulatif Aktual"
+        self._ytd_pengurang_jan_nov = ytd_pengurang
         return ytd_bruto, ytd_netto, ytd_tax
 
     # -------------------------
@@ -558,6 +563,9 @@ class CustomSalarySlip(SalarySlip):
                 # Dua opsi (pilih salah satu, yang bawah lebih eksplisit):
                 # december_slip=slip_dict,
                 jp_jht_employee_month=jp_jht_employee_month,
+                method=frappe.db.get_single_value("Imogi Payroll Settings", "pph21_december_method")
+                or "Annualized December",
+                ytd_pengurang_jan_nov=getattr(self, "_ytd_pengurang_jan_nov", 0.0),
             )
 
             # Nilai pajak yang diposting untuk bulan Desember (koreksi)
