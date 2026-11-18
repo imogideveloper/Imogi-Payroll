@@ -161,3 +161,12 @@ body.imogi-wide .widget.number-widget-box .widget-content .number {
 	line-height: 1.35;
 	margin-top: 2px;
 }
+
+/* List Salary Slip: kolom tampil sesuai urutan List View Settings (ID, Employee Name, Batch, Department,
+   Branch, Net Pay, Status). imogi_finance/public/css/custom.css memaksa urutan global semua list view
+   (kolom ke-7 ke depan lewat `order: ... !important`), sehingga Status dan Net Pay melompat ke depan.
+   Dibatasi ke list ini saja; list lain tetap mengikuti aturan imogi_finance. */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col,
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
+	order: 0 !important;
+}
