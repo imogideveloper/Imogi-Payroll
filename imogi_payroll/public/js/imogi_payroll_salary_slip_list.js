@@ -76,7 +76,10 @@ function put_id_column_first(listview) {
 		if (cols.length < 2) {
 			return;
 		}
-		const subject_link = cols[0].querySelector("span.level-item.bold a, span.level-item.bold");
+		// Cari <a> dulu. querySelector("x a, x") mengembalikan elemen yang lebih dulu di dokumen, yaitu span
+		// pembungkusnya; menulis teks ke span itu menghapus <a> di dalamnya sehingga baris tidak bisa dibuka.
+		const subject_link =
+			cols[0].querySelector("span.level-item.bold a") || cols[0].querySelector("span.level-item.bold");
 		const id_col = cols[cols.length - 1];
 		if (!subject_link) {
 			return;
