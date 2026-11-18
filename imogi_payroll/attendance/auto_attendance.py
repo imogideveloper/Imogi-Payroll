@@ -64,6 +64,8 @@ def auto_create_from_checkin(doc, method):
             "naming_series": "HR-ATT-.YYYY.-"
         })
         
+        # Dibuat dari Employee Checkin, bukan koreksi HR: lewati validasi koreksi manual
+        attendance.flags.imogi_system_attendance = True
         attendance.insert(ignore_permissions=True)
         attendance.submit()
         frappe.db.commit()

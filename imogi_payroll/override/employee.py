@@ -7,6 +7,28 @@ Override Employee untuk handle perubahan bebas_bpjs per-jenis:
 import frappe
 from frappe import _
 
+def validate(doc, method=None):
+    """Isi Employee.ump_region dari Branch.ump_region bila kosong atau cabang berubah.
+
+    Pilihan manual tidak ditimpa: saat cabang berganti, wilayah hanya ikut berganti
+    kalau nilainya masih sama dengan wilayah cabang lama."""
+    if not doc.get("branch"):
+        return
+    if not frappe.get_meta("Branch").has_field("ump_region") or not frappe.get_meta("Employee").has_field("ump_region"):
+        return
+    region = frappe.db.get_value("Branch", doc.branch, "ump_region")
+    if not region:
+        return
+    if not doc.get("ump_region"):
+        doc.ump_region = region
+        return
+    before = doc.get_doc_before_save()
+    if before and before.get("branch") and before.branch != doc.branch:
+        old_region = frappe.db.get_value("Branch", before.branch, "ump_region")
+        if doc.ump_region == old_region:
+            doc.ump_region = region
+
+
 def on_update(doc, method=None):
     """Trigger saat Employee di-save."""
     before = doc.get_doc_before_save()
