@@ -132,7 +132,8 @@ boot_session = "imogi_payroll.checkin_gate.boot_session"
 after_migrate = [
     "imogi_payroll.setup.setup_module.after_sync",
     "imogi_payroll.setup.install.after_migrate",
-    "imogi_payroll.setup.salary_component_accounts.sync_salary_component_accounts"
+    "imogi_payroll.setup.salary_component_accounts.sync_salary_component_accounts",
+    "imogi_payroll.payroll.payroll_entry_summary.backfill_departemen_karyawan",
 ]
 
 # Desk Notifications
@@ -152,6 +153,22 @@ after_migrate = [
 # has_permission = {
 #	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
+
+permission_query_conditions = {
+    "Imogi Payroll Overtime": "imogi_payroll.override.overtime_permissions.get_permission_query_conditions",
+}
+
+has_permission = {
+    "Imogi Payroll Overtime": "imogi_payroll.override.overtime_permissions.has_permission",
+}
+
+# Fungsi yang bisa dipanggil dari template Jinja (Print Format), mis. terbilang slip gaji
+jinja = {
+    "methods": [
+        "imogi_payroll.utils.terbilang.terbilang_rupiah",
+        "imogi_payroll.utils.slip_print.file_data_uri",
+    ],
+}
 
 # DocType Class
 # ---------------
@@ -184,6 +201,7 @@ override_doctype_class = {
 
 doc_events = {
     "Employee": {
+        "validate": "imogi_payroll.override.employee.validate",
         "on_update": "imogi_payroll.override.employee.on_update",
     },
     "Salary Structure": {
@@ -198,6 +216,10 @@ doc_events = {
         "validate": "imogi_payroll.utils.validate_salary_structure.validate_salary_structure_required_components",
     },
     "Salary Structure Assignment": {
+        "before_validate": [
+            "imogi_payroll.payroll.structure_mapping.fill_salary_structure",
+            "imogi_payroll.payroll.salary_structure_assignment.sync_components_before_validate",
+        ],
         "validate": (
             "imogi_payroll.payroll.salary_structure_assignment"
             ".validate_salary_structure_assignment"
@@ -252,6 +274,9 @@ doc_events = {
             "imogi_payroll.override.salary_slip.on_cancel",
             "imogi_payroll.api.payroll_sync.handle_salary_slip_cancel",
         ],
+    },
+    "Attendance": {
+        "validate": "imogi_payroll.override.attendance.validate",
     },
     "Employee Checkin": {
         "before_insert": "imogi_payroll.checkin_gate.force_server_time",
@@ -405,6 +430,7 @@ fixtures = [
                 "Payroll Entry-run_imogi_payroll_december",
                 "Payroll Entry-periode",
                 "Payroll Entry-total_karyawan",
+                "Payroll Entry-departemen_karyawan",
                 "Payroll Entry-total_amount",
                 "Salary Structure Assignment-meal_allowance",
                 "Salary Structure Assignment-transport_allowance",
@@ -534,9 +560,7 @@ fixtures = [
         "doctype": "Client Script",
         "filters": [
             ["name", "in", [
-                "Imogi Payroll Salary Slip Grouping",
-                "Imogi Payroll Salary Component Sort",
-                "Imogi Payroll Entry List Script"
+                "Imogi Payroll Salary Component Sort"
             ]]
         ]
     },

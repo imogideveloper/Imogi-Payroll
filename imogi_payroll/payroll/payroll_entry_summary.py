@@ -77,8 +77,53 @@ def update_payroll_entry_summary(payroll_entry, *, persist=True) -> dict:
 	return summary
 
 
+def format_departemen_karyawan(employees) -> str:
+	"""Nama departemen unik (urut kemunculan) dari baris tabel Employee Details, dipisah koma.
+
+	Pakai nama departemen tanpa akhiran singkatan perusahaan ("OPERATIONAL", bukan
+	"OPERATIONAL - AIO"). Field `department` bawaan di bagian Filter Employees tidak dipakai
+	karena itu hanya filter pencarian dan sering kosong.
+	"""
+	seen = []
+	for row in employees or []:
+		dept = row.get("department")
+		if dept and dept not in seen:
+			seen.append(dept)
+	names = []
+	for dept in seen:
+		names.append(frappe.db.get_value("Department", dept, "department_name") or dept)
+	return ", ".join(names)
+
+
+def backfill_departemen_karyawan():
+	"""Isi kolom Department untuk Payroll Entry lama yang masih kosong (dipanggil saat after_migrate).
+
+	Dijalankan setelah fixture membuat Custom Field `departemen_karyawan`; Payroll Entry baru terisi otomatis
+	saat disimpan. Hanya menyentuh baris yang masih kosong, tanpa mengubah `modified`. Idempoten.
+	"""
+	if not frappe.db.has_column("Payroll Entry", "departemen_karyawan"):
+		return
+	kosong = frappe.get_all(
+		"Payroll Entry",
+		filters={"departemen_karyawan": ["in", ["", None]]},
+		pluck="name",
+	)
+	for name in kosong:
+		karyawan = frappe.get_all(
+			"Payroll Employee Detail", filters={"parent": name}, fields=["department"], order_by="idx"
+		)
+		nilai = format_departemen_karyawan(karyawan)
+		if nilai:
+			frappe.db.set_value("Payroll Entry", name, "departemen_karyawan", nilai, update_modified=False)
+	if kosong:
+		frappe.db.commit()
+
+
 def sync_summary_on_validate(doc, method=None):
 	"""Isi field ringkasan saat save Payroll Entry."""
+	if doc.meta.has_field("departemen_karyawan"):
+		doc.departemen_karyawan = format_departemen_karyawan(doc.get("employees"))
+
 	if not doc.get("name") or doc.get("__islocal"):
 		doc.periode = format_periode_label(doc.get("start_date"), doc.get("end_date"))
 		return
