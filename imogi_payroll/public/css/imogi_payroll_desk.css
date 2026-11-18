@@ -170,3 +170,22 @@ body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col,
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
 	order: 0 !important;
 }
+
+/* List Salary Slip: kolom ID cukup lebar untuk nomor slip lama ("Sal Slip/HR-EMP-00003/00001") dan rata kiri
+   (sebelumnya terpotong di sisi kiri karena isi kolom ditengahkan). Kolom lain berbagi sisa lebar secara rata,
+   sehingga Status tidak terdorong keluar layar. */
+body[data-route="List/Salary Slip/List"] .list-row .list-subject,
+body[data-route="List/Salary Slip/List"] .list-row-head .list-subject {
+	flex: 0 0 250px !important;
+	width: 250px !important;
+}
+body[data-route="List/Salary Slip/List"] .list-subject .level-item.bold {
+	justify-content: flex-start !important;
+	min-width: 0;
+}
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:not(.list-subject),
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:not(.list-subject) {
+	flex: 1 1 0 !important;
+	width: auto !important;
+	min-width: 0 !important;
+}
