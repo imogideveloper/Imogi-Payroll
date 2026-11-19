@@ -4,6 +4,11 @@
 frappe.listview_settings["Salary Slip"] = {
 	add_fields: ["docstatus", "pph21_amount", "net_pay", "start_date", "end_date"],
 
+	// imogi_finance versi baru (list_view_columns.js) sudah menaruh ID di depan dan judul (Employee Name) tepat
+	// setelahnya untuk semua list; opsi ini menaruh Posting Date di antaranya: ID, Posting Date, Employee Name.
+	// Di imogi_finance versi lama opsi ini diabaikan dan put_id_column_first di bawah yang menata urutannya.
+	after_subject: ["posting_date"],
+
 	refresh(listview) {
 		put_id_column_first(listview);
 		setTimeout(() => put_id_column_first(listview), 150);

@@ -174,8 +174,8 @@ body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
 /* List Salary Slip: lebar kolom tetap supaya judul dan baris selalu sejajar dan isi tidak terpotong.
    Kontainer judul dan baris berbeda lebar (judul memberi ruang untuk tombol pengaturan kolom), jadi kolom yang
    melebar mengikuti sisa ruang akan bergeser; karena itu hanya kolom terakhir (Status) yang melebar. Frappe memberi
-   min-width 150px ke tiap kolom, jadi min-width ikut disetel. Jarak antarkolom 10px (bawaan 15px) supaya ke-8 kolom
-   muat di area list sekitar 1200px tanpa gulir ke samping.
+   min-width 150px ke tiap kolom, jadi min-width ikut disetel. Jarak antarkolom 8px (bawaan 15px) supaya ke-8 kolom
+   muat di area list sekitar 1150px (prod) tanpa gulir ke samping.
    Urutan anak (diatur imogi_payroll_salary_slip_list.js): ID, Tag, Posting Date, Employee Name, Payroll Entry,
    Department, Branch, Net Pay, Status. */
 body[data-route="List/Salary Slip/List"] .list-subject .level-item.bold {
@@ -184,7 +184,7 @@ body[data-route="List/Salary Slip/List"] .list-subject .level-item.bold {
 }
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col,
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
-	margin-right: 10px !important;
+	margin-right: 8px !important;
 }
 
 /* ID */
@@ -259,8 +259,8 @@ body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(3) {
 /* Status */
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(9),
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(9) {
-	flex: 1 0 95px !important;
+	flex: 1 0 85px !important;
 	width: auto !important;
 	max-width: none !important;
-	min-width: 95px !important;
+	min-width: 85px !important;
 }
