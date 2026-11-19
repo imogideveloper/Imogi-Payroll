@@ -24,6 +24,7 @@
 {%- set employer_list = [] -%}
 {%- set statutory_ded = [] -%}
 {%- set other_ded     = [] -%}
+{%- set contra_ded    = [] -%}
 {%- set ns = namespace(earn_total=0, emp_total=0, ada_contra=false) -%}
 
 {# Slip pola Odoo (Otoexpert): BPJS Employer ada di Earnings dan dibatalkan "Contra BPJS ... Employer" di
@@ -50,7 +51,7 @@
 {%- for row in doc.deductions -%}
   {%- if row.statistical_component -%}
   {%- elif "contra" in (row.salary_component | lower) -%}
-    {%- set _ = other_ded.append(row) -%}
+    {%- set _ = contra_ded.append(row) -%}
   {%- elif "employer" in (row.salary_component | lower) -%}
     {%- set _ = employer_list.append(row) -%}
     {%- set ns.emp_total = ns.emp_total + row.amount -%}
@@ -165,7 +166,7 @@
 }
 
 /* BODY */
-.body { background: #edf0f7; padding: 5px 5px 0 5px; width: 100%; }
+.body { background: #edf0f7; padding: 5px 0; width: 100%; }
 .body-table { width: 100%; border-collapse: separate; border-spacing: 5px 0; table-layout: fixed; }
 .col-earn  { background: #fff; padding: 8px 10px; vertical-align: top; width: 42%; }
 .col-right { background: #fff; padding: 8px 10px; vertical-align: top; width: 58%; }
@@ -180,6 +181,7 @@
   padding-left: 6px; 
   margin-bottom: 7px;
 }
+.col-title.sub { margin-top: 10px; }
 .section-divider { border: none; border-top: 2px solid #edf0f7; margin: 8px 0; }
 
 .grp { 
@@ -193,6 +195,10 @@
 .grp.first { padding-top: 0; }
 
 .items { width: 100%; border-collapse: collapse; }
+/* Frappe (standard.css) memberi semua td print padding 6px !important sehingga angka baris tidak sejajar dengan
+   angka total. Di slip ini padding td diatur sendiri. */
+.wrap .body-table > tbody > tr > td { padding: 8px 10px !important; vertical-align: top !important; }
+.wrap .items td { padding: 2.5px 0 !important; vertical-align: middle !important; }
 .items td { 
   font-size: 7.5pt; /* DINAIKKAN dari 6.5pt */
   padding: 2.5px 0; /* PADDING LEBIH BESAR */
@@ -219,53 +225,33 @@
   white-space: nowrap; 
 }
 
-/* SUMMARY BAR */
+/* RINGKASAN: label kiri, angka rata kanan sejajar angka di kolom Deductions */
 .summary {
   background: #fff;
-  margin: 5px 0 0 0;
-  padding: 8px 14px; /* PADDING LEBIH BESAR */
-  overflow: hidden;
-  border-top: 3px solid #edf0f7;
+  margin: 5px 5px 0 5px;
+  padding: 8px 10px;
 }
-.summary-table { width: 100%; border-collapse: collapse; }
-.summary-table td { padding: 0 10px; vertical-align: middle; } /* PADDING LEBIH BESAR */
-.summary-table td:first-child { padding-left: 0; }
-.summary-table td:last-child  { padding-right: 0; text-align: right; }
-.sum-lbl { 
-  font-size: 6.5pt; /* DINAIKKAN dari 5.5pt */
-  color: #999; 
-  text-transform: uppercase; 
-  letter-spacing: .4px; 
-  margin-bottom: 3px; 
-}
-.sum-val { 
-  font-size: 10pt; /* DINAIKKAN dari 9pt */
-  font-weight: bold; 
-  color: #1b3f7e; 
-}
+.wrap .sum { width: 100%; border-collapse: collapse; }
+.wrap .sum td { padding: 2.5px 0 !important; vertical-align: middle !important; }
+.sum-lbl { font-size: 7.5pt; color: #555; }
+.sum-val { font-size: 7.5pt; font-weight: bold; color: #1b3f7e; text-align: right; white-space: nowrap; }
 .sum-val.neg { color: #c0392b; }
-.sum-eq  { 
-  font-size: 14pt; /* DINAIKKAN dari 12pt */
-  color: #ccc; 
-  font-weight: bold; 
-  padding: 0 5px; 
+.sum-net-row td { border-top: 1.5px solid #ddd; padding-top: 5px !important; }
+.sum-net-row .sum-lbl { font-weight: bold; color: #1b3f7e; text-transform: uppercase; letter-spacing: .4px; }
+.sum-net { font-size: 10pt; font-weight: bold; color: #1b3f7e; text-align: right; white-space: nowrap; }
+
+/* TERBILANG (seperti slip Odoo, gaya slip ini) */
+.words {
+  margin-top: 6px;
+  background: #f5f7fb;
+  border-left: 3px solid #1b3f7e;
+  padding: 5px 8px;
 }
-.sum-net { 
-  font-size: 11pt; /* DINAIKKAN dari 10pt */
-  font-weight: bold; 
-  color: #1b3f7e; 
+.words-lbl {
+  display: block;
+  font-size: 5.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: .3px; color: #999;
 }
-.badge {
-  display: inline-block; 
-  background: #27ae60; 
-  color: #fff;
-  font-size: 6.5pt; /* DINAIKKAN dari 5.5pt */
-  font-weight: bold; 
-  padding: 3px 8px; /* PADDING LEBIH BESAR */
-  border-radius: 8px; 
-  margin-left: 7px; 
-  vertical-align: middle;
-}
+.words-val { font-size: 7.5pt; font-weight: bold; font-style: italic; color: #1b3f7e; }
 
 .note {
   background: #edf0f7;
@@ -275,49 +261,13 @@
   padding: 4px 14px;
 }
 
-/* SIGNATURE BLOCK */
-.sig-wrap {
-  background: #fff;
-  padding: 16px 14px 8px 14px;
-  border-top: 3px solid #edf0f7;
-}
-.sig-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.sig-table td {
-  width: 33.33%;
-  text-align: center;
-  vertical-align: top;
-  padding: 0 8px;
-}
-.sig-place {
-  font-size: 6.5pt;
-  color: #999;
-  margin-bottom: 26px;
-}
-.sig-line {
-  border-top: 1px solid #333;
-  margin: 0 6px;
-  padding-top: 4px;
-}
-.sig-name {
-  font-size: 7.5pt;
-  font-weight: bold;
-  color: #1b3f7e;
-}
-.sig-role {
-  font-size: 6.5pt;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-  margin-top: 1px;
-}
-
 /* TANDA TANGAN + CATATAN DI DASAR HALAMAN, seperti footer.
    - Layar (pratinjau print di desk) dan PDF (wkhtmltopdf, kertas A4 margin 15mm): .wrap setinggi area isi
      kertas A4, blok .kaki ditempel di dasarnya.
    - Print lewat browser (memakai @page di atas): .kaki fixed di dasar halaman cetak. Blok @supports hanya
      dibaca browser modern; wkhtmltopdf tidak mengenalnya sehingga tetap memakai aturan A4. */
 .kaki { page-break-inside: avoid; }
-.wrap { position: relative; z-index: 0; padding-bottom: 36mm; }
+.wrap { position: relative; z-index: 0; padding-bottom: 12mm; }
 .kaki { position: absolute; left: 0; right: 0; bottom: 0; }
 /* Garis bingkai kiri-kanan (warna sama dengan bingkai Earnings/Deductions) menyambung dari isi slip sampai
    footer. Diletakkan di belakang isi (z-index -1), jadi hanya terlihat di ruang kosong dan di blok tanda tangan. */
@@ -325,7 +275,6 @@
   position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;
   border-left: 5px solid #edf0f7; border-right: 5px solid #edf0f7;
 }
-.kaki .sig-wrap { background: transparent; }
 @media screen { .wrap { min-height: 250mm; } }
 @media print  { .wrap { min-height: 262mm; } }
 @supports (display: grid) {
@@ -417,7 +366,19 @@
             {%- endfor -%}
           </tbody></table>
         {%- endif -%}
-        {%- if not statutory_ded and not other_ded -%}<div style="color:#ccc;">—</div>{%- endif -%}
+        {%- if contra_ded -%}
+          {# Slip pola Odoo: baris "Contra BPJS ... Employer" (pembatal iuran perusahaan di Earnings). #}
+          <div class="col-title sub">Employer Contribution</div>
+          <table class="items"><tbody>
+            {%- for row in contra_ded -%}
+            <tr>
+              <td>{{ row.salary_component }}</td>
+              <td class="neg">&ndash; {{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+            </tr>
+            {%- endfor -%}
+          </tbody></table>
+        {%- endif -%}
+        {%- if not statutory_ded and not other_ded and not contra_ded -%}<div style="color:#ccc;">—</div>{%- endif -%}
         <div class="subtotal">
           <span class="sl">Total Deductions</span>
           <span class="sr">&ndash; {{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</span>
@@ -448,56 +409,32 @@
 
     </tr></tbody></table>
 
-    <!-- SUMMARY BAR -->
+    <!-- RINGKASAN -->
     <div class="summary">
-      <table class="summary-table"><tbody><tr>
-        <td>
-          <div class="sum-lbl">Total Earnings</div>
-          <div class="sum-val">{{ frappe.format(ns.earn_total, {'fieldtype':'Currency'}) }}</div>
-        </td>
-        <td style="width:20px; text-align:center;"><span class="sum-eq">&minus;</span></td>
-        <td>
-          <div class="sum-lbl">Total Deductions</div>
-          <div class="sum-val neg">{{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</div>
-        </td>
-        <td style="width:20px; text-align:center;"><span class="sum-eq">=</span></td>
-        <td>
-          <div class="sum-lbl">Net Take-Home Pay</div>
-          <div class="sum-net">{{ frappe.format(doc.net_pay, {'fieldtype':'Currency'}) }} <span class="badge">Paid</span></div>
-        </td>
-      </tr></tbody></table>
+      <table class="sum"><tbody>
+        <tr>
+          <td class="sum-lbl">Total Earnings</td>
+          <td class="sum-val">{{ frappe.format(ns.earn_total, {'fieldtype':'Currency'}) }}</td>
+        </tr>
+        <tr>
+          <td class="sum-lbl">Total Deductions</td>
+          <td class="sum-val neg">&ndash; {{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</td>
+        </tr>
+        <tr class="sum-net-row">
+          <td class="sum-lbl">Net Take-Home Pay</td>
+          <td class="sum-net">{{ frappe.format(doc.net_pay, {'fieldtype':'Currency'}) }}</td>
+        </tr>
+      </tbody></table>
+      <div class="words">
+        <span class="words-lbl">Terbilang</span>
+        <span class="words-val">{{ terbilang_rupiah(doc.net_pay) }}</span>
+      </div>
     </div>
 
   </div>
 
-  <!-- SIGNATURE BLOCK -->
+  <!-- FOOTER -->
   <div class="kaki">
-  <div class="sig-wrap">
-    <table class="sig-table"><tbody><tr>
-      <td>
-        <div class="sig-place">&nbsp;</div>
-        <div class="sig-line">
-          <div class="sig-name">{{ (pis_settings.director_name if pis_settings else "") or "&mdash;" }}</div>
-          <div class="sig-role">{{ (pis_settings.director_designation if pis_settings else "") or "Direktur" }}</div>
-        </div>
-      </td>
-      <td>
-        <div class="sig-place">&nbsp;</div>
-        <div class="sig-line">
-          <div class="sig-name">{{ (pis_settings.operation_head_name if pis_settings else "") or "&mdash;" }}</div>
-          <div class="sig-role">{{ (pis_settings.operation_head_designation if pis_settings else "") or "Operation Head" }}</div>
-        </div>
-      </td>
-      <td>
-        <div class="sig-place">&nbsp;</div>
-        <div class="sig-line">
-          <div class="sig-name">{{ doc.employee_name or doc.employee }}</div>
-          <div class="sig-role">Karyawan</div>
-        </div>
-      </td>
-    </tr></tbody></table>
-  </div>
-
   <div class="note">Generated automatically &middot; imogi.id Payroll Division</div>
   </div>
 
