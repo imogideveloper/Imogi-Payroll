@@ -24,7 +24,7 @@
 {%- set employer_list = [] -%}
 {%- set statutory_ded = [] -%}
 {%- set other_ded     = [] -%}
-{%- set ns = namespace(earn_total=0, emp_total=0) -%}
+{%- set ns = namespace(earn_total=0, emp_total=0, contra_total=0) -%}
 
 {%- for row in doc.earnings -%}
   {%- if row.statistical_component -%}
@@ -40,6 +40,11 @@
 {%- for row in doc.deductions -%}
   {%- if row.statistical_component -%}
   {%- elif "contra" in (row.salary_component | lower) -%}
+    {# Contra BPJS Employer hanya penyeimbang baris BPJS Employer di Earnings (pola slip Odoo); tidak
+       ditampilkan, jadi juga dikeluarkan dari Total Deductions supaya Earnings - Deductions = Net Pay. #}
+    {%- if not row.do_not_include_in_total -%}
+      {%- set ns.contra_total = ns.contra_total + row.amount -%}
+    {%- endif -%}
   {%- elif "employer" in (row.salary_component | lower) -%}
     {%- set _ = employer_list.append(row) -%}
     {%- set ns.emp_total = ns.emp_total + row.amount -%}
@@ -54,8 +59,11 @@
 {%- endfor -%}
 
 {%- if doc.employer_contributions -%}
+  {# Komponen yang sudah tampil dari Earnings/Deductions tidak diulang dari tabel employer_contributions
+     (tabel itu salinan informatif dari baris yang sama), supaya Employer Contribution tidak dobel. #}
+  {%- set sudah_tampil = employer_list | map(attribute="salary_component") | list -%}
   {%- for row in doc.employer_contributions -%}
-    {%- if row.salary_component and row.amount -%}
+    {%- if row.salary_component and row.amount and row.salary_component not in sudah_tampil -%}
       {%- set _ = employer_list.append(row) -%}
       {%- set ns.emp_total = ns.emp_total + row.amount -%}
     {%- endif -%}
@@ -381,7 +389,7 @@
         {%- if not statutory_ded and not other_ded -%}<div style="color:#ccc;">—</div>{%- endif -%}
         <div class="subtotal">
           <span class="sl">Total Deductions</span>
-          <span class="sr">&ndash; {{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</span>
+          <span class="sr">&ndash; {{ frappe.format((doc.total_deduction or 0) - ns.contra_total, {'fieldtype':'Currency'}) }}</span>
         </div>
 
         <hr class="section-divider">
@@ -417,7 +425,7 @@
         <td style="width:20px; text-align:center;"><span class="sum-eq">&minus;</span></td>
         <td>
           <div class="sum-lbl">Total Deductions</div>
-          <div class="sum-val neg">{{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</div>
+          <div class="sum-val neg">{{ frappe.format((doc.total_deduction or 0) - ns.contra_total, {'fieldtype':'Currency'}) }}</div>
         </td>
         <td style="width:20px; text-align:center;"><span class="sum-eq">=</span></td>
         <td>
