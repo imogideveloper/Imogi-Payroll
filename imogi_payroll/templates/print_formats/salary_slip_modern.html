@@ -310,6 +310,23 @@
   letter-spacing: .3px;
   margin-top: 1px;
 }
+
+/* TANDA TANGAN + CATATAN DI DASAR HALAMAN, seperti footer.
+   - Layar (pratinjau print di desk) dan PDF (wkhtmltopdf, kertas A4 margin 15mm): .wrap setinggi area isi
+     kertas A4, blok .kaki ditempel di dasarnya.
+   - Print lewat browser (memakai @page di atas): .kaki fixed di dasar halaman cetak. Blok @supports hanya
+     dibaca browser modern; wkhtmltopdf tidak mengenalnya sehingga tetap memakai aturan A4. */
+.kaki { page-break-inside: avoid; }
+.wrap { position: relative; padding-bottom: 36mm; }
+.kaki { position: absolute; left: 0; right: 0; bottom: 0; }
+@media screen { .wrap { min-height: 250mm; } }
+@media print  { .wrap { min-height: 262mm; } }
+@supports (display: grid) {
+  @media print {
+    .wrap { min-height: 0; }
+    .kaki { position: fixed; }
+  }
+}
 </style>
 
 <div class="wrap">
@@ -446,6 +463,7 @@
   </div>
 
   <!-- SIGNATURE BLOCK -->
+  <div class="kaki">
   <div class="sig-wrap">
     <table class="sig-table"><tbody><tr>
       <td>
@@ -473,5 +491,6 @@
   </div>
 
   <div class="note">Generated automatically &middot; imogi.id Payroll Division</div>
+  </div>
 
 </div>
