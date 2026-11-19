@@ -249,7 +249,7 @@
   font-weight: bold; 
   color: #1b3f7e; 
 }
-.sum-val.neg { color: #c0392b; }
+.sum-val.neg { color: #c0392b; text-align: left; } /* .neg (baris potongan) rata kanan; di ringkasan ikut label */
 .sum-eq  { 
   font-size: 14pt; /* DINAIKKAN dari 12pt */
   color: #ccc; 
@@ -260,6 +260,9 @@
   font-size: 11pt; /* DINAIKKAN dari 10pt */
   font-weight: bold; 
   color: #1b3f7e; 
+  display: inline-block;
+  border-bottom: 2px solid #1b3f7e; /* garis bawah angka Net Take-Home Pay */
+  padding-bottom: 1px;
 }
 /* TERBILANG (seperti slip Odoo, gaya slip ini) */
 .words {
