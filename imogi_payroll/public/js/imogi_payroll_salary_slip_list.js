@@ -36,7 +36,7 @@ frappe.listview_settings["Salary Slip"] = {
 };
 
 /**
- * Urutan kolom list: ID, Employee Name, Posting Date, Net Pay.
+ * Urutan kolom list: ID, (Posting Date bila kolom data pertama), Employee Name, lalu kolom lain.
  *
  * Kolom pertama list Frappe selalu "judul" dokumen (di Salary Slip = Employee Name) dan kolom ID
  * selalu paling kanan; urutan ini tidak bisa diatur lewat List View Settings. Jadi isi kedua kolom
@@ -101,11 +101,26 @@ function is_slip_id(text) {
 	return t.startsWith("Sal Slip/") || t.startsWith("SLIP/");
 }
 
-/** Pindahkan kolom (yang kini berisi nama karyawan) ke posisi kedua, tepat setelah kolom pertama (ID). */
+/**
+ * Pindahkan kolom (yang kini berisi nama karyawan) tepat setelah kolom ID, atau setelah kolom Posting Date
+ * bila Posting Date adalah kolom data pertama (Otoexpert: ID, Posting Date, Employee Name, ...).
+ */
 function move_after_subject(cols, moved) {
 	// cols[1] = kolom Tag (tersembunyi); kolom data pertama = cols[2].
-	const first_data_col = cols[2];
-	if (first_data_col && first_data_col !== moved) {
-		first_data_col.parentNode.insertBefore(moved, first_data_col);
+	let index = 2;
+	if (cols[2] && cols[2] !== moved && is_posting_date_col(cols[2])) {
+		index = 3;
 	}
+	const target = cols[index];
+	if (target && target !== moved) {
+		target.parentNode.insertBefore(moved, target);
+	}
+}
+
+/** Kolom Posting Date: sel baris punya filter "posting_date,...", sel judul berteks "Posting Date". */
+function is_posting_date_col(col) {
+	if (col.querySelector('[data-filter^="posting_date,"]')) {
+		return true;
+	}
+	return col.textContent.trim() === __("Posting Date");
 }

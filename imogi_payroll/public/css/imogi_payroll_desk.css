@@ -171,33 +171,77 @@ body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
 	order: 0 !important;
 }
 
-/* List Salary Slip: kolom ID cukup lebar untuk nomor slip lama ("Sal Slip/HR-EMP-00003/00001") dan rata kiri
-   (sebelumnya terpotong di sisi kiri karena isi kolom ditengahkan). Kolom lain berbagi sisa lebar secara rata,
-   sehingga Status tidak terdorong keluar layar. */
-body[data-route="List/Salary Slip/List"] .list-row .list-subject,
-body[data-route="List/Salary Slip/List"] .list-row-head .list-subject {
-	flex: 0 0 250px !important;
-	width: 250px !important;
-}
+/* List Salary Slip: lebar kolom tetap supaya judul dan baris selalu sejajar dan isi tidak terpotong.
+   Kontainer judul dan baris berbeda lebar (judul memberi ruang untuk tombol pengaturan kolom), jadi kolom yang
+   melebar mengikuti sisa ruang akan bergeser; karena itu hanya kolom terakhir (Status) yang melebar.
+   Urutan anak (diatur imogi_payroll_salary_slip_list.js): ID, Tag, Posting Date, Employee Name, Payroll Entry,
+   Department, Branch, Net Pay, Status. Di layar sempit, list bisa digulir ke samping. */
 body[data-route="List/Salary Slip/List"] .list-subject .level-item.bold {
 	justify-content: flex-start !important;
 	min-width: 0;
 }
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:not(.list-subject),
-body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:not(.list-subject) {
-	flex: 1 1 0 !important;
-	width: auto !important;
-	min-width: 0 !important;
+
+/* ID */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(1),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(1) {
+	flex: 0 0 195px !important;
+	width: 195px !important;
+	max-width: 195px !important;
 }
 
-/* Kolom Payroll Entry (anak ke-4: ID, Tag, Employee Name, Payroll Entry, ...) cukup lebar untuk nomor
-   "HR-PRUN-2026-00006" tanpa terpotong; kolom Status (anak ke-8) cukup untuk lencana status. Urutan anak tetap
-   karena imogi_payroll_salary_slip_list.js menata kolom ID dan Employee Name di depan. */
+/* Posting Date */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(3),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(3) {
+	flex: 0 0 95px !important;
+	width: 95px !important;
+	max-width: 95px !important;
+}
+
+/* Employee Name */
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(4),
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(4) {
-	flex: 0 0 175px !important;
+	flex: 0 0 150px !important;
+	width: 150px !important;
+	max-width: 150px !important;
 }
+
+/* Payroll Entry */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(5),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(5) {
+	flex: 0 0 170px !important;
+	width: 170px !important;
+	max-width: 170px !important;
+}
+
+/* Department */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(6),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(6) {
+	flex: 0 0 150px !important;
+	width: 150px !important;
+	max-width: 150px !important;
+}
+
+/* Branch */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(7),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(7) {
+	flex: 0 0 150px !important;
+	width: 150px !important;
+	max-width: 150px !important;
+}
+
+/* Net Pay */
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(8),
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(8) {
-	flex: 0 0 110px !important;
+	flex: 0 0 135px !important;
+	width: 135px !important;
+	max-width: 135px !important;
+}
+
+/* Status */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(9),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(9) {
+	flex: 1 0 100px !important;
+	width: auto !important;
+	max-width: none !important;
+	min-width: 100px !important;
 }
