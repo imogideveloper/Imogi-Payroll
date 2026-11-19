@@ -225,24 +225,24 @@
   white-space: nowrap; 
 }
 
-/* RINGKASAN: label kiri, angka rata kanan sejajar angka di kolom Deductions */
-.summary {
-  background: #fff;
-  margin: 5px 5px 0 5px;
-  padding: 8px 10px;
-}
-.wrap .sum { width: 100%; border-collapse: collapse; }
-.wrap .sum td { padding: 2.5px 0 !important; vertical-align: middle !important; }
-.sum-lbl { font-size: 7.5pt; color: #555; }
-.sum-val { font-size: 7.5pt; font-weight: bold; color: #1b3f7e; text-align: right; white-space: nowrap; }
-.sum-val.neg { color: #c0392b; }
-.sum-net-row td { border-top: 1.5px solid #ddd; padding-top: 5px !important; }
-.sum-net-row .sum-lbl { font-weight: bold; color: #1b3f7e; text-transform: uppercase; letter-spacing: .4px; }
-.sum-net { font-size: 10pt; font-weight: bold; color: #1b3f7e; text-align: right; white-space: nowrap; }
+/* RINGKASAN: dua sel selebar kolom Earnings (42%) dan Deductions (58%), jarak sama dengan tabel isi */
+.sum-table { width: 100%; border-collapse: separate; border-spacing: 5px 0; table-layout: fixed; margin-top: 5px; }
+.wrap .sum-table > tbody > tr > td.sum-cell { background: #fff; padding: 8px 10px !important; vertical-align: top !important; }
+.sum-earn  { width: 42%; text-align: right; }
+.sum-right { width: 58%; }
+.sum-in { width: 100%; border-collapse: collapse; }
+.wrap .sum-in td { padding: 0 !important; vertical-align: top !important; }
+.wrap .sum-in td.sum-net-cell { text-align: right; }
+.sum-lbl { font-size: 6.5pt; color: #999; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
+.sum-earn .sum-lbl { text-align: left; }
+.sum-val { font-size: 10pt; font-weight: bold; color: #1b3f7e; white-space: nowrap; }
+.sum-earn .sum-val { text-align: right; }
+.sum-net { font-size: 10pt; font-weight: bold; color: #1b3f7e; white-space: nowrap; }
+.summary { background: #fff; margin: 5px 5px 0 5px; padding: 8px 10px; }
 
 /* TERBILANG (seperti slip Odoo, gaya slip ini) */
 .words {
-  margin-top: 6px;
+  margin-top: 0;
   background: #f5f7fb;
   border-left: 3px solid #1b3f7e;
   padding: 5px 8px;
@@ -350,7 +350,7 @@
             {%- for row in statutory_ded -%}
             <tr>
               <td>{{ row.salary_component }}</td>
-              <td class="neg">&ndash; {{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+              <td class="r">{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
             </tr>
             {%- endfor -%}
           </tbody></table>
@@ -361,7 +361,7 @@
             {%- for row in other_ded -%}
             <tr>
               <td>{{ row.salary_component }}</td>
-              <td class="neg">&ndash; {{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+              <td class="r">{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
             </tr>
             {%- endfor -%}
           </tbody></table>
@@ -373,7 +373,7 @@
             {%- for row in contra_ded -%}
             <tr>
               <td>{{ row.salary_component }}</td>
-              <td class="neg">&ndash; {{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
+              <td class="r">{{ frappe.format(row.amount, {'fieldtype':'Currency'}) }}</td>
             </tr>
             {%- endfor -%}
           </tbody></table>
@@ -381,7 +381,7 @@
         {%- if not statutory_ded and not other_ded and not contra_ded -%}<div style="color:#ccc;">—</div>{%- endif -%}
         <div class="subtotal">
           <span class="sl">Total Deductions</span>
-          <span class="sr">&ndash; {{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</span>
+          <span class="sr">{{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</span>
         </div>
 
         {%- if not ns.ada_contra -%}
@@ -409,22 +409,27 @@
 
     </tr></tbody></table>
 
-    <!-- RINGKASAN -->
+    <!-- RINGKASAN: sel kiri selebar kolom Earnings, sel kanan selebar kolom Deductions, angka rata kanan
+         sejajar dengan angka di kolom masing-masing. -->
+    <table class="sum-table"><tbody><tr>
+      <td class="sum-cell sum-earn">
+        <div class="sum-lbl">Total Earnings</div>
+        <div class="sum-val">{{ frappe.format(ns.earn_total, {'fieldtype':'Currency'}) }}</div>
+      </td>
+      <td class="sum-cell sum-right">
+        <table class="sum-in"><tbody><tr>
+          <td>
+            <div class="sum-lbl">Total Deductions</div>
+            <div class="sum-val">{{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</div>
+          </td>
+          <td class="sum-net-cell">
+            <div class="sum-lbl">Net Take-Home Pay</div>
+            <div class="sum-net">{{ frappe.format(doc.net_pay, {'fieldtype':'Currency'}) }}</div>
+          </td>
+        </tr></tbody></table>
+      </td>
+    </tr></tbody></table>
     <div class="summary">
-      <table class="sum"><tbody>
-        <tr>
-          <td class="sum-lbl">Total Earnings</td>
-          <td class="sum-val">{{ frappe.format(ns.earn_total, {'fieldtype':'Currency'}) }}</td>
-        </tr>
-        <tr>
-          <td class="sum-lbl">Total Deductions</td>
-          <td class="sum-val neg">&ndash; {{ frappe.format(doc.total_deduction, {'fieldtype':'Currency'}) }}</td>
-        </tr>
-        <tr class="sum-net-row">
-          <td class="sum-lbl">Net Take-Home Pay</td>
-          <td class="sum-net">{{ frappe.format(doc.net_pay, {'fieldtype':'Currency'}) }}</td>
-        </tr>
-      </tbody></table>
       <div class="words">
         <span class="words-lbl">Terbilang</span>
         <span class="words-val">{{ terbilang_rupiah(doc.net_pay) }}</span>
