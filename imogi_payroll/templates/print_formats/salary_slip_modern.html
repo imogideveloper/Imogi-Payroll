@@ -152,6 +152,10 @@
 }
 .ef  { float: left; padding-right: 18px; } /* SPACING LEBIH BESAR */
 .ef:last-child { padding-right: 0; }
+/* Enam kolom data karyawan (termasuk Branch) tetap satu baris: sel tabel, bukan float. */
+.emp { display: table; width: 100%; table-layout: auto; }
+.emp .ef { display: table-cell; float: none; vertical-align: top; padding-right: 12px; }
+.emp .ef:last-child { padding-right: 0; }
 .el  { 
   font-size: 5.5pt; /* DINAIKKAN dari 4.5pt */
   color: #d0d8e6; /* LEBIH TERANG */
@@ -261,6 +265,7 @@
   font-weight: bold; 
   color: #1b3f7e; 
   display: inline-block;
+  white-space: nowrap; /* jangan pecah "Rp" dan angka (PDF) */
   border-bottom: 2px solid #1b3f7e; /* garis bawah angka Net Take-Home Pay */
   padding-bottom: 1px;
 }
@@ -326,9 +331,13 @@
 
   <!-- EMPLOYEE BAR -->
   <div class="emp">
+    {#- Urutan: siapa (nama, ID), di mana (cabang, departemen), sebagai apa (jabatan), lalu rekening.
+        Nama cabang dipendekkan: "OTOXPERT KELAPA GADING JAKARTA BY AUTO2000" -> "KELAPA GADING JAKARTA". -#}
+    {%- set cabang = (doc.branch or employee_doc.branch or "") | replace("OTOXPERT ", "") | replace(" OPERATED BY AUTO2000", "") | replace(" BY AUTO2000", "") -%}
     <div class="ef"><div class="el">Employee</div><div class="ev">{{ doc.employee_name or doc.employee }}</div></div>
-    <div class="ef"><div class="el">Department</div><div class="ev">{{ doc.department or "&mdash;" }}</div></div>
     <div class="ef"><div class="el">Employee ID</div><div class="ev">{{ doc.employee }}</div></div>
+    <div class="ef"><div class="el">Branch</div><div class="ev">{{ cabang or "&mdash;" }}</div></div>
+    <div class="ef"><div class="el">Department</div><div class="ev">{{ doc.department or "&mdash;" }}</div></div>
     <div class="ef"><div class="el">Position</div><div class="ev">{{ doc.designation or "&mdash;" }}</div></div>
     <div class="ef">
       <div class="el">Bank Account</div>
