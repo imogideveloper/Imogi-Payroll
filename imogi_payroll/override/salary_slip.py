@@ -800,6 +800,24 @@ class CustomSalarySlip(SalarySlip):
                 title="Imogi Payroll BPJS Exempt Error"
             )
 
+    def _order_additional_salary_after_lembur(self):
+        """Taruh earning dari Additional Salary (mis. Kompensasi Habis Kontrak) tepat setelah
+        Gaji Pokok/Lembur, sebelum BPJS Employer, seperti urutan slip Odoo. HRMS bawaan
+        menambahkannya di baris paling bawah. Hanya urutan (idx), nominal tidak berubah."""
+        rows = list(self.get("earnings") or [])
+        tambahan = [r for r in rows if r.get("additional_salary")]
+        if not tambahan:
+            return
+        lain = [r for r in rows if not r.get("additional_salary")]
+        pos = 0
+        for i, r in enumerate(lain):
+            if r.salary_component in ("Gaji Pokok", "Gaji Pokok HO", "Lembur", "Lembur HO"):
+                pos = i + 1
+        urut = lain[:pos] + tambahan + lain[pos:]
+        for i, r in enumerate(urut, 1):
+            r.idx = i
+        self.earnings = urut
+
     # -------------------------
     # Hook validate & sync history
     # -------------------------
@@ -824,6 +842,7 @@ class CustomSalarySlip(SalarySlip):
 
             self.update_pph21_row(tax_amount)
             self._strip_bpjs_if_exempt()
+            self._order_additional_salary_after_lembur()
             logger.info(f"Validate: Updated PPh21 deduction row to {tax_amount}")
 
         except frappe.ValidationError:
