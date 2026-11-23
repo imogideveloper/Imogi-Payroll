@@ -155,7 +155,8 @@ def backfill_cabang_karyawan():
 		karyawan = frappe.get_all(
 			"Payroll Employee Detail", filters={"parent": name}, fields=["employee"], order_by="idx"
 		)
-		nilai = format_cabang_karyawan(karyawan)
+		# Draft yang belum "Get Employees" belum punya karyawan: pakai Branch yang dipilih di filter.
+		nilai = format_cabang_karyawan(karyawan) or frappe.db.get_value("Payroll Entry", name, "branch")
 		if nilai:
 			frappe.db.set_value("Payroll Entry", name, "cabang_karyawan", nilai, update_modified=False)
 	if kosong:
@@ -167,7 +168,8 @@ def sync_summary_on_validate(doc, method=None):
 	if doc.meta.has_field("departemen_karyawan"):
 		doc.departemen_karyawan = format_departemen_karyawan(doc.get("employees"))
 	if doc.meta.has_field("cabang_karyawan"):
-		doc.cabang_karyawan = format_cabang_karyawan(doc.get("employees"))
+		# Draft tanpa karyawan (belum "Get Employees") tetap menampilkan Branch yang dipilih di list.
+		doc.cabang_karyawan = format_cabang_karyawan(doc.get("employees")) or (doc.get("branch") or "")
 
 	if not doc.get("name") or doc.get("__islocal"):
 		doc.periode = format_periode_label(doc.get("start_date"), doc.get("end_date"))
