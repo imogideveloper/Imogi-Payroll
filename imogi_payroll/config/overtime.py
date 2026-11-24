@@ -55,7 +55,10 @@ def weighted_hours(hours: float, day_type: str) -> float:
 
 
 def get_base_for_date(employee, date) -> float:
-	"""Gaji Pokok (variabel `base` formula slip) dari SSA Submit yang berlaku di tanggal itu."""
+	"""Gaji Pokok (variabel `base` formula slip) dari SSA Submit yang berlaku di tanggal itu.
+
+	Bila belum ada SSA yang mulai sebelum tanggal itu (mis. SSA kontrak baru mulai di tengah
+	periode), pakai SSA terdekat sesudahnya, karena slip periode itu juga memakai SSA tersebut."""
 	if not employee or not date:
 		return 0.0
 	ssa = frappe.db.get_value(
@@ -63,6 +66,11 @@ def get_base_for_date(employee, date) -> float:
 		{"employee": employee, "docstatus": 1, "from_date": ["<=", date]},
 		"name",
 		order_by="from_date desc, creation desc",
+	) or frappe.db.get_value(
+		"Salary Structure Assignment",
+		{"employee": employee, "docstatus": 1, "from_date": [">", date]},
+		"name",
+		order_by="from_date asc, creation desc",
 	)
 	if not ssa:
 		return 0.0
