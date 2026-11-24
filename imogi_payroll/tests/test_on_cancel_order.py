@@ -35,8 +35,8 @@ def test_on_cancel_respects_tax_type_and_dates():
     sys.modules["frappe.utils"] = frappe.utils
     sys.modules["frappe.model.document"] = frappe.model.document
 
-    from imogi_payroll.imogi_payroll.doctype.imogi_payroll_annual_history.imogi_payroll_annual_history import (
-        ImogiPayrollAnnualHistory,
+    from imogi_payroll.imogi_payroll.doctype.payroll_annual_history.payroll_annual_history import (
+        PayrollAnnualHistory,
     )
 
     # Prepare dummy salary slips
@@ -78,7 +78,7 @@ def test_on_cancel_respects_tax_type_and_dates():
         def __init__(self, name):
             self.salary_slip = name
 
-    history = ImogiPayrollAnnualHistory()
+    history = PayrollAnnualHistory()
     history.name = "APH-1"
     history.monthly_details = [
         Detail("SS-OCT"),

@@ -1,4 +1,4 @@
-"""Izin akses Imogi Payroll Overtime untuk atasan penyetuju.
+"""Izin akses Overtime untuk atasan penyetuju.
 
 Hook has_permission Frappe hanya boleh menolak: nilai kosong (None) dianggap menolak, jadi
 fungsi ini harus mengembalikan True untuk mengizinkan.
@@ -22,7 +22,7 @@ def get_permission_query_conditions(user=None):
 	user = user or frappe.session.user
 	if _is_hr(user):
 		return ""
-	return f"`tabImogi Payroll Overtime`.`overtime_approver` = {frappe.db.escape(user)}"
+	return f"`tabOvertime`.`overtime_approver` = {frappe.db.escape(user)}"
 
 
 def has_permission(doc, ptype=None, user=None, **kwargs):

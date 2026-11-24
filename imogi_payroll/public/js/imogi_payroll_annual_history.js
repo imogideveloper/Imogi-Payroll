@@ -16,7 +16,7 @@ const APH_MONTH_NAMES = [
 	"Desember",
 ];
 
-frappe.ui.form.on("Imogi Payroll Annual History", {
+frappe.ui.form.on("Payroll Annual History", {
 	refresh(frm) {
 		enable_monthly_detail_editing(frm);
 		calculate_totals(frm);
@@ -35,7 +35,7 @@ frappe.ui.form.on("Imogi Payroll Annual History", {
 				__(
 					"Urutan pembatalan:<br>" +
 						"1. Batalkan semua Salary Slip terkait.<br>" +
-						"2. Batalkan dokumen Imogi Payroll Annual History ini.<br><br>" +
+						"2. Batalkan dokumen Payroll Annual History ini.<br><br>" +
 						"Lanjutkan pembatalan?"
 				),
 				() => resolve(),
@@ -242,7 +242,7 @@ function save_recalculated_totals(frm, opts = {}) {
 	const quiet = opts.quiet;
 	frappe.call({
 		method:
-			"imogi_payroll.imogi_payroll.doctype.imogi_payroll_annual_history.imogi_payroll_annual_history.recalculate_and_save",
+			"imogi_payroll.imogi_payroll.doctype.payroll_annual_history.payroll_annual_history.recalculate_and_save",
 		args: { name: frm.doc.name },
 		freeze: !quiet,
 		freeze_message: quiet ? undefined : __("Menyimpan perhitungan ulang..."),

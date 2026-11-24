@@ -6,7 +6,7 @@ from frappe.utils import flt, getdate, time_diff_in_hours
 from imogi_payroll.config.overtime import estimate_overtime_amount, weighted_hours
 
 
-class ImogiPayrollOvertime(Document):
+class Overtime(Document):
 	"""Input lembur harian (OT1 dan OT2 per hari, seperti di Odoo)."""
 
 	def validate(self):
@@ -49,7 +49,7 @@ class ImogiPayrollOvertime(Document):
 
 	def _check_duplicate(self):
 		exists = frappe.db.exists(
-			"Imogi Payroll Overtime",
+			"Overtime",
 			{"employee": self.employee, "overtime_date": self.overtime_date, "docstatus": ["<", 2], "name": ["!=", self.name or ""]},
 		)
 		if exists:
@@ -66,5 +66,5 @@ class ImogiPayrollOvertime(Document):
 					return "Offday (6)" if weekly else "Public Holiday (6)"
 		except Exception:
 			# Tanpa Holiday List / error lain: jatuh ke Workday, tapi jangan diam-diam.
-			frappe.log_error(frappe.get_traceback(), "Imogi Payroll Overtime: deteksi jenis hari gagal")
+			frappe.log_error(frappe.get_traceback(), "Overtime: deteksi jenis hari gagal")
 		return "Workday"

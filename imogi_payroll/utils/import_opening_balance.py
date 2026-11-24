@@ -1,4 +1,4 @@
-"""Impor saldo awal pajak (bruto, pengurang netto, PPh 21 per bulan) ke Imogi Payroll Annual History.
+"""Impor saldo awal pajak (bruto, pengurang netto, PPh 21 per bulan) ke Payroll Annual History.
 
 Dipakai saat pindah dari sistem lain (Odoo): slip bulan-bulan sebelum go-live tidak ada di
 ERPNext, padahal perhitungan PPh 21 Desember butuh total bruto dan PPh Januari s/d bulan
@@ -32,7 +32,7 @@ BIAYA_JABATAN_BULANAN_MAX = 500_000.0
 
 def _months_with_slip(employee: str, fiscal_year: str) -> set:
 	name = frappe.db.get_value(
-		"Imogi Payroll Annual History", {"employee": employee, "fiscal_year": fiscal_year}, "name"
+		"Payroll Annual History", {"employee": employee, "fiscal_year": fiscal_year}, "name"
 	)
 	if not name:
 		return set()

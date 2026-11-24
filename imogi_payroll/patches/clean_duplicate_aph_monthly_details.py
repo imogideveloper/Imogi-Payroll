@@ -1,4 +1,4 @@
-"""Hapus baris Monthly Detail duplikat / slip tidak ada di Imogi Payroll Annual History."""
+"""Hapus baris Monthly Detail duplikat / slip tidak ada di Payroll Annual History."""
 
 import frappe
 from frappe.utils import cint, flt
@@ -10,7 +10,7 @@ from imogi_payroll.utils.sync_imogi_payroll_annual_history import (
 
 
 def execute():
-	for aph_name in frappe.get_all("Imogi Payroll Annual History", pluck="name"):
+	for aph_name in frappe.get_all("Payroll Annual History", pluck="name"):
 		child_names = frappe.get_all(
 			"Imogi Payroll Annual History Child",
 			filters={"parent": aph_name},
@@ -45,14 +45,14 @@ def execute():
 		for name in delete_names:
 			frappe.db.delete("Imogi Payroll Annual History Child", name)
 
-		doc = frappe.get_doc("Imogi Payroll Annual History", aph_name)
+		doc = frappe.get_doc("Payroll Annual History", aph_name)
 		try:
 			recalculate_summary_from_monthly_details(doc)
 		except Exception:
 			pass
 
 		frappe.db.set_value(
-			"Imogi Payroll Annual History",
+			"Payroll Annual History",
 			aph_name,
 			{
 				"bruto_total": doc.bruto_total,

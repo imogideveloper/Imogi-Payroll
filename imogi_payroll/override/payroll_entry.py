@@ -396,7 +396,7 @@ class CustomPayrollEntry(PayrollEntry):
                 logger.error(f"Error processing {tax_mode} Salary Slip '{name}': {str(e)}")
                 invalid_slips.append(name)
                 
-                # Clean up any partial Imogi Payroll Annual History entries
+                # Clean up any partial Payroll Annual History entries
                 try:
                     # Get employee and fiscal year info from the slip
                     employee_doc = self._get_employee_doc(slip_obj)
@@ -424,15 +424,15 @@ class CustomPayrollEntry(PayrollEntry):
                                     "payroll_entry": self.name
                                 }
                             )
-                            logger.info(f"Cleaned up Imogi Payroll Annual History for failed slip {name}")
+                            logger.info(f"Cleaned up Payroll Annual History for failed slip {name}")
                 except Exception as cleanup_error:
                     # Log error but continue processing other slips
                     cleanup_trace = traceback.format_exc()
                     frappe.log_error(
-                        message=f"Failed to clean up Imogi Payroll Annual History for {name}: {str(cleanup_error)}\n{cleanup_trace}",
+                        message=f"Failed to clean up Payroll Annual History for {name}: {str(cleanup_error)}\n{cleanup_trace}",
                         title="Imogi Payroll History Cleanup Error"
                     )
-                    logger.warning(f"Failed to clean up Imogi Payroll Annual History for {name}: {str(cleanup_error)}")
+                    logger.warning(f"Failed to clean up Payroll Annual History for {name}: {str(cleanup_error)}")
         
         # Remove invalid slips from the salary_slips child table
         child_table_modified = False

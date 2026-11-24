@@ -11,6 +11,7 @@
   "company",
   "column_break_1",
   "payroll_date",
+  "payroll_sub_period",
   "description",
   "items_section",
   "items",
@@ -57,6 +58,17 @@
    "reqd": 1
   },
   {
+   "fieldname": "payroll_sub_period",
+   "fieldtype": "Data",
+   "label": "Payroll Period",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "no_copy": 1,
+   "search_index": 1,
+   "description": "Bulan gaji (baris cutoff Payroll Period), terisi otomatis dari tanggal."
+  },
+  {
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Keterangan"
@@ -87,7 +99,7 @@
  "index_web_pages_for_search": 0,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-24 15:30:00.000000",
+ "modified": "2026-11-24 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Imogi Payroll",
  "name": "Additional Multiple Salary",

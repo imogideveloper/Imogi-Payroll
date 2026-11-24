@@ -80,7 +80,7 @@ def recalculate_aph_totals(doc) -> dict:
 	}
 
 
-class ImogiPayrollAnnualHistory(Document):
+class PayrollAnnualHistory(Document):
 	def validate(self):
 		sort_monthly_details(self)
 		recalculate_aph_totals(self)
@@ -174,7 +174,7 @@ class ImogiPayrollAnnualHistory(Document):
 @frappe.whitelist()
 def recalculate_and_save(name: str) -> dict:
 	"""Hitung ulang total & koreksi lalu simpan (submitted doc dengan allow_on_submit)."""
-	doc = frappe.get_doc("Imogi Payroll Annual History", name)
+	doc = frappe.get_doc("Payroll Annual History", name)
 	if not doc.has_permission("write"):
 		frappe.throw(frappe._("Not permitted"), frappe.PermissionError)
 

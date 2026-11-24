@@ -35,14 +35,14 @@ def _clean_orphan_monthly_rows():
 		if remove:
 			frappe.db.delete("Imogi Payroll Annual History Child", child.name)
 
-	for aph_name in frappe.get_all("Imogi Payroll Annual History", pluck="name"):
-		doc = frappe.get_doc("Imogi Payroll Annual History", aph_name)
+	for aph_name in frappe.get_all("Payroll Annual History", pluck="name"):
+		doc = frappe.get_doc("Payroll Annual History", aph_name)
 		try:
 			recalculate_summary_from_monthly_details(doc)
 		except Exception:
 			pass
 		frappe.db.set_value(
-			"Imogi Payroll Annual History",
+			"Payroll Annual History",
 			aph_name,
 			{
 				"bruto_total": doc.bruto_total,

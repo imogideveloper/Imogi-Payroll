@@ -9,6 +9,7 @@ imogi_payroll.patches.fix_aph_end_year_and_month_order
 imogi_payroll.patches.backfill_aph_salary_component_snapshot
 imogi_payroll.patches.set_default_salary_slip_print_format
 imogi_payroll.patches.rename_input_manual_ke_additional_multiple_salary
+imogi_payroll.patches.rename_overtime_dan_payroll_annual_history
 
 [post_model_sync]
 imogi_payroll.patches.convert_aph_bulan_to_month_names
@@ -25,3 +26,4 @@ imogi_payroll.patches.absensi_job_pengaman
 imogi_payroll.patches.lembur_pindah_ke_settings
 imogi_payroll.patches.overtime_estimasi_nilai
 imogi_payroll.patches.additional_multiple_salary_isi_type
+imogi_payroll.patches.isi_payroll_period_label

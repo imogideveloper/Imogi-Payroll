@@ -3,7 +3,7 @@
 import frappe
 from frappe.utils import getdate
 
-from imogi_payroll.imogi_payroll.doctype.imogi_payroll_annual_history.imogi_payroll_annual_history import (
+from imogi_payroll.imogi_payroll.doctype.payroll_annual_history.payroll_annual_history import (
 	recalculate_aph_totals,
 	sort_monthly_details,
 )
@@ -68,11 +68,11 @@ def _move_cross_month_slips_to_end_year() -> int:
 def _sort_existing_aph_months() -> int:
 	sorted_docs = 0
 	for row in frappe.get_all(
-		"Imogi Payroll Annual History",
+		"Payroll Annual History",
 		filters={"docstatus": ["!=", 2]},
 		fields=["name"],
 	):
-		doc = frappe.get_doc("Imogi Payroll Annual History", row.name)
+		doc = frappe.get_doc("Payroll Annual History", row.name)
 		before = [r.name for r in (doc.get("monthly_details") or [])]
 		sort_monthly_details(doc)
 		after = [r.name for r in (doc.get("monthly_details") or [])]

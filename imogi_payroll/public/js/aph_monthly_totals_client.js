@@ -1,4 +1,4 @@
-/* Client Script: baris Jumlah di Monthly Detail (Imogi Payroll Annual History) */
+/* Client Script: baris Jumlah di Monthly Detail (Payroll Annual History) */
 const APH_TOTAL_FIELDS = ["bruto", "pengurang_netto", "biaya_jabatan", "netto", "pph21"];
 
 function aph_monthly_scope(frm) {
@@ -169,7 +169,7 @@ function aph_schedule_total_row(frm) {
 	});
 }
 
-frappe.ui.form.on("Imogi Payroll Annual History", {
+frappe.ui.form.on("Payroll Annual History", {
 	refresh(frm) {
 		aph_schedule_total_row(frm);
 	},

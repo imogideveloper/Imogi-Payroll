@@ -1,4 +1,4 @@
-"""Helper bulan untuk Imogi Payroll Annual History (grid pakai nama bulan)."""
+"""Helper bulan untuk Payroll Annual History (grid pakai nama bulan)."""
 
 from __future__ import annotations
 

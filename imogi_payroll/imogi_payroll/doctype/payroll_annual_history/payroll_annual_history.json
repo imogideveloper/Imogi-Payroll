@@ -1,6 +1,6 @@
 {
   "doctype": "DocType",
-  "name": "Imogi Payroll Annual History",
+  "name": "Payroll Annual History",
   "module": "Imogi Payroll",
   "custom": 1,
   "istable": 0,
@@ -143,5 +143,5 @@
       "amend": 1
     }
   ],
-  "modified": "2024-01-02 00:00:00"
+  "modified": "2026-11-24 19:00:00"
 }

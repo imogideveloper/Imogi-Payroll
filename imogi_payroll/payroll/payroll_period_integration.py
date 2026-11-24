@@ -452,3 +452,59 @@ def get_payroll_month_label(end_date: str) -> str:
 		"Des",
 	)
 	return f"{months_id[end.month - 1]} {end.year}"
+
+
+# ---------------------------------------------------------------------------
+# Label "Payroll Period" (bulan gaji) untuk dokumen lain: Salary Slip, Additional Salary,
+# Additional Multiple Salary, Overtime. Dipakai untuk kolom list, filter, dan Group By per bulan gaji.
+# ---------------------------------------------------------------------------
+
+# DocType -> field tanggal yang menentukan bulan gaji
+PAYROLL_PERIOD_DATE_FIELD = {
+	"Salary Slip": "end_date",
+	"Additional Salary": "payroll_date",
+	"Additional Multiple Salary": "payroll_date",
+	"Overtime": "overtime_date",
+}
+
+
+def get_payroll_period_label(reference_date, company: str | None = None) -> str | None:
+	"""Label baris cutoff Payroll Period yang memuat tanggal itu, mis. "Okt 2026 (21 Sep 2026 – 20 Oct 2026)".
+
+	Dicari di semua Payroll Period (bukan hanya tahun yang sama), karena 21-31 Desember masuk bulan gaji
+	Januari tahun berikutnya. Tanpa Payroll Period yang cocok: None.
+	"""
+	if not reference_date:
+		return None
+	ref = getdate(reference_date)
+	cond = "and p.company = %(company)s" if company else ""
+	rows = frappe.db.sql(
+		f"""select d.period_label, d.start_date, d.end_date
+		from `tabPayroll Period Date` d join `tabPayroll Period` p on p.name = d.parent
+		where d.parenttype = 'Payroll Period' and %(ref)s between d.start_date and d.end_date {cond}
+		order by d.start_date desc limit 1""",
+		{"ref": ref, "company": company},
+		as_dict=True,
+	)
+	if not rows:
+		return None
+	r = rows[0]
+	return r.period_label or _format_sub_period_label(getdate(r.start_date), getdate(r.end_date))
+
+
+def _payroll_period_date(doc):
+	field = PAYROLL_PERIOD_DATE_FIELD.get(doc.doctype)
+	value = doc.get(field) if field else None
+	if not value and doc.doctype == "Additional Salary":
+		value = doc.get("from_date")  # Additional Salary berulang
+	return value
+
+
+def set_payroll_period_label(doc, method=None):
+	"""doc_events before_validate: isi field `payroll_sub_period` (label "Payroll Period") dari tanggal dokumen."""
+	if not doc.meta.has_field("payroll_sub_period"):
+		return
+	company = doc.get("company")
+	if not company and doc.get("employee"):
+		company = frappe.db.get_value("Employee", doc.employee, "company")
+	doc.payroll_sub_period = get_payroll_period_label(_payroll_period_date(doc), company)

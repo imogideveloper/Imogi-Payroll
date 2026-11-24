@@ -1,6 +1,6 @@
 """Lembur dari jam (mengikuti Odoo): doctype input harian + komponen gaji "Lembur" otomatis.
 
-1. Reload doctype Imogi Payroll Overtime / Imogi Payroll Settings / Overtime Coefficient.
+1. Reload doctype Overtime / Imogi Payroll Settings / Overtime Coefficient.
 2. Isi tabel koefisien bawaan (nilai Odoo) dan pembagi 173 di tab Overtime bila belum ada.
 3. Buat/perbarui Salary Component "Lembur": formula get_overtime_amount(employee, start_date,
    end_date, base), tanpa prorata hari bayar (seperti Odoo).
@@ -17,7 +17,7 @@ STRUCTURE = "Indonesian Payroll Standard"
 
 
 def execute():
-	for dt in ("imogi_payroll_overtime_coefficient", "imogi_payroll_settings", "imogi_payroll_overtime"):
+	for dt in ("imogi_payroll_overtime_coefficient", "imogi_payroll_settings", "overtime"):
 		frappe.reload_doc("imogi_payroll", "doctype", dt)
 
 	# Pengaturan lembur sekarang di tab "Overtime" Imogi Payroll Settings
@@ -39,7 +39,7 @@ def execute():
 		"depends_on_payment_days": 0,
 		"is_tax_applicable": 1,
 		"round_to_the_nearest_integer": 1,
-		"description": "Lembur dari jam (Imogi Payroll Overtime): jam berbobot x Upah / 173.",
+		"description": "Lembur dari jam (Overtime): jam berbobot x Upah / 173.",
 	}
 	if frappe.db.exists("Salary Component", "Lembur"):
 		comp = frappe.get_doc("Salary Component", "Lembur")

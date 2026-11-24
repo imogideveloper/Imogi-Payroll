@@ -45,7 +45,7 @@ app_include_js = [
 
 # include js in doctype views
 doctype_js = {
-    "Imogi Payroll Annual History": "public/js/imogi_payroll_annual_history.js",
+    "Payroll Annual History": "public/js/imogi_payroll_annual_history.js",
     "Employee": "public/js/imogi_payroll_employee_form.js",
     "Imogi Payroll Settings": "public/js/imogi_payroll_form_layout.js",
     "Salary Slip": [
@@ -135,6 +135,7 @@ after_migrate = [
     "imogi_payroll.setup.salary_component_accounts.sync_salary_component_accounts",
     "imogi_payroll.payroll.payroll_entry_summary.backfill_departemen_karyawan",
     "imogi_payroll.payroll.payroll_entry_summary.backfill_cabang_karyawan",
+    "imogi_payroll.setup.payroll_sidebar.ensure_payroll_sidebar_items",
 ]
 
 # Desk Notifications
@@ -156,11 +157,11 @@ after_migrate = [
 # }
 
 permission_query_conditions = {
-    "Imogi Payroll Overtime": "imogi_payroll.override.overtime_permissions.get_permission_query_conditions",
+    "Overtime": "imogi_payroll.override.overtime_permissions.get_permission_query_conditions",
 }
 
 has_permission = {
-    "Imogi Payroll Overtime": "imogi_payroll.override.overtime_permissions.has_permission",
+    "Overtime": "imogi_payroll.override.overtime_permissions.has_permission",
 }
 
 # Fungsi yang bisa dipanggil dari template Jinja (Print Format), mis. terbilang slip gaji
@@ -244,6 +245,8 @@ doc_events = {
         "validate": "imogi_payroll.payroll.payroll_period_integration.validate_payroll_period"
     },
     "Salary Slip": {
+        # Isi field "Payroll Period" (bulan gaji) dari end_date.
+        "before_validate": "imogi_payroll.payroll.payroll_period_integration.set_payroll_period_label",
         "validate": "imogi_payroll.override.salary_slip.strip_bpjs_hook",
         # Other apps' "validate" doc_events (e.g. imogi_finance's
         # validate_pph21_exemption) run AFTER this one and call
@@ -278,6 +281,16 @@ doc_events = {
     },
     "Attendance": {
         "validate": "imogi_payroll.override.attendance.validate",
+    },
+    # Field "Payroll Period" (bulan gaji) dari tanggal dokumen, untuk kolom list / filter / Group By.
+    "Additional Salary": {
+        "before_validate": "imogi_payroll.payroll.payroll_period_integration.set_payroll_period_label",
+    },
+    "Additional Multiple Salary": {
+        "before_validate": "imogi_payroll.payroll.payroll_period_integration.set_payroll_period_label",
+    },
+    "Overtime": {
+        "before_validate": "imogi_payroll.payroll.payroll_period_integration.set_payroll_period_label",
     },
     "Employee Checkin": {
         "before_insert": "imogi_payroll.checkin_gate.force_server_time",
@@ -465,7 +478,9 @@ fixtures = [
                 "Payroll Period Date-period_label",
                 "Salary Component-sequence_no",
                 "Bulk Salary Structure Assignment-meal_allowance",
-                "Bulk Salary Structure Assignment-transport_allowance"
+                "Bulk Salary Structure Assignment-transport_allowance",
+                "Salary Slip-payroll_sub_period",
+                "Additional Salary-payroll_sub_period"
             ]]
         ]
     },

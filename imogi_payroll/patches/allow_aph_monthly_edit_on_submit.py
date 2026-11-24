@@ -1,4 +1,4 @@
-"""Izinkan edit/hapus baris Monthly Detail pada Imogi Payroll Annual History yang sudah submit."""
+"""Izinkan edit/hapus baris Monthly Detail pada Payroll Annual History yang sudah submit."""
 
 import frappe
 
@@ -8,12 +8,12 @@ def execute():
 	for fieldname, prop, value, ptype in (
 		("monthly_details", "allow_on_submit", "1", "Check"),
 	):
-		_make_or_update_property_setter("Imogi Payroll Annual History", fieldname, prop, value, ptype)
+		_make_or_update_property_setter("Payroll Annual History", fieldname, prop, value, ptype)
 
-	if frappe.db.exists("DocType", "Imogi Payroll Annual History"):
+	if frappe.db.exists("DocType", "Payroll Annual History"):
 		frappe.db.set_value(
 			"DocType",
-			"Imogi Payroll Annual History",
+			"Payroll Annual History",
 			"editable_grid",
 			1,
 			update_modified=False,
@@ -36,7 +36,7 @@ def execute():
 			"Imogi Payroll Annual History Child", fieldname, "allow_on_submit", "1", "Check"
 		)
 
-	frappe.clear_cache(doctype="Imogi Payroll Annual History")
+	frappe.clear_cache(doctype="Payroll Annual History")
 
 
 def _make_or_update_property_setter(doctype, fieldname, prop, value, ptype):

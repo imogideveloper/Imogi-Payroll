@@ -34,11 +34,11 @@ def execute():
 			summary=None,
 		)
 
-	for aph_name in frappe.get_all("Imogi Payroll Annual History", pluck="name"):
-		doc = frappe.get_doc("Imogi Payroll Annual History", aph_name)
+	for aph_name in frappe.get_all("Payroll Annual History", pluck="name"):
+		doc = frappe.get_doc("Payroll Annual History", aph_name)
 		recalculate_summary_from_monthly_details(doc)
 		frappe.db.set_value(
-			"Imogi Payroll Annual History",
+			"Payroll Annual History",
 			aph_name,
 			{
 				"bruto_total": doc.bruto_total,

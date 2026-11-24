@@ -14,11 +14,11 @@ def execute():
 	)
 	updated = 0
 	for row in frappe.get_all(
-		"Imogi Payroll Annual History",
+		"Payroll Annual History",
 		filters={"docstatus": ["!=", 2]},
 		fields=["name"],
 	):
-		doc = frappe.get_doc("Imogi Payroll Annual History", row.name)
+		doc = frappe.get_doc("Payroll Annual History", row.name)
 		changed = False
 		for detail in doc.get("monthly_details") or []:
 			if not detail.get("salary_slip") or not frappe.db.exists("Salary Slip", detail.salary_slip):

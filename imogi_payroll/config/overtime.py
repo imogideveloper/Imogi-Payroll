@@ -96,7 +96,7 @@ def get_overtime_amount(employee=None, start_date=None, end_date=None, base=0) -
 		return 0.0
 	rows = frappe.db.sql(
 		"""select ot1_from, ot1_to, ot2_from, ot2_to, day_type, weighted_hours
-		from `tabImogi Payroll Overtime`
+		from `tabOvertime`
 		where employee = %s and docstatus = 1 and overtime_date between %s and %s""",
 		(employee, start_date, end_date),
 		as_dict=True,

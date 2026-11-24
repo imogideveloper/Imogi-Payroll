@@ -4,7 +4,7 @@ Custom Salary Slip override for Imogi Payroll.
 
 - TER (bulanan) & Progressive (Desember/annual correction).
 - Flow Desember (sesuai arahan):
-  * Jan–Nov diambil dari Imogi Payroll Annual History (APH).
+  * Jan–Nov diambil dari Payroll Annual History (APH).
   * Desember dihitung dari slip aktif (bruto, pengurang netto bulanan, biaya jabatan bulanan).
   * Tahunan = (Jan–Nov APH) + (Desember dari slip).
   * PPh Desember (koreksi) = PPh tahunan − total PPh Jan–Nov (APH).
@@ -46,7 +46,7 @@ from imogi_payroll.config.pph21_ter_december import (
 )
 from imogi_payroll.override.salary_slip_cutoff_patch import apply_salary_slip_cutoff_patch
 
-# Sinkronisasi Imogi Payroll Annual History
+# Sinkronisasi Payroll Annual History
 from imogi_payroll.utils.sync_imogi_payroll_annual_history import (
     build_monthly_aph_row_from_salary_slip,
     get_aph_fiscal_year_from_salary_slip,
@@ -476,7 +476,7 @@ class CustomSalarySlip(SalarySlip):
     def _get_ytd_from_aph(self):
         """
         Kembalikan (ytd_bruto_jan_nov, ytd_netto_jan_nov, ytd_tax_paid_jan_nov)
-        yang diambil dari Imogi Payroll Annual History (monthly_details bulan < 12).
+        yang diambil dari Payroll Annual History (monthly_details bulan < 12).
         """
         ytd_bruto = 0.0
         ytd_netto = 0.0
@@ -494,13 +494,13 @@ class CustomSalarySlip(SalarySlip):
 
         try:
             rows = frappe.get_all(
-                "Imogi Payroll Annual History",
+                "Payroll Annual History",
                 filters={"employee": self.employee, "fiscal_year": fiscal_year},
                 fields=["name"],
                 limit=1,
             )
             if rows:
-                hist = frappe.get_doc("Imogi Payroll Annual History", rows[0].name)
+                hist = frappe.get_doc("Payroll Annual History", rows[0].name)
                 from imogi_payroll.utils.aph_month import normalize_bulan
 
                 for r in hist.get("monthly_details", []) or []:
@@ -519,7 +519,7 @@ class CustomSalarySlip(SalarySlip):
                         if bln == 11:
                             self._pph21_bulan_11 += flt(getattr(r, "pph21", 0))
         except Exception as e:
-            logger.warning(f"Error fetching YTD from Imogi Payroll Annual History: {e}")
+            logger.warning(f"Error fetching YTD from Payroll Annual History: {e}")
 
         # Total pengurang netto (JHT+JP karyawan) Jan–Nov, dipakai metode "Kumulatif Aktual"
         self._ytd_pengurang_jan_nov = ytd_pengurang
@@ -860,7 +860,7 @@ class CustomSalarySlip(SalarySlip):
             raise frappe.ValidationError(f"Error calculating PPh21: {e}")
 
     # -------------------------
-    # Imogi Payroll Annual History sync
+    # Payroll Annual History sync
     # -------------------------
     def sync_to_imogi_payroll_annual_history(self, result, mode="monthly"):
         # Catatan: Bila Anda TIDAK ingin menulis APH sama sekali,
@@ -936,10 +936,10 @@ class CustomSalarySlip(SalarySlip):
             raise
         except Exception as e:
             frappe.log_error(
-                message=f"Failed to sync Imogi Payroll Annual History for {getattr(self, 'name', 'unknown')}: {e}\n{traceback.format_exc()}",
-                title="Imogi Payroll Annual History Sync Error",
+                message=f"Failed to sync Payroll Annual History for {getattr(self, 'name', 'unknown')}: {e}\n{traceback.format_exc()}",
+                title="Payroll Annual History Sync Error",
             )
-            logger.warning(f"Imogi Payroll Annual History sync failed for {self.name}: {e}")
+            logger.warning(f"Payroll Annual History sync failed for {self.name}: {e}")
 
     def on_submit(self):
         try:
@@ -957,27 +957,27 @@ class CustomSalarySlip(SalarySlip):
         mode = "december" if tax_type == "DECEMBER" else "monthly"
         self.sync_to_imogi_payroll_annual_history(info, mode=mode)
         if getattr(self, "_annual_history_synced", False):
-            frappe.logger().info(f"[SYNC] Salary Slip {self.name} synced to Imogi Payroll Annual History")
+            frappe.logger().info(f"[SYNC] Salary Slip {self.name} synced to Payroll Annual History")
 
 
     def _restore_aph_if_cancelled(self):
-        """Auto-restore Imogi Payroll Annual History jika ikut ter-cancel."""
+        """Auto-restore Payroll Annual History jika ikut ter-cancel."""
         try:
             fiscal_year = get_aph_fiscal_year_from_salary_slip(self)
             if not fiscal_year or not getattr(self, "employee", None):
                 return
             aph_name = frappe.db.get_value(
-                "Imogi Payroll Annual History",
+                "Payroll Annual History",
                 {"employee": self.employee, "fiscal_year": fiscal_year},
                 "name",
             )
-            if frappe.db.exists("Imogi Payroll Annual History", aph_name):
-                docstatus = frappe.db.get_value("Imogi Payroll Annual History", aph_name, "docstatus")
+            if frappe.db.exists("Payroll Annual History", aph_name):
+                docstatus = frappe.db.get_value("Payroll Annual History", aph_name, "docstatus")
                 if docstatus == 2:  # Cancelled
-                    frappe.db.set_value("Imogi Payroll Annual History", aph_name, "docstatus", 1)
+                    frappe.db.set_value("Payroll Annual History", aph_name, "docstatus", 1)
                     frappe.db.commit()
                     frappe.logger("imogi_payroll").info(
-                        f"Auto-restored Imogi Payroll Annual History {aph_name} from Cancelled to Submitted"
+                        f"Auto-restored Payroll Annual History {aph_name} from Cancelled to Submitted"
                     )
         except Exception as e:
             frappe.log_error(
@@ -991,8 +991,8 @@ class CustomSalarySlip(SalarySlip):
         # Prevent APH from being cancelled when salary slip is cancelled
         if not hasattr(self, 'ignore_linked_doctypes'):
             self.ignore_linked_doctypes = []
-        if 'Imogi Payroll Annual History' not in self.ignore_linked_doctypes:
-            self.ignore_linked_doctypes.append('Imogi Payroll Annual History')
+        if 'Payroll Annual History' not in self.ignore_linked_doctypes:
+            self.ignore_linked_doctypes.append('Payroll Annual History')
         # Auto-restore APH if it got cancelled
         self._restore_aph_if_cancelled()
         try:
@@ -1012,15 +1012,15 @@ class CustomSalarySlip(SalarySlip):
                 summary=None,
                 cancelled_salary_slip=self.name,
             )
-            frappe.logger().info(f"[SYNC] Salary Slip {self.name} removed from Imogi Payroll Annual History")
+            frappe.logger().info(f"[SYNC] Salary Slip {self.name} removed from Payroll Annual History")
         except frappe.ValidationError:
             raise
         except Exception as e:
             frappe.log_error(
-                message=f"Failed to remove from Imogi Payroll Annual History on cancel for {getattr(self, 'name', 'unknown')}: {e}\n{traceback.format_exc()}",
-                title="Imogi Payroll Annual History Cancel Error",
+                message=f"Failed to remove from Payroll Annual History on cancel for {getattr(self, 'name', 'unknown')}: {e}\n{traceback.format_exc()}",
+                title="Payroll Annual History Cancel Error",
             )
-            logger.warning(f"Failed to update Imogi Payroll Annual History when cancelling {self.name}: {e}")
+            logger.warning(f"Failed to update Payroll Annual History when cancelling {self.name}: {e}")
 
 
 

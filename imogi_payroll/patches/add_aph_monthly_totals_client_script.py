@@ -27,7 +27,7 @@ def execute():
 			{
 				"doctype": "Client Script",
 				"name": SCRIPT_NAME,
-				"dt": "Imogi Payroll Annual History",
+				"dt": "Payroll Annual History",
 				"view": "Form",
 				"enabled": 1,
 				"module": "Imogi Payroll",

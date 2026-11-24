@@ -83,7 +83,7 @@ def get_or_create_imogi_payroll_annual_history(
     create_if_missing: bool = True
 ) -> Optional[Any]:
     """
-    Get or create Imogi Payroll Annual History document.
+    Get or create Payroll Annual History document.
     
     Args:
         employee_id: Employee ID
@@ -91,21 +91,21 @@ def get_or_create_imogi_payroll_annual_history(
         create_if_missing: Whether to create document if not found
         
     Returns:
-        Imogi Payroll Annual History document or None
+        Payroll Annual History document or None
     """
     doc_name = frappe.db.get_value(
-        "Imogi Payroll Annual History",
+        "Payroll Annual History",
         {"employee": employee_id, "fiscal_year": fiscal_year},
         "name"
     )
     
     if doc_name:
-        return frappe.get_doc("Imogi Payroll Annual History", doc_name)
+        return frappe.get_doc("Payroll Annual History", doc_name)
 
     if not create_if_missing:
         return None
 
-    history = frappe.new_doc("Imogi Payroll Annual History")
+    history = frappe.new_doc("Payroll Annual History")
     history.employee = employee_id
     history.fiscal_year = fiscal_year
 
@@ -143,10 +143,10 @@ def get_or_create_imogi_payroll_annual_history(
 
 def update_annual_payroll_summary(history: Any, summary: Dict[str, Any]) -> None:
     """
-    Update Imogi Payroll Annual History summary fields.
+    Update Payroll Annual History summary fields.
     
     Args:
-        history: Imogi Payroll Annual History document
+        history: Payroll Annual History document
         summary: Dictionary of summary values
     """
     if not summary:
@@ -180,7 +180,7 @@ def is_salary_slip_valid(
     in_transaction_context: bool = False
 ) -> Tuple[bool, Optional[str]]:
     """
-    Check if a salary slip is valid for inclusion in Imogi Payroll Annual History.
+    Check if a salary slip is valid for inclusion in Payroll Annual History.
     
     Args:
         salary_slip_name: Name of the salary slip
@@ -265,10 +265,10 @@ def _remove_duplicate_monthly_rows(history: Any, salary_slip: str, keep: Any = N
 
 def upsert_monthly_detail(history: Any, month_data: Dict[str, Any]) -> bool:
     """
-    Update or insert monthly detail in Imogi Payroll Annual History.
+    Update or insert monthly detail in Payroll Annual History.
     
     Args:
-        history: Imogi Payroll Annual History document
+        history: Payroll Annual History document
         month_data: Monthly data to insert or update
         
     Returns:
@@ -292,7 +292,7 @@ def upsert_monthly_detail(history: Any, month_data: Dict[str, Any]) -> bool:
         if not is_valid:
             logger = frappe.logger("imogi_payroll")
             logger.warning(
-                "Skipping invalid Salary Slip in Imogi Payroll Annual History sync: "
+                "Skipping invalid Salary Slip in Payroll Annual History sync: "
                 f"{salary_slip}. Reason: {reason}"
             )
             return False
@@ -388,10 +388,10 @@ def remove_monthly_detail_by_salary_slip(
     error_state: Optional[Dict[str, Any]] = None
 ) -> int:
     """
-    Remove monthly detail entries by salary slip from Imogi Payroll Annual History.
+    Remove monthly detail entries by salary slip from Payroll Annual History.
     
     Args:
-        history: Imogi Payroll Annual History document
+        history: Payroll Annual History document
         salary_slip: Salary slip to remove
         error_state: Optional error state to set
         
@@ -438,7 +438,7 @@ def sync_imogi_payroll_annual_history(
     error_state: Optional[Dict[str, Any]] = None,
 ) -> Optional[str]:
     """
-    Synchronize Imogi Payroll Annual History for an employee.
+    Synchronize Payroll Annual History for an employee.
     
     Args:
         employee: Employee ID, dict or object
@@ -552,7 +552,7 @@ def sync_imogi_payroll_annual_history_legacy(
     error_state: Optional[Dict[str, Any]] = None,
 ) -> Optional[str]:
     """
-    Legacy function to synchronize Imogi Payroll Annual History.
+    Legacy function to synchronize Payroll Annual History.
     
     Args:
         employee: Employee ID, dict or object
@@ -616,7 +616,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
     error_state: Optional[Dict[str, Any]] = None,
 ) -> Optional[str]:
     """
-    Synchronize Imogi Payroll Annual History for a specific month.
+    Synchronize Payroll Annual History for a specific month.
     
     Args:
         employee: Employee ID, dict or object
@@ -670,7 +670,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
                 is_valid, reason = is_salary_slip_valid(salary_slip, in_transaction_context=False)
                 if not is_valid:
                     frappe.logger("imogi_payroll").warning(
-                        "Imogi Payroll Annual History: Skipping invalid slip: %s. Reason: %s",
+                        "Payroll Annual History: Skipping invalid slip: %s. Reason: %s",
                         salary_slip, reason
                     )
                     continue
@@ -678,7 +678,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
             
         if not valid_results:
             frappe.logger("imogi_payroll").info(
-                "No valid salary slips found for Imogi Payroll Annual History sync"
+                "No valid salary slips found for Payroll Annual History sync"
             )
             return None
         monthly_results = valid_results
@@ -709,7 +709,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
 
         if not history:
             frappe.logger("imogi_payroll").info(
-                "No Imogi Payroll Annual History found for employee %s, "
+                "No Payroll Annual History found for employee %s, "
                 "fiscal year %s and not creating new record",
                 employee_id, fiscal_year
             )
@@ -763,7 +763,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
         # Skip save if no changes
         if rows_updated == 0 and rows_deleted == 0 and error_state is None and not summary:
             frappe.logger("imogi_payroll").info(
-                "No rows updated, deleted, or summary provided in Imogi Payroll Annual History for %s, skipping save",
+                "No rows updated, deleted, or summary provided in Payroll Annual History for %s, skipping save",
                 employee_id
             )
             return None
@@ -772,7 +772,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
         if is_new_doc:
             # Get DocType metadata to check field defaults
             try:
-                doctype_meta = frappe.get_meta("Imogi Payroll Annual History")
+                doctype_meta = frappe.get_meta("Payroll Annual History")
                 for field in [
                     "bruto_total",
                     "netto_total",
@@ -822,7 +822,7 @@ def sync_imogi_payroll_annual_history_for_bulan(
 
         try:
             frappe.logger("imogi_payroll").debug(
-                "[%s] Saving Imogi Payroll Annual History '%s' for employee '%s', "
+                "[%s] Saving Payroll Annual History '%s' for employee '%s', "
                 "fiscal year %s, bulan %s with %d rows updated and %d rows deleted at %s",
                 frappe.session.user, history.name, employee_id, fiscal_year, bulan,
                 rows_updated, rows_deleted, frappe.utils.now()
@@ -840,18 +840,18 @@ def sync_imogi_payroll_annual_history_for_bulan(
                     history.flags.ignore_permissions = True
                     history.submit()
                     frappe.logger("imogi_payroll").info(
-                        "Auto-submitted Imogi Payroll Annual History '%s' for employee '%s', fiscal year %s",
+                        "Auto-submitted Payroll Annual History '%s' for employee '%s', fiscal year %s",
                         history.name, employee_id, fiscal_year
                     )
                 except Exception as submit_error:
                     # Log error but don't throw - we already saved the document successfully
                     error_trace = traceback.format_exc()
                     frappe.log_error(
-                        message=f"Failed to auto-submit Imogi Payroll Annual History '{history.name}': {str(submit_error)}\n{error_trace}",
-                        title="Imogi Payroll Annual History Auto-Submit Error"
+                        message=f"Failed to auto-submit Payroll Annual History '{history.name}': {str(submit_error)}\n{error_trace}",
+                        title="Payroll Annual History Auto-Submit Error"
                     )
                     frappe.logger("imogi_payroll").warning(
-                        "Failed to auto-submit Imogi Payroll Annual History '%s': %s",
+                        "Failed to auto-submit Payroll Annual History '%s': %s",
                         history.name, str(submit_error)
                     )
             
@@ -861,11 +861,11 @@ def sync_imogi_payroll_annual_history_for_bulan(
             frappe.db.rollback(save_point=savepoint_name)
             
             frappe.logger("imogi_payroll").warning(
-                "Link validation error when saving Imogi Payroll Annual History for %s. Error: %s",
+                "Link validation error when saving Payroll Annual History for %s. Error: %s",
                 employee_id, str(e)
             )
             frappe.throw(
-                f"Gagal menyimpan Imogi Payroll Annual History: Referensi link tidak valid. "
+                f"Gagal menyimpan Payroll Annual History: Referensi link tidak valid. "
                 f"Kemungkinan Salary Slip belum tersimpan.",
                 title="Link Validation Error"
             )
@@ -875,11 +875,11 @@ def sync_imogi_payroll_annual_history_for_bulan(
             
             error_trace = traceback.format_exc()
             frappe.log_error(
-                message=f"Failed to save Imogi Payroll Annual History: {str(e)}\n{error_trace}",
-                title="Imogi Payroll Annual History Save Error"
+                message=f"Failed to save Payroll Annual History: {str(e)}\n{error_trace}",
+                title="Payroll Annual History Save Error"
             )
             
-            error_message = f"Gagal menyimpan Imogi Payroll Annual History: {str(e)}"
+            error_message = f"Gagal menyimpan Payroll Annual History: {str(e)}"
             if "Could not find Row" in str(e) and "Salary Slip" in str(e):
                 error_message += "\nKemungkinan penyebab: Salary Slip belum disimpan ke database"
             frappe.throw(error_message)
@@ -890,15 +890,15 @@ def sync_imogi_payroll_annual_history_for_bulan(
         error_trace = traceback.format_exc()
         frappe.log_error(
             message=f"Error in sync_imogi_payroll_annual_history: {str(e)}\n{error_trace}",
-            title="Imogi Payroll Annual History Sync Error"
+            title="Payroll Annual History Sync Error"
         )
         # Re-raise exception after logging
-        frappe.throw(f"Gagal memproses Imogi Payroll Annual History: {str(e)}")
+        frappe.throw(f"Gagal memproses Payroll Annual History: {str(e)}")
 
 
 def get_aph_fiscal_year_from_salary_slip(doc) -> str:
 	"""
-	Tahun Imogi Payroll Annual History = tahun bulan gaji.
+	Tahun Payroll Annual History = tahun bulan gaji.
 	Pola cutoff 25–24: slip 25 Des 2025–24 Jan 2026 → fiscal year 2026 (end_date), bukan 2025.
 	"""
 	if getattr(doc, "end_date", None):
@@ -1096,12 +1096,12 @@ def recalculate_summary_from_monthly_details(history: Any) -> None:
     Recalculate summary fields based on monthly details.
     
     Args:
-        history: Imogi Payroll Annual History document
+        history: Payroll Annual History document
     """
     if not history or not hasattr(history, "monthly_details"):
         return
 
-    from imogi_payroll.imogi_payroll.doctype.imogi_payroll_annual_history.imogi_payroll_annual_history import (
+    from imogi_payroll.imogi_payroll.doctype.payroll_annual_history.payroll_annual_history import (
         recalculate_aph_totals,
     )
 
@@ -1132,7 +1132,7 @@ def normalize_month(bulan: Any) -> int:
 
 def sync_salary_slip_to_annual(doc: Any, method: Optional[str] = None) -> None:
     """
-    Synchronize Salary Slip to Imogi Payroll Annual History.
+    Synchronize Salary Slip to Payroll Annual History.
     
     Args:
         doc: Salary Slip document
@@ -1183,7 +1183,7 @@ def sync_salary_slip_to_annual(doc: Any, method: Optional[str] = None) -> None:
                     cancelled_salary_slip=doc.name
                 )
                 logger.info(
-                    "Removed cancelled Salary Slip %s from Imogi Payroll Annual History",
+                    "Removed cancelled Salary Slip %s from Payroll Annual History",
                     doc.name
                 )
             return
@@ -1258,7 +1258,7 @@ def sync_salary_slip_to_annual(doc: Any, method: Optional[str] = None) -> None:
                 "koreksi_pph21": pph21_info.get("koreksi_pph21", 0),
             }
 
-        # Sync to Imogi Payroll Annual History
+        # Sync to Payroll Annual History
         sync_imogi_payroll_annual_history(
             employee=doc.employee,
             fiscal_year=fiscal_year,
@@ -1267,7 +1267,7 @@ def sync_salary_slip_to_annual(doc: Any, method: Optional[str] = None) -> None:
         )
 
         logger.info(
-            "Successfully synced Salary Slip %s to Imogi Payroll Annual History",
+            "Successfully synced Salary Slip %s to Payroll Annual History",
             getattr(doc, "name", "unknown")
         )
 
@@ -1275,8 +1275,8 @@ def sync_salary_slip_to_annual(doc: Any, method: Optional[str] = None) -> None:
         error_trace = traceback.format_exc()
         # Gabungkan f-string menjadi satu pesan yang utuh
         frappe.log_error(
-            message=f"Failed to sync Salary Slip {getattr(doc, 'name', 'unknown')} to Imogi Payroll Annual History: {str(e)}\n{error_trace}",
-            title="Imogi Payroll Annual History Sync Error"
+            message=f"Failed to sync Salary Slip {getattr(doc, 'name', 'unknown')} to Payroll Annual History: {str(e)}\n{error_trace}",
+            title="Payroll Annual History Sync Error"
         )
         logger.error("Error in sync_salary_slip_to_annual: %s", str(e))
         # Re-raise the exception to ensure proper error handling
