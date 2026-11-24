@@ -70,9 +70,19 @@ doctype_js = {
     ],
 }
 doctype_list_js = {
-    "Payroll Entry": "public/js/imogi_payroll_entry_list.js",
+    # imogi_payroll_period_list.js (label pendek kolom Payroll Period) harus dimuat SETELAH list JS lain.
+    "Payroll Entry": [
+        "public/js/imogi_payroll_entry_list.js",
+        "public/js/imogi_payroll_period_list.js",
+    ],
     "Salary Structure Assignment": "public/js/imogi_payroll_ssa_list.js",
-    "Salary Slip": "public/js/imogi_payroll_salary_slip_list.js",
+    "Salary Slip": [
+        "public/js/imogi_payroll_salary_slip_list.js",
+        "public/js/imogi_payroll_period_list.js",
+    ],
+    "Additional Salary": "public/js/imogi_payroll_period_list.js",
+    "Additional Multiple Salary": "public/js/imogi_payroll_period_list.js",
+    "Overtime": "public/js/imogi_payroll_period_list.js",
 }
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -236,6 +246,9 @@ doc_events = {
         ),
     },
     "Payroll Entry": {
+        # Start/End Date disembunyikan dan tidak wajib (Property Setter): diisi dari Payroll Period sebelum
+        # validasi controller, supaya selalu ada saat HRMS memakainya.
+        "before_validate": "imogi_payroll.payroll.payroll_period_integration.fill_dates_from_sub_period",
         "validate": [
             "imogi_payroll.payroll.payroll_period_integration.validate_payroll_entry",
             "imogi_payroll.payroll.payroll_entry_summary.sync_summary_on_validate",
@@ -519,6 +532,8 @@ fixtures = [
                 "Payroll Entry-posting_date-in_list_view",
                 "Payroll Entry-posting_date-in_standard_filter",
                 "Payroll Entry-start_date-hidden",
+                "Payroll Entry-start_date-reqd",
+                "Payroll Entry-end_date-reqd",
                 "Payroll Entry-start_date-in_standard_filter",
                 "Payroll Entry-status-insert_after",
                 "Payroll Entry-total_employer_contribution-hidden",

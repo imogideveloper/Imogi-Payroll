@@ -508,3 +508,13 @@ def set_payroll_period_label(doc, method=None):
 	if not company and doc.get("employee"):
 		company = frappe.db.get_value("Employee", doc.employee, "company")
 	doc.payroll_sub_period = get_payroll_period_label(_payroll_period_date(doc), company)
+
+
+def fill_dates_from_sub_period(doc, method=None):
+	"""doc_events before_validate Payroll Entry: isi Start/End Date dari Payroll Period (bulan gaji) yang dipilih.
+
+	Kedua field itu disembunyikan dan tidak wajib (Property Setter) karena selalu ditentukan oleh Payroll Period;
+	diisi di sini, sebelum validate controller HRMS, supaya tidak pernah kosong. Validasi lengkap tetap di
+	validate_payroll_entry."""
+	if doc.get("payroll_period") and doc.get("payroll_sub_period"):
+		apply_sub_period_to_payroll_entry(doc)
