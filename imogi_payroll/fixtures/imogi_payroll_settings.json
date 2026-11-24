@@ -1,7 +1,9 @@
 [
  {
+  "attendance_backdate_role": null,
   "authorized_signatory": null,
   "authorized_signatory_designation": null,
+  "auto_mark_absent_enabled": 0,
   "auto_queue_salary_slip": 0,
   "biaya_jabatan_cap": 6000000.0,
   "biaya_jabatan_rate": 5.0,
@@ -22,10 +24,12 @@
   "bpjs_jkk_rate_tinggi": 1.27,
   "bpjs_jkm_cap": 9077600.0,
   "bpjs_jkm_rate": 0.3,
+  "bpjs_jp_max_age": 59,
   "bpjs_pension_employee_cap": 9077600.0,
   "bpjs_pension_employee_rate": 1.0,
   "bpjs_pension_employer_cap": 9077600.0,
   "bpjs_pension_employer_rate": 2.0,
+  "default_ump_region": "DKI JAKARTA",
   "director_designation": null,
   "director_name": null,
   "docstatus": 0,
@@ -883,7 +887,7 @@
     "ter_code": "C"
    }
   ],
-  "modified": "2026-11-24 09:00:00.000000",
+  "modified": "2026-11-24 17:00:00.000000",
   "name": "Imogi Payroll Settings",
   "operation_head_designation": null,
   "operation_head_name": null,
@@ -895,6 +899,7 @@
    {"day_type": "Public Holiday (6)", "jam_1": 2.0, "jam_2": 2.0, "jam_3": 2.0, "jam_4": 2.0, "jam_5": 2.0, "jam_6": 3.0, "jam_7": 4.0, "jam_8": 4.0, "jam_9": 4.0, "jam_10": 4.0, "jam_11": 4.0}
   ],
   "overtime_divisor": 173.0,
+  "pph21_december_method": "Odoo",
   "pph21_method": "TER",
   "salary_slip_use_component_cache": 1,
   "validate_tax_status_strict": 1

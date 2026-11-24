@@ -24,3 +24,4 @@ imogi_payroll.patches.input_manual_massal
 imogi_payroll.patches.absensi_job_pengaman
 imogi_payroll.patches.lembur_pindah_ke_settings
 imogi_payroll.patches.overtime_estimasi_nilai
+imogi_payroll.patches.additional_multiple_salary_isi_type

@@ -18,6 +18,16 @@ class AdditionalMultipleSalary(Document):
 			frappe.throw(_("Isi minimal satu karyawan."))
 		if frappe.db.get_value("Salary Component", self.salary_component, "statistical_component"):
 			frappe.throw(_("Komponen statistik tidak bisa dipakai di input manual."))
+		# Type (Earning / Deduction) boleh dikosongkan saat input: diisi dari tipe komponen.
+		component_type = frappe.db.get_value("Salary Component", self.salary_component, "type")
+		if not self.get("type"):
+			self.type = component_type
+		elif component_type and self.type != component_type:
+			frappe.throw(
+				_("Komponen {0} bertipe {1}, tidak sesuai dengan Type {2}.").format(
+					frappe.bold(self.salary_component), component_type, self.type
+				)
+			)
 		seen = set()
 		for row in self.items:
 			if row.employee in seen:

@@ -32,9 +32,9 @@
    "fieldname": "pph21_december_method",
    "fieldtype": "Select",
    "label": "PPh 21 December Method",
-   "options": "Annualized December\nKumulatif Aktual",
+   "options": "Annualized December\nKumulatif Aktual\nOdoo",
    "default": "Annualized December",
-   "description": "Annualized December: penghasilan setahun = slip Desember x 12 (perilaku lama). Kumulatif Aktual: penghasilan setahun = total Jan-Nov dari Annual History (termasuk saldo awal) + slip Desember."
+   "description": "Annualized December: penghasilan setahun = slip Desember x 12 (perilaku lama). Kumulatif Aktual: penghasilan setahun = total Jan-Nov dari Annual History (termasuk saldo awal) + slip Desember. Odoo: sama seperti salary rule Odoo (tanpa pengurang JHT/JP karyawan, PKP tidak dibulatkan, dikurangi PPh TER bulan November saja; koreksi lain lewat komponen PPH21 Jan - Des)."
   },
   {
    "fieldname": "validate_tax_status_strict",
@@ -441,5 +441,5 @@
    "share": 1
   }
  ],
- "modified": "2026-11-24 10:00:00"
+ "modified": "2026-11-24 17:00:00"
 }

@@ -202,6 +202,8 @@ def calculate_pph21_december(
     # Metode (Imogi Payroll Settings.pph21_december_method) dan pengurang JHT+JP Jan–Nov:
     method: str = "Annualized December",
     ytd_pengurang_jan_nov: float = 0.0,
+    # Metode "Odoo": PPh 21 TER bulan sebelumnya saja (November), seperti PPH21_TER_ALL di Odoo.
+    pph21_bulan_sebelumnya: float = 0.0,
 ) -> Dict[str, Any]:
 
     if not employee:
@@ -250,16 +252,35 @@ def calculate_pph21_december(
         jp_jht_employee_annual = flt(ytd_pengurang_jan_nov) + jp_jht_employee_month
         netto_annual = bruto_annual - bj_annual - jp_jht_employee_annual
 
+    if method == "Odoo":
+        # Meniru salary rule Odoo PPH21ALL (masa pajak 12): bruto setahun (Jan-Nov dari APH termasuk
+        # saldo awal + Desember) - biaya jabatan - PTKP, TANPA pengurang iuran JHT/JP karyawan.
+        bruto_annual = flt(ytd_bruto_jan_nov) + bruto_des
+        bj_annual = min(
+            bruto_annual * flt(config.get_value("biaya_jabatan_rate") or 5.0) / 100.0,
+            flt(config.get_value("biaya_jabatan_cap") or 6_000_000.0),
+        )
+        jp_jht_employee_annual = 0.0
+        netto_annual = bruto_annual - bj_annual
+
     # PTKP, PKP, PPh
     try:
         ptkp_annual = get_ptkp_amount(employee)
     except ValidationError:
         ptkp_annual = 0.0
 
-    pkp_annual = calculate_pkp_annual(netto_annual, ptkp_annual)
-    pph21_annual = round_rupiah(calculate_pph21_progressive(pkp_annual))
-
-    koreksi_pph21 = pph21_annual - flt(ytd_tax_paid_jan_nov)
+    if method == "Odoo":
+        # Odoo: PKP tidak dibulatkan ke ribuan; PPh setahun dikurangi PPh TER bulan sebelumnya saja
+        # (PPH21_TER_ALL), lalu dibulatkan. Koreksi TER bulan-bulan lain diinput manual lewat
+        # komponen "PPH21 Jan - Des" (kategori Odoo 203).
+        pkp_annual = max(flt(netto_annual) - flt(ptkp_annual), 0.0)
+        pph21_annual_raw = calculate_pph21_progressive(pkp_annual)
+        pph21_annual = round_rupiah(pph21_annual_raw)
+        koreksi_pph21 = round_rupiah(pph21_annual_raw - flt(pph21_bulan_sebelumnya))
+    else:
+        pkp_annual = calculate_pkp_annual(netto_annual, ptkp_annual)
+        pph21_annual = round_rupiah(calculate_pph21_progressive(pkp_annual))
+        koreksi_pph21 = pph21_annual - flt(ytd_tax_paid_jan_nov)
     pph21_bulan_des = koreksi_pph21
 
     rates = "/".join([f"{rate}%" for _, rate in get_tax_slabs()])
@@ -272,6 +293,8 @@ def calculate_pph21_december(
         "bruto_jan_nov": flt(ytd_bruto_jan_nov),
         "netto_jan_nov": flt(ytd_netto_jan_nov),
         "pph21_paid_jan_nov": flt(ytd_tax_paid_jan_nov),
+        "pph21_bulan_sebelumnya": flt(pph21_bulan_sebelumnya),
+        "metode_desember": method,
 
         # Desember (display)
         "bruto_desember": bruto_des,
