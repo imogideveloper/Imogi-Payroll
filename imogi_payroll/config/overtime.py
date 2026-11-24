@@ -54,6 +54,30 @@ def weighted_hours(hours: float, day_type: str) -> float:
 	return total
 
 
+def get_base_for_date(employee, date) -> float:
+	"""Gaji Pokok (variabel `base` formula slip) dari SSA Submit yang berlaku di tanggal itu."""
+	if not employee or not date:
+		return 0.0
+	ssa = frappe.db.get_value(
+		"Salary Structure Assignment",
+		{"employee": employee, "docstatus": 1, "from_date": ["<=", date]},
+		"name",
+		order_by="from_date desc, creation desc",
+	)
+	if not ssa:
+		return 0.0
+	from imogi_payroll.payroll.salary_structure_assignment import get_assignment_formula_context
+
+	return flt(get_assignment_formula_context(ssa).get("base"))
+
+
+def estimate_overtime_amount(employee, date, weighted) -> float:
+	"""Estimasi nilai lembur satu hari = jam berbobot x Gaji Pokok / pembagi (seperti
+	"Estimasi Nilai OT" di Odoo). Hanya informasi; nilai di slip tetap dari get_overtime_amount."""
+	base = get_base_for_date(employee, date)
+	return flt(flt(weighted) * base / get_divisor(), 2) if base else 0.0
+
+
 def get_overtime_amount(employee=None, start_date=None, end_date=None, base=0) -> float:
 	"""Nilai lembur satu periode slip = jam berbobot (lembur yang sudah Submit) x base / pembagi.
 

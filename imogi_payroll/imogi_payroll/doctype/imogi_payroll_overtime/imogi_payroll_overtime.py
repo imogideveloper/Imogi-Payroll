@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, getdate, time_diff_in_hours
 
-from imogi_payroll.config.overtime import weighted_hours
+from imogi_payroll.config.overtime import estimate_overtime_amount, weighted_hours
 
 
 class ImogiPayrollOvertime(Document):
@@ -17,6 +17,10 @@ class ImogiPayrollOvertime(Document):
 		if not self.day_type:
 			self.day_type = self._detect_day_type()
 		self.weighted_hours = round(weighted_hours(self.total_hours, self.day_type), 4)
+		# Estimasi Nilai Lembur (seperti "Estimasi Nilai OT" di Odoo), pakai jam berbobot penuh.
+		self.estimated_amount = estimate_overtime_amount(
+			self.employee, self.overtime_date, weighted_hours(sum(h for _s, _e, h in sessions), self.day_type)
+		)
 
 	def _set_approver(self):
 		"""Atasan penyetuju = akun User dari Employee.reports_to. Hanya diisi saat dokumen belum

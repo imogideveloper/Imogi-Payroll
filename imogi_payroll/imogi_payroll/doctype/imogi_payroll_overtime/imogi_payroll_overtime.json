@@ -109,6 +109,14 @@
       "in_list_view": 1
     },
     {
+      "fieldname": "estimated_amount",
+      "fieldtype": "Currency",
+      "label": "Estimasi Nilai Lembur",
+      "read_only": 1,
+      "no_copy": 1,
+      "description": "Jam berbobot x Gaji Pokok (SSA yang berlaku di tanggal lembur) / pembagi upah per jam."
+    },
+    {
       "fieldname": "column_break_3",
       "fieldtype": "Column Break"
     },
@@ -169,5 +177,5 @@
   ],
   "sort_field": "modified",
   "sort_order": "DESC",
-  "modified": "2026-11-13 00:00:00"
+  "modified": "2026-11-24 12:00:00"
 }
