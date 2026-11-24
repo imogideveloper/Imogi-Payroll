@@ -143,7 +143,7 @@ def validate_payroll_entry(doc, method=None):
 	if doc.get("payroll_period"):
 		apply_sub_period_to_payroll_entry(doc)
 		if not doc.get("payroll_sub_period"):
-			frappe.throw(_("Pilih Periode Gaji (Bulan) dari Payroll Period."))
+			frappe.throw(_("Pilih Payroll Period (bulan gaji)."))
 		if doc.get("end_date") and not doc.get("posting_date"):
 			doc.posting_date = doc.end_date
 	validate_active_assignment_contracts(doc)

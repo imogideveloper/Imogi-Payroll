@@ -249,7 +249,7 @@ function set_payroll_period_intro(frm) {
 	}
 
 	const intro_text = __(
-		"<b>Periode Gaji (Bulan)</b> terisi otomatis dari bulan berjalan (cutoff <b>25–24</b>). "
+		"<b>Payroll Period</b> terisi otomatis dari bulan berjalan (sesuai cutoff di Payroll Period). "
 			+ "<b>Posting Date</b> default tanggal <b>24</b> akhir periode dan <b>bisa diubah</b> "
 			+ "(tidak harus sama dengan periode gaji)."
 	);
