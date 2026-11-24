@@ -3,7 +3,7 @@
 Nilai lembur = jam berbobot x Upah / pembagi (173).
 Jam berbobot = jumlah (pengali jam ke-i x jam yang terpakai di jam ke-i); jam pecahan
 dihitung proporsional. Pengali tergantung jenis hari. Tabel pengali bisa diubah di
-"Imogi Payroll Overtime Settings"; bila kosong dipakai nilai bawaan Odoo di bawah.
+tab "Overtime" pada "Imogi Payroll Settings"; bila kosong dipakai nilai bawaan Odoo di bawah.
 """
 
 import frappe
@@ -21,21 +21,23 @@ DEFAULT_COEFFICIENTS = {
 
 
 def _settings():
+	# Pengaturan lembur ada di tab "Overtime" pada Imogi Payroll Settings
+	# (dulu doctype terpisah "Imogi Payroll Overtime Settings").
 	try:
-		return frappe.get_cached_doc("Imogi Payroll Overtime Settings")
+		return frappe.get_cached_doc("Imogi Payroll Settings")
 	except Exception:
 		return None
 
 
 def get_divisor() -> float:
 	s = _settings()
-	return flt(s.divisor) if s and flt(s.divisor) > 0 else DEFAULT_DIVISOR
+	return flt(s.get("overtime_divisor")) if s and flt(s.get("overtime_divisor")) > 0 else DEFAULT_DIVISOR
 
 
 def get_coefficients(day_type: str) -> list:
 	s = _settings()
 	if s:
-		for row in s.get("coefficients") or []:
+		for row in s.get("overtime_coefficients") or []:
 			if row.day_type == day_type:
 				return [flt(row.get("jam_%d" % i)) for i in range(1, 12)]
 	return list(DEFAULT_COEFFICIENTS.get(day_type or "Workday", DEFAULT_COEFFICIENTS["Workday"]))

@@ -21,3 +21,4 @@ imogi_payroll.patches.field_agama_dan_ump_branch
 imogi_payroll.patches.absensi_koreksi_hr
 imogi_payroll.patches.input_manual_massal
 imogi_payroll.patches.absensi_job_pengaman
+imogi_payroll.patches.lembur_pindah_ke_settings

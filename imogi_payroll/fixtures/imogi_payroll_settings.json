@@ -883,10 +883,18 @@
     "ter_code": "C"
    }
   ],
-  "modified": "2026-10-20 13:28:07.239931",
+  "modified": "2026-11-24 09:00:00.000000",
   "name": "Imogi Payroll Settings",
   "operation_head_designation": null,
   "operation_head_name": null,
+  "overtime_coefficients": [
+   {"day_type": "Workday", "jam_1": 1.5, "jam_2": 2.0, "jam_3": 2.0, "jam_4": 2.0, "jam_5": 2.0, "jam_6": 2.0, "jam_7": 2.0, "jam_8": 2.0, "jam_9": 2.0, "jam_10": 2.0, "jam_11": 2.0},
+   {"day_type": "Offday (5)", "jam_1": 2.0, "jam_2": 2.0, "jam_3": 2.0, "jam_4": 2.0, "jam_5": 2.0, "jam_6": 2.0, "jam_7": 2.0, "jam_8": 2.0, "jam_9": 3.0, "jam_10": 4.0, "jam_11": 4.0},
+   {"day_type": "Holiday (5)", "jam_1": 2.0, "jam_2": 2.0, "jam_3": 2.0, "jam_4": 2.0, "jam_5": 2.0, "jam_6": 2.0, "jam_7": 2.0, "jam_8": 2.0, "jam_9": 3.0, "jam_10": 4.0, "jam_11": 4.0},
+   {"day_type": "Offday (6)", "jam_1": 2.0, "jam_2": 2.0, "jam_3": 2.0, "jam_4": 2.0, "jam_5": 2.0, "jam_6": 2.0, "jam_7": 2.0, "jam_8": 3.0, "jam_9": 4.0, "jam_10": 4.0, "jam_11": 4.0},
+   {"day_type": "Public Holiday (6)", "jam_1": 2.0, "jam_2": 2.0, "jam_3": 2.0, "jam_4": 2.0, "jam_5": 2.0, "jam_6": 3.0, "jam_7": 4.0, "jam_8": 4.0, "jam_9": 4.0, "jam_10": 4.0, "jam_11": 4.0}
+  ],
+  "overtime_divisor": 173.0,
   "pph21_method": "TER",
   "salary_slip_use_component_cache": 1,
   "validate_tax_status_strict": 1

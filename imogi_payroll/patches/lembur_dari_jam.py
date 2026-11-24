@@ -1,7 +1,7 @@
 """Lembur dari jam (mengikuti Odoo): doctype input harian + komponen gaji "Lembur" otomatis.
 
-1. Reload doctype Imogi Payroll Overtime / Overtime Settings / Overtime Coefficient.
-2. Isi tabel koefisien bawaan (nilai Odoo) dan pembagi 173 bila belum ada.
+1. Reload doctype Imogi Payroll Overtime / Imogi Payroll Settings / Overtime Coefficient.
+2. Isi tabel koefisien bawaan (nilai Odoo) dan pembagi 173 di tab Overtime bila belum ada.
 3. Buat/perbarui Salary Component "Lembur": formula get_overtime_amount(employee, start_date,
    end_date, base), tanpa prorata hari bayar (seperti Odoo).
 4. Tambahkan "Lembur" ke Salary Structure "Indonesian Payroll Standard" bila masih Draft.
@@ -17,16 +17,18 @@ STRUCTURE = "Indonesian Payroll Standard"
 
 
 def execute():
-	for dt in ("imogi_payroll_overtime_coefficient", "imogi_payroll_overtime_settings", "imogi_payroll_overtime"):
+	for dt in ("imogi_payroll_overtime_coefficient", "imogi_payroll_settings", "imogi_payroll_overtime"):
 		frappe.reload_doc("imogi_payroll", "doctype", dt)
 
-	settings = frappe.get_single("Imogi Payroll Overtime Settings")
-	if not settings.get("coefficients"):
-		settings.divisor = DEFAULT_DIVISOR
+	# Pengaturan lembur sekarang di tab "Overtime" Imogi Payroll Settings
+	# (lihat patch lembur_pindah_ke_settings).
+	settings = frappe.get_single("Imogi Payroll Settings")
+	if not settings.get("overtime_coefficients"):
+		settings.overtime_divisor = DEFAULT_DIVISOR
 		for day_type, table in DEFAULT_COEFFICIENTS.items():
 			row = {"day_type": day_type}
 			row.update({"jam_%d" % (i + 1): v for i, v in enumerate(table)})
-			settings.append("coefficients", row)
+			settings.append("overtime_coefficients", row)
 		settings.save(ignore_permissions=True)
 
 	values = {
