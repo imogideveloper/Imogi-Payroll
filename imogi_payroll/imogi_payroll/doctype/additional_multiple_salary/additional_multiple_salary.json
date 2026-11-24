@@ -59,7 +59,7 @@
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Karyawan",
-   "options": "Imogi Payroll Input Manual Item",
+   "options": "Additional Multiple Salary Item",
    "reqd": 1
   },
   {
@@ -67,7 +67,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Imogi Payroll Input Manual",
+   "options": "Additional Multiple Salary",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -76,10 +76,10 @@
  "index_web_pages_for_search": 0,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-16 00:00:00.000000",
+ "modified": "2026-11-24 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Imogi Payroll",
- "name": "Imogi Payroll Input Manual",
+ "name": "Additional Multiple Salary",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

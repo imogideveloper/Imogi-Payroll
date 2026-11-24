@@ -1,5 +1,5 @@
 from frappe.model.document import Document
 
 
-class ImogiPayrollInputManualItem(Document):
+class AdditionalMultipleSalaryItem(Document):
 	pass

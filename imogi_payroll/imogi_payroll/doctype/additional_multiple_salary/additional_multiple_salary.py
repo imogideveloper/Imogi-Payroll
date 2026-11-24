@@ -4,7 +4,7 @@ from frappe.model.document import Document
 from frappe.utils import flt
 
 
-class ImogiPayrollInputManual(Document):
+class AdditionalMultipleSalary(Document):
 	"""Input massal Additional Salary: satu dokumen = satu komponen gaji, satu tanggal payroll,
 	banyak karyawan (padanan "Input Manual" per kategori per cutoff di Odoo).
 
@@ -45,7 +45,7 @@ class ImogiPayrollInputManual(Document):
 			)
 			additional_salary.insert(ignore_permissions=True)
 			additional_salary.submit()
-			frappe.db.set_value("Imogi Payroll Input Manual Item", row.name, "additional_salary", additional_salary.name)
+			frappe.db.set_value("Additional Multiple Salary Item", row.name, "additional_salary", additional_salary.name)
 
 	def on_cancel(self):
 		for row in self.items:

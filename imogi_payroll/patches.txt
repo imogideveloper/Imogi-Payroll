@@ -8,6 +8,7 @@ imogi_payroll.patches.fix_aph_cutoff_fiscal_year
 imogi_payroll.patches.fix_aph_end_year_and_month_order
 imogi_payroll.patches.backfill_aph_salary_component_snapshot
 imogi_payroll.patches.set_default_salary_slip_print_format
+imogi_payroll.patches.rename_input_manual_ke_additional_multiple_salary
 
 [post_model_sync]
 imogi_payroll.patches.convert_aph_bulan_to_month_names
