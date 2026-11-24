@@ -6,7 +6,8 @@ frappe.ui.form.on("Additional Multiple Salary", {
 		frm.set_query("salary_component", () => {
 			const filters = { disabled: 0, statistical_component: 0 };
 			if (frm.doc.type) filters.type = frm.doc.type;
-			return { filters };
+			// Dropdown Link bawaan hanya 10 hasil; tampilkan semua komponen (Earning ~56).
+			return { filters, page_length: 200 };
 		});
 	},
 
