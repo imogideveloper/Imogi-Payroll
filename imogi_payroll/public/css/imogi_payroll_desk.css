@@ -174,17 +174,19 @@ body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
 /* List Salary Slip: lebar kolom tetap supaya judul dan baris selalu sejajar dan isi tidak terpotong.
    Kontainer judul dan baris berbeda lebar (judul memberi ruang untuk tombol pengaturan kolom), jadi kolom yang
    melebar mengikuti sisa ruang akan bergeser; karena itu hanya kolom terakhir (Status) yang melebar. Frappe memberi
-   min-width 150px ke tiap kolom, jadi min-width ikut disetel. Jarak antarkolom 8px (bawaan 15px) supaya ke-8 kolom
+   min-width 150px ke tiap kolom, jadi min-width ikut disetel. Jarak antarkolom 6px (bawaan 15px) supaya ke-9 kolom
    muat di area list sekitar 1150px (prod) tanpa gulir ke samping.
-   Urutan anak (diatur imogi_payroll_salary_slip_list.js): ID, Tag, Posting Date, Employee Name, Payroll Entry,
-   Department, Branch, Net Pay, Status. */
+   Urutan anak (diatur imogi_payroll_salary_slip_list.js): ID, Tag, Posting Date, Employee Name, Payroll Period,
+   Payroll Entry, Department, Branch, Net Pay, Status.
+   Lebar diukur dari isi di prod (2026-11-25): Payroll Entry "HR-PRUN-2026-00044" tampil utuh; Employee Name dan
+   Branch yang panjang terpotong "..." (isi lengkap di tooltip). */
 body[data-route="List/Salary Slip/List"] .list-subject .level-item.bold {
 	justify-content: flex-start !important;
 	min-width: 0;
 }
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col,
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col {
-	margin-right: 8px !important;
+	margin-right: 6px !important;
 }
 
 /* ID */
@@ -199,66 +201,76 @@ body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(1) {
 /* Posting Date */
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(3),
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(3) {
-	flex: 0 0 95px !important;
-	width: 95px !important;
-	min-width: 95px !important;
-	max-width: 95px !important;
+	flex: 0 0 86px !important;
+	width: 86px !important;
+	min-width: 86px !important;
+	max-width: 86px !important;
 }
 
 /* Employee Name */
 body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(4),
 body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(4) {
-	flex: 0 0 140px !important;
-	width: 140px !important;
-	min-width: 140px !important;
-	max-width: 140px !important;
+	flex: 0 0 114px !important;
+	width: 114px !important;
+	min-width: 114px !important;
+	max-width: 114px !important;
+}
+
+/* Payroll Period */
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(5),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(5) {
+	flex: 0 0 92px !important;
+	width: 92px !important;
+	min-width: 92px !important;
+	max-width: 92px !important;
 }
 
 /* Payroll Entry */
-body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(5),
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(5) {
-	flex: 0 0 165px !important;
-	width: 165px !important;
-	min-width: 165px !important;
-	max-width: 165px !important;
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(6),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(6) {
+	flex: 0 0 170px !important;
+	width: 170px !important;
+	min-width: 170px !important;
+	max-width: 170px !important;
 }
 
 /* Department */
-body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(6),
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(6) {
-	flex: 0 0 150px !important;
-	width: 150px !important;
-	min-width: 150px !important;
-	max-width: 150px !important;
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(7),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(7) {
+	flex: 0 0 144px !important;
+	width: 144px !important;
+	min-width: 144px !important;
+	max-width: 144px !important;
 }
 
 /* Branch */
-body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(7),
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(7) {
-	flex: 0 0 140px !important;
-	width: 140px !important;
-	min-width: 140px !important;
-	max-width: 140px !important;
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(8),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(8) {
+	flex: 0 0 80px !important;
+	width: 80px !important;
+	min-width: 80px !important;
+	max-width: 80px !important;
 }
 
 /* Net Pay */
-body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(8),
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(8) {
-	flex: 0 0 125px !important;
-	width: 125px !important;
-	min-width: 125px !important;
-	max-width: 125px !important;
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(9),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(9) {
+	flex: 0 0 118px !important;
+	width: 118px !important;
+	min-width: 118px !important;
+	max-width: 118px !important;
 }
 
-/* Posting Date: isi rata tengah, sama dengan judulnya */
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(3) {
+/* Posting Date dan Payroll Period: isi rata tengah, sama dengan judulnya */
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(3),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(5) {
 	justify-content: center !important;
 	text-align: center !important;
 }
 
 /* Status */
-body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(9),
-body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(9) {
+body[data-route="List/Salary Slip/List"] .list-row-head .list-row-col:nth-child(10),
+body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(10) {
 	flex: 1 0 85px !important;
 	width: auto !important;
 	max-width: none !important;

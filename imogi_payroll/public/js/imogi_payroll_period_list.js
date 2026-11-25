@@ -46,48 +46,6 @@
 		});
 	}
 
-	// Kolom yang lebarnya disesuaikan isi (tanpa "..."): Payroll Period cukup selebar "Sep 2026",
-	// sisa ruangnya dipakai kolom lain; di Salary Slip kode Payroll Entry tampil utuh.
-	const FIT_COLUMNS = {
-		"Salary Slip": ["Payroll Period", "Payroll Entry"],
-	};
-
-	function fit_columns(listview, labels) {
-		const $result = listview?.$result;
-		if (!$result?.length) return;
-		const wanted = new Set(labels.map((l) => __(l)));
-		const head_cols = $result.find(".list-row-head .list-row-col").toArray();
-		const idx = [];
-		head_cols.forEach((el, i) => {
-			if (wanted.has(el.textContent.trim())) idx.push(i);
-		});
-		if (!idx.length) return;
-		const rows = [head_cols].concat(
-			$result
-				.find(".list-row-container .list-row")
-				.toArray()
-				.map((row) => $(row).find(".list-row-col").toArray())
-		);
-		idx.forEach((i) => {
-			const cells = rows.map((cols) => cols[i]).filter(Boolean);
-			// ukur lebar isi: sementara kolom dibuat selebar isinya (flex auto, tanpa min/max)
-			cells.forEach((c) => {
-				c.style.flex = "0 0 auto";
-				c.style.minWidth = "0";
-				c.style.maxWidth = "none";
-			});
-			let width = 0;
-			cells.forEach((c) => (width = Math.max(width, c.getBoundingClientRect().width)));
-			if (!width) return;
-			width = Math.ceil(width);
-			width += 4;
-			cells.forEach((c) => {
-				c.style.flex = `0 0 ${width}px`;
-				c.style.minWidth = `${width}px`;
-			});
-		});
-	}
-
 	DOCTYPES.forEach((doctype) => {
 		const settings = (frappe.listview_settings[doctype] = frappe.listview_settings[doctype] || {});
 		settings.formatters = settings.formatters || {};
@@ -97,14 +55,9 @@
 
 		// Center kolom; onload/refresh bawaan (mis. dari list JS lain) tetap dipanggil lebih dulu.
 		const labels = CENTER_COLUMNS[doctype] || ["Payroll Period"];
-		const fit_labels = FIT_COLUMNS[doctype] || ["Payroll Period"];
 		const run_center = (listview) => {
 			center_columns(listview, labels);
-			fit_columns(listview, fit_labels);
-			setTimeout(() => {
-				center_columns(listview, labels);
-				fit_columns(listview, fit_labels);
-			}, 150);
+			setTimeout(() => center_columns(listview, labels), 150);
 		};
 		["onload", "refresh"].forEach((hook) => {
 			const original = settings[hook];
