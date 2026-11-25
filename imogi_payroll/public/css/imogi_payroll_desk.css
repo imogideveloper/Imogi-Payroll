@@ -276,3 +276,44 @@ body[data-route="List/Salary Slip/List"] .list-row .list-row-col:nth-child(10) {
 	max-width: none !important;
 	min-width: 85px !important;
 }
+
+/* List Payroll Entry: lebar kolom tetap (dicocokkan lewat data-fieldname, bukan urutan) supaya ID tampil utuh,
+   Status tidak terdorong keluar layar, dan tidak ada gulir ke samping di area list sekitar 1150px (prod).
+   Tanpa ini Frappe memberi Branch lebar maksimum 400px+ dan ID terpotong. Kolom terakhir (Status) mengisi sisa ruang. */
+body[data-route="List/Payroll Entry/List"] .list-row-col.list-subject {
+	flex: 0 0 210px !important;
+	width: 210px !important;
+	min-width: 210px !important;
+	max-width: 210px !important;
+}
+body[data-route="List/Payroll Entry/List"] .list-row-col[data-fieldname="payroll_sub_period"] {
+	flex: 0 0 92px !important;
+	width: 92px !important;
+	min-width: 92px !important;
+	max-width: 92px !important;
+}
+body[data-route="List/Payroll Entry/List"] .list-row-col[data-fieldname="posting_date"] {
+	flex: 0 0 86px !important;
+	width: 86px !important;
+	min-width: 86px !important;
+	max-width: 86px !important;
+}
+body[data-route="List/Payroll Entry/List"] .list-row-col[data-fieldname="cabang_karyawan"] {
+	flex: 0 0 420px !important;
+	width: 420px !important;
+	min-width: 420px !important;
+	max-width: 420px !important;
+}
+body[data-route="List/Payroll Entry/List"] .list-row-col[data-fieldname="departemen_karyawan"] {
+	flex: 0 0 110px !important;
+	width: 110px !important;
+	min-width: 110px !important;
+	max-width: 110px !important;
+}
+body[data-route="List/Payroll Entry/List"] .list-row-head .list-row-col:last-child,
+body[data-route="List/Payroll Entry/List"] .list-row .level-left > .list-row-col:last-child {
+	flex: 1 0 85px !important;
+	width: auto !important;
+	min-width: 85px !important;
+	max-width: none !important;
+}
